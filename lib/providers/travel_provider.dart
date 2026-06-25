@@ -107,8 +107,28 @@ class TravelProvider with ChangeNotifier {
   // STOP OPERATIONS
   // ==========================================
 
+  Future<void> _reorderStops(int tripId) async {
+    final stops = await _dbHelper.getStopsForTrip(tripId);
+    for (int i = 0; i < stops.length; i++) {
+      final expectedOrder = i + 1;
+      if (stops[i].itineraryOrder != expectedOrder) {
+        await _dbHelper.updateStop(stops[i].copyWith(itineraryOrder: expectedOrder));
+      }
+    }
+  }
+
   Future<void> addStop(Stop stop) async {
+    final existingStops = await _dbHelper.getStopsForTrip(stop.tripId);
+    // Shift existing stops that have order >= new order
+    for (var existing in existingStops) {
+      if (existing.itineraryOrder >= stop.itineraryOrder) {
+        await _dbHelper.updateStop(existing.copyWith(
+          itineraryOrder: existing.itineraryOrder + 1,
+        ));
+      }
+    }
     await _dbHelper.insertStop(stop);
+    await _reorderStops(stop.tripId);
     if (_selectedTrip != null) {
       await loadTripDetails(_selectedTrip!.id!);
       notifyListeners();
@@ -116,7 +136,31 @@ class TravelProvider with ChangeNotifier {
   }
 
   Future<void> updateStop(Stop stop) async {
+    final existingStops = await _dbHelper.getStopsForTrip(stop.tripId);
+    final oldStop = existingStops.firstWhere((s) => s.id == stop.id);
+    final oldOrder = oldStop.itineraryOrder;
+    final newOrder = stop.itineraryOrder;
+
+    if (oldOrder != newOrder) {
+      for (var existing in existingStops) {
+        if (existing.id == stop.id) continue;
+        if (newOrder < oldOrder) {
+          if (existing.itineraryOrder >= newOrder && existing.itineraryOrder < oldOrder) {
+            await _dbHelper.updateStop(existing.copyWith(
+              itineraryOrder: existing.itineraryOrder + 1,
+            ));
+          }
+        } else {
+          if (existing.itineraryOrder > oldOrder && existing.itineraryOrder <= newOrder) {
+            await _dbHelper.updateStop(existing.copyWith(
+              itineraryOrder: existing.itineraryOrder - 1,
+            ));
+          }
+        }
+      }
+    }
     await _dbHelper.updateStop(stop);
+    await _reorderStops(stop.tripId);
     if (_selectedTrip != null) {
       await loadTripDetails(_selectedTrip!.id!);
       notifyListeners();
@@ -124,8 +168,9 @@ class TravelProvider with ChangeNotifier {
   }
 
   Future<void> deleteStop(int id) async {
-    await _dbHelper.deleteStop(id);
     if (_selectedTrip != null) {
+      await _dbHelper.deleteStop(id);
+      await _reorderStops(_selectedTrip!.id!);
       await loadTripDetails(_selectedTrip!.id!);
       notifyListeners();
     }

@@ -495,212 +495,173 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                       return true;
                     }).toList();
 
-                    return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Timeline graphics (bullets and vertical lines)
-            Column(
-              children: [
-                // Bullet point
-                Container(
-                  width: 20,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary,
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      width: 3,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Theme.of(context).colorScheme.primary.withOpacity(0.4),
-                        blurRadius: 6,
-                      ),
-                    ],
-                  ),
-                ),
-                // Vertical Line (except for the last item)
-                if (index < stops.length - 1)
-                  Container(
-                    width: 3,
-                    height: 110.0 + (activities.length * 40.0), // dynamic height based on activities
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
-                  ),
-              ],
-            ),
-            const SizedBox(width: 16),
-            // Stop Card
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Card(
-                    margin: const EdgeInsets.only(bottom: 8),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  "Giorno ${stop.itineraryOrder} • ${stop.name}",
-                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Stop Card
+                        Card(
+                          margin: const EdgeInsets.only(bottom: 8),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        "Giorno ${stop.itineraryOrder} • ${stop.name}",
+                                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    Row(
+                                      children: [
+                                        IconButton(
+                                          icon: const Icon(Icons.edit_outlined, size: 20),
+                                          tooltip: "Modifica tappa",
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => AddStopScreen(
+                                                  tripId: provider.selectedTrip!.id!,
+                                                  stop: stop,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(Icons.delete_outline, size: 20, color: Colors.redAccent),
+                                          tooltip: "Rimuovi tappa",
+                                          onPressed: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (ctx) => AlertDialog(
+                                                title: const Text("Elimina Tappa"),
+                                                content: Text("Sei sicuro di voler eliminare la tappa '${stop.name}' e tutte le sue attività associate?"),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () => Navigator.pop(ctx),
+                                                    child: const Text("Annulla"),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(ctx);
+                                                      provider.deleteStop(stop.id!);
+                                                    },
+                                                    child: const Text("Elimina", style: TextStyle(color: Colors.redAccent)),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              Row(
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(Icons.edit_outlined, size: 20),
-                                    tooltip: "Modifica tappa",
+                                Row(
+                                  children: [
+                                    const Icon(Icons.access_time, size: 14, color: Colors.grey),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      "${_formatDate(stop.dateTime)} alle ${_formatTime(stop.dateTime.hour.toString().padLeft(2, '0'))}:${stop.dateTime.minute.toString().padLeft(2, '0')}",
+                                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 12),
+                                    ),
+                                    if (stop.location.isNotEmpty) ...[
+                                      const SizedBox(width: 12),
+                                      const Icon(Icons.location_on_outlined, size: 14, color: Colors.grey),
+                                      const SizedBox(width: 4),
+                                      Expanded(
+                                        child: Text(
+                                          stop.location,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 12),
+                                        ),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                                if (stop.description.isNotEmpty) ...[
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    stop.description,
+                                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.8),
+                                    ),
+                                  ),
+                                ],
+                                if (stop.notes.isNotEmpty) ...[
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Icon(
+                                        Icons.sticky_note_2_outlined,
+                                        size: 14,
+                                        color: Theme.of(context).colorScheme.secondary.withOpacity(0.8),
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Expanded(
+                                        child: Text(
+                                          stop.notes,
+                                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                            fontStyle: FontStyle.italic,
+                                            fontSize: 13,
+                                            color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                                const SizedBox(height: 12),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: OutlinedButton.icon(
                                     onPressed: () {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) => AddStopScreen(
                                             tripId: provider.selectedTrip!.id!,
-                                            stop: stop,
+                                            parentStop: stop,
                                           ),
                                         ),
                                       );
                                     },
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.delete_outline, size: 20, color: Colors.redAccent),
-                                    tooltip: "Rimuovi tappa",
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (ctx) => AlertDialog(
-                                          title: const Text("Elimina Tappa"),
-                                          content: Text("Sei sicuro di voler eliminare la tappa '${stop.name}' e tutte le sue attività associate?"),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () => Navigator.pop(ctx),
-                                              child: const Text("Annulla"),
-                                            ),
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.pop(ctx);
-                                                provider.deleteStop(stop.id!);
-                                              },
-                                              child: const Text("Elimina", style: TextStyle(color: Colors.redAccent)),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              const Icon(Icons.access_time, size: 14, color: Colors.grey),
-                              const SizedBox(width: 4),
-                              Text(
-                                "${_formatDate(stop.dateTime)} alle ${_formatTime(stop.dateTime.hour.toString().padLeft(2, '0'))}:${stop.dateTime.minute.toString().padLeft(2, '0')}",
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 12),
-                              ),
-                              if (stop.location.isNotEmpty) ...[
-                                const SizedBox(width: 12),
-                                const Icon(Icons.location_on_outlined, size: 14, color: Colors.grey),
-                                const SizedBox(width: 4),
-                                Expanded(
-                                  child: Text(
-                                    stop.location,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 12),
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
-                          if (stop.description.isNotEmpty) ...[
-                            const SizedBox(height: 8),
-                            Text(
-                              stop.description,
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.8),
-                              ),
-                            ),
-                          ],
-                          if (stop.notes.isNotEmpty) ...[
-                            const SizedBox(height: 8),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Icon(
-                                  Icons.sticky_note_2_outlined,
-                                  size: 14,
-                                  color: Theme.of(context).colorScheme.secondary.withOpacity(0.8),
-                                ),
-                                const SizedBox(width: 6),
-                                Expanded(
-                                  child: Text(
-                                    stop.notes,
-                                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                      fontStyle: FontStyle.italic,
-                                      fontSize: 13,
-                                      color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
+                                    icon: const Icon(Icons.add_task, size: 16),
+                                    label: const Text(
+                                      "Aggiungi attività per questa tappa",
+                                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                    ),
+                                    style: OutlinedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
                                     ),
                                   ),
                                 ),
                               ],
                             ),
-                          ],
-                          const SizedBox(height: 12),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: OutlinedButton.icon(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AddStopScreen(
-                                      tripId: provider.selectedTrip!.id!,
-                                      parentStop: stop,
-                                    ),
-                                  ),
-                                );
-                              },
-                              icon: const Icon(Icons.add_task, size: 16),
-                              label: const Text(
-                                "Aggiungi attività per questa tappa",
-                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                              ),
-                              style: OutlinedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                            ),
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
+                        ),
 
-                  // Activities inside this stop
-                  if (activities.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(left: 12, bottom: 16),
-                      child: Column(
-                        children: activities.map((act) => _buildActivityRow(context, act, provider)).toList(),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ],
-        );
+                        // Activities inside this stop
+                        if (activities.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(left: 12, bottom: 16),
+                            child: Column(
+                              children: activities.map((act) => _buildActivityRow(context, act, provider)).toList(),
+                            ),
+                          ),
+                      ],
+                    );
       },
     ),
   ),

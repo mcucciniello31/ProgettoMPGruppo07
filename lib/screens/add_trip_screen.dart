@@ -297,7 +297,9 @@ class _AddTripScreenState extends State<AddTripScreen> {
             children: [
               Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 28),
               SizedBox(width: 8),
-              Text("Controlli di Validazione"),
+              Expanded(
+                child: Text("Controlli di Validazione"),
+              ),
             ],
           ),
           content: SingleChildScrollView(

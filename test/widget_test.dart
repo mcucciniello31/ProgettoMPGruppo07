@@ -17,6 +17,6 @@ void main() {
 
     // Verify that the title "Zefiro" is found on screen.
     expect(find.text('Zefiro'), findsOneWidget);
-    expect(find.text('Organizza le tue prossime avventure'), findsOneWidget);
+    expect(find.text('Organizza le tue prossime avventure!'), findsOneWidget);
   });
 }

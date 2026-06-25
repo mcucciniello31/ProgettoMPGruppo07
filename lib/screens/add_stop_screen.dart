@@ -225,8 +225,25 @@ class _AddStopScreenState extends State<AddStopScreen> {
         validationErrors.add("Ordine nell'itinerario: campo obbligatorio");
       } else if (orderText.startsWith(' ')) {
         validationErrors.add("Ordine nell'itinerario: non può iniziare con uno spazio");
-      } else if (int.tryParse(orderText) == null || int.parse(orderText) <= 0) {
-        validationErrors.add("Ordine nell'itinerario: deve essere un numero intero positivo maggiore di zero (es: 1, 2, 3)");
+      } else {
+        final orderVal = int.tryParse(orderText);
+        if (orderVal == null || orderVal <= 0) {
+          validationErrors.add("Ordine nell'itinerario: deve essere un numero intero positivo maggiore di zero (es: 1, 2, 3)");
+        } else {
+          final provider = Provider.of<TravelProvider>(context, listen: false);
+          final existingStops = provider.currentStops;
+          if (widget.stop == null) {
+            final maxAllowed = existingStops.length + 1;
+            if (orderVal > maxAllowed) {
+              validationErrors.add("Ordine nell'itinerario: non puoi saltare giorni. La prossima tappa deve avere un ordine al massimo di $maxAllowed (attualmente ci sono ${existingStops.length} tappe).");
+            }
+          } else {
+            final maxAllowed = existingStops.length;
+            if (orderVal > maxAllowed) {
+              validationErrors.add("Ordine nell'itinerario: giorno non valido. Non può essere superiore al numero totale di tappe ($maxAllowed).");
+            }
+          }
+        }
       }
 
       if (notesText.startsWith(' ')) {
@@ -287,7 +304,9 @@ class _AddStopScreenState extends State<AddStopScreen> {
             children: [
               Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 28),
               SizedBox(width: 8),
-              Text("Controlli di Validazione"),
+              Expanded(
+                child: Text("Controlli di Validazione"),
+              ),
             ],
           ),
           content: SingleChildScrollView(
@@ -522,8 +541,22 @@ class _AddStopScreenState extends State<AddStopScreen> {
                     if (value.startsWith(' ')) {
                       return "Non può iniziare con uno spazio";
                     }
-                    if (int.tryParse(value) == null || int.parse(value) <= 0) {
+                    final orderVal = int.tryParse(value);
+                    if (orderVal == null || orderVal <= 0) {
                       return "Inserisci un numero intero maggiore di 0";
+                    }
+                    final provider = Provider.of<TravelProvider>(context, listen: false);
+                    final existingStops = provider.currentStops;
+                    if (widget.stop == null) {
+                      final maxAllowed = existingStops.length + 1;
+                      if (orderVal > maxAllowed) {
+                        return "Non puoi saltare giorni. Max consentito: $maxAllowed";
+                      }
+                    } else {
+                      final maxAllowed = existingStops.length;
+                      if (orderVal > maxAllowed) {
+                        return "Giorno non valido. Max consentito: $maxAllowed";
+                      }
                     }
                     return null;
                   },

@@ -125,7 +125,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             children: [
               Icon(Icons.warning_amber_rounded, color: Theme.of(context).colorScheme.error),
               const SizedBox(width: 8),
-              const Text("Campi non validi o mancanti"),
+              const Expanded(
+                child: Text("Campi non validi o mancanti"),
+              ),
             ],
           ),
           content: Column(

@@ -97,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           ),
                         ),
                         Text(
-                          "Organizza le tue prossime avventure",
+                          "Organizza le tue prossime avventure!",
                           style: Theme.of(context).textTheme.bodyMedium,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -105,39 +105,21 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     ),
                   ),
                   const SizedBox(width: 12),
-                  // App Icon / Logo placeholder & Analytics Button
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: Icon(
-                          Icons.bar_chart_outlined,
-                          color: Theme.of(context).colorScheme.primary,
-                          size: 28,
+                  IconButton(
+                    icon: Icon(
+                      Icons.bar_chart_outlined,
+                      color: Theme.of(context).colorScheme.primary,
+                      size: 28,
+                    ),
+                    tooltip: "Statistiche e Analisi",
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AnalyticsScreen(),
                         ),
-                        tooltip: "Statistiche e Analisi",
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const AnalyticsScreen(),
-                            ),
-                          );
-                        },
-                      ),
-                      const SizedBox(width: 4),
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.explore,
-                          color: Theme.of(context).colorScheme.primary,
-                          size: 28,
-                        ),
-                      ),
-                    ],
+                      );
+                    },
                   ),
                 ],
               ),
@@ -153,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       Expanded(
                         child: TextField(
                           decoration: InputDecoration(
-                            hintText: "Cerca destinazione o titolo...",
+                            hintText: "Destinazione o Titolo",
                             prefixIcon: const Icon(Icons.search, size: 20),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
