@@ -8,6 +8,7 @@ import '../models/checklist_item.dart';
 import '../models/expense.dart';
 import '../models/useful_info.dart';
 import '../models/diary_entry.dart';
+import '../models/travel_document.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
@@ -27,7 +28,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 8, // Upgraded to 8 for diary_entries
+      version: 9, // Upgraded to 9 for travel_documents
       onCreate: _createDB,
       onConfigure: _onConfigure,
       onUpgrade: _onUpgrade,
@@ -156,6 +157,22 @@ class DatabaseHelper {
         FOREIGN KEY (tripId) REFERENCES trips (id) ON DELETE CASCADE
       )
     ''');
+
+    // 8. Travel Documents table
+    await db.execute('''
+      CREATE TABLE travel_documents (
+        id $idType,
+        tripId $integerType,
+        title $textType,
+        documentType $textType,
+        bookingCode $textNullableType,
+        seat $textNullableType,
+        gate $textNullableType,
+        dateTime $textNullableType,
+        notes $textNullableType,
+        FOREIGN KEY (tripId) REFERENCES trips (id) ON DELETE CASCADE
+      )
+    ''');
   }
 
   Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
@@ -241,6 +258,22 @@ class DatabaseHelper {
           content TEXT NOT NULL,
           date TEXT NOT NULL,
           imagePath TEXT,
+          FOREIGN KEY (tripId) REFERENCES trips (id) ON DELETE CASCADE
+        )
+      ''');
+    }
+    if (oldVersion < 9) {
+      await db.execute('''
+        CREATE TABLE travel_documents (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          tripId INTEGER NOT NULL,
+          title TEXT NOT NULL,
+          documentType TEXT NOT NULL,
+          bookingCode TEXT,
+          seat TEXT,
+          gate TEXT,
+          dateTime TEXT,
+          notes TEXT,
           FOREIGN KEY (tripId) REFERENCES trips (id) ON DELETE CASCADE
         )
       ''');
@@ -571,6 +604,46 @@ class DatabaseHelper {
     final db = await instance.database;
     return await db.delete(
       'diary_entries',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  // ==========================================
+  // TRAVEL DOCUMENTS CRUD OPERATIONS
+  // ==========================================
+
+  Future<TravelDocument> insertTravelDocument(TravelDocument doc) async {
+    final db = await instance.database;
+    final id = await db.insert('travel_documents', doc.toMap());
+    return doc.copyWith(id: id);
+  }
+
+  Future<List<TravelDocument>> getTravelDocumentsForTrip(int tripId) async {
+    final db = await instance.database;
+    final result = await db.query(
+      'travel_documents',
+      where: 'tripId = ?',
+      whereArgs: [tripId],
+      orderBy: 'dateTime ASC',
+    );
+    return result.map((json) => TravelDocument.fromMap(json)).toList();
+  }
+
+  Future<int> updateTravelDocument(TravelDocument doc) async {
+    final db = await instance.database;
+    return await db.update(
+      'travel_documents',
+      doc.toMap(),
+      where: 'id = ?',
+      whereArgs: [doc.id],
+    );
+  }
+
+  Future<int> deleteTravelDocument(int id) async {
+    final db = await instance.database;
+    return await db.delete(
+      'travel_documents',
       where: 'id = ?',
       whereArgs: [id],
     );
