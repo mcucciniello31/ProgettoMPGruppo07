@@ -42,6 +42,7 @@ dependencies:
   uuid: ^4.3.3
   http: ^1.2.1
   url_launcher: ^6.2.6
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:

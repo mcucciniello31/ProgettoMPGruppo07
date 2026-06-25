@@ -5,6 +5,7 @@ import '../models/activity.dart';
 import '../models/checklist_item.dart';
 import '../models/expense.dart';
 import '../models/useful_info.dart';
+import '../models/diary_entry.dart';
 import '../services/database_helper.dart';
 import '../services/currency_service.dart';
 
@@ -18,6 +19,7 @@ class TravelProvider with ChangeNotifier {
   List<ChecklistItem> _currentChecklist = [];
   List<Expense> _currentExpenses = [];
   List<UsefulInfo> _currentUsefulInfo = [];
+  List<DiaryEntry> _currentDiaryEntries = [];
   bool _isLoading = false;
 
   // Getters
@@ -27,6 +29,7 @@ class TravelProvider with ChangeNotifier {
   List<ChecklistItem> get currentChecklist => _currentChecklist;
   List<Expense> get currentExpenses => _currentExpenses;
   List<UsefulInfo> get currentUsefulInfo => _currentUsefulInfo;
+  List<DiaryEntry> get currentDiaryEntries => _currentDiaryEntries;
   bool get isLoading => _isLoading;
 
   List<Activity> getActivitiesForStop(int stopId) {
@@ -69,6 +72,7 @@ class TravelProvider with ChangeNotifier {
     _currentChecklist = await _dbHelper.getChecklistItemsForTrip(tripId);
     _currentExpenses = await _dbHelper.getExpensesForTrip(tripId);
     _currentUsefulInfo = await _dbHelper.getUsefulInfoForTrip(tripId);
+    _currentDiaryEntries = await _dbHelper.getDiaryEntriesForTrip(tripId);
 
     // Load activities for all stops
     _stopActivities.clear();
@@ -320,5 +324,33 @@ class TravelProvider with ChangeNotifier {
     if (_currentChecklist.isEmpty) return 0.0;
     final checkedCount = _currentChecklist.where((item) => item.isChecked).length;
     return checkedCount / _currentChecklist.length;
+  }
+
+  // ==========================================
+  // DIARY CRUD OPERATIONS
+  // ==========================================
+
+  Future<void> addDiaryEntry(DiaryEntry entry) async {
+    await _dbHelper.insertDiaryEntry(entry);
+    if (_selectedTrip != null) {
+      await loadTripDetails(_selectedTrip!.id!);
+      notifyListeners();
+    }
+  }
+
+  Future<void> updateDiaryEntry(DiaryEntry entry) async {
+    await _dbHelper.updateDiaryEntry(entry);
+    if (_selectedTrip != null) {
+      await loadTripDetails(_selectedTrip!.id!);
+      notifyListeners();
+    }
+  }
+
+  Future<void> deleteDiaryEntry(int id) async {
+    await _dbHelper.deleteDiaryEntry(id);
+    if (_selectedTrip != null) {
+      await loadTripDetails(_selectedTrip!.id!);
+      notifyListeners();
+    }
   }
 }

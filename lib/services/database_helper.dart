@@ -7,6 +7,7 @@ import '../models/activity.dart';
 import '../models/checklist_item.dart';
 import '../models/expense.dart';
 import '../models/useful_info.dart';
+import '../models/diary_entry.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
@@ -26,7 +27,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 7, // Upgraded from 6 to 7
+      version: 8, // Upgraded to 8 for diary_entries
       onCreate: _createDB,
       onConfigure: _onConfigure,
       onUpgrade: _onUpgrade,
@@ -142,6 +143,19 @@ class DatabaseHelper {
         FOREIGN KEY (tripId) REFERENCES trips (id) ON DELETE CASCADE
       )
     ''');
+
+    // 7. Diary Entries table
+    await db.execute('''
+      CREATE TABLE diary_entries (
+        id $idType,
+        tripId $integerType,
+        title $textType,
+        content $textType,
+        date $textType,
+        imagePath $textNullableType,
+        FOREIGN KEY (tripId) REFERENCES trips (id) ON DELETE CASCADE
+      )
+    ''');
   }
 
   Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
@@ -217,6 +231,19 @@ class DatabaseHelper {
     }
     if (oldVersion < 7) {
       await db.execute("ALTER TABLE checklist_items ADD COLUMN priority TEXT NOT NULL DEFAULT 'Media'");
+    }
+    if (oldVersion < 8) {
+      await db.execute('''
+        CREATE TABLE diary_entries (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          tripId INTEGER NOT NULL,
+          title TEXT NOT NULL,
+          content TEXT NOT NULL,
+          date TEXT NOT NULL,
+          imagePath TEXT,
+          FOREIGN KEY (tripId) REFERENCES trips (id) ON DELETE CASCADE
+        )
+      ''');
     }
   }
 
@@ -507,6 +534,46 @@ class DatabaseHelper {
     final db = await instance.database;
     final result = await db.query('expenses');
     return result.map((json) => Expense.fromMap(json)).toList();
+  }
+
+  // ==========================================
+  // DIARY ENTRIES CRUD OPERATIONS
+  // ==========================================
+
+  Future<DiaryEntry> insertDiaryEntry(DiaryEntry entry) async {
+    final db = await instance.database;
+    final id = await db.insert('diary_entries', entry.toMap());
+    return entry.copyWith(id: id);
+  }
+
+  Future<List<DiaryEntry>> getDiaryEntriesForTrip(int tripId) async {
+    final db = await instance.database;
+    final result = await db.query(
+      'diary_entries',
+      where: 'tripId = ?',
+      whereArgs: [tripId],
+      orderBy: 'date DESC',
+    );
+    return result.map((json) => DiaryEntry.fromMap(json)).toList();
+  }
+
+  Future<int> updateDiaryEntry(DiaryEntry entry) async {
+    final db = await instance.database;
+    return await db.update(
+      'diary_entries',
+      entry.toMap(),
+      where: 'id = ?',
+      whereArgs: [entry.id],
+    );
+  }
+
+  Future<int> deleteDiaryEntry(int id) async {
+    final db = await instance.database;
+    return await db.delete(
+      'diary_entries',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
   }
 
   // Close database

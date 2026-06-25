@@ -66,5 +66,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Zefiro richiede l'accesso alla galleria per permetterti di caricare le foto nel tuo diario di bordo.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Zefiro richiede l'accesso alla fotocamera per permetterti di scattare foto da aggiungere al tuo diario di bordo.</string>
 </dict>
 </plist>

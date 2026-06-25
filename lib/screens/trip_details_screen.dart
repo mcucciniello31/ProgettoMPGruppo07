@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../providers/travel_provider.dart';
 import '../models/trip.dart';
+import '../models/stop.dart';
 import '../models/activity.dart';
 import '../models/checklist_item.dart';
 import '../models/useful_info.dart';
@@ -12,6 +13,12 @@ import '../services/currency_service.dart';
 import 'add_stop_screen.dart';
 import 'add_expense_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
+import '../models/diary_entry.dart';
 
 class TripDetailsScreen extends StatefulWidget {
   const TripDetailsScreen({super.key});
@@ -65,7 +72,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 5, vsync: this);
     _tabController.addListener(() {
       setState(() {}); // Rebuild to change FAB based on active tab
     });
@@ -148,15 +155,24 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                       icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
                                       onPressed: () => Navigator.pop(context),
                                     ),
-                                    Text(
-                                      trip.destination,
-                                      style: GoogleFonts.outfit(
-                                        color: Colors.white.withOpacity(0.9),
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 16,
+                                    Expanded(
+                                      child: Center(
+                                        child: Text(
+                                          trip.destination,
+                                          style: GoogleFonts.outfit(
+                                            color: Colors.white.withOpacity(0.9),
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
                                       ),
                                     ),
-                                    const SizedBox(width: 48), // Spacer to balance back button
+                                    IconButton(
+                                      icon: const Icon(Icons.ios_share, color: Colors.white),
+                                      tooltip: "Esporta Viaggio",
+                                      onPressed: () => _showExportTripDialog(context, provider),
+                                    ),
                                   ],
                                 ),
                                 const SizedBox(height: 12),
@@ -221,14 +237,19 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                 delegate: _SliverAppBarDelegate(
                   TabBar(
                     controller: _tabController,
+                    isScrollable: false,
                     indicatorColor: Theme.of(context).colorScheme.primary,
                     labelColor: Theme.of(context).colorScheme.onBackground,
                     unselectedLabelColor: Theme.of(context).textTheme.bodyMedium?.color,
+                    labelPadding: EdgeInsets.zero,
+                    labelStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+                    unselectedLabelStyle: const TextStyle(fontSize: 10),
                     tabs: const [
-                      Tab(icon: Icon(Icons.map_outlined), text: "Itinerario"),
-                      Tab(icon: Icon(Icons.checklist_outlined), text: "Checklist"),
-                      Tab(icon: Icon(Icons.euro_outlined), text: "Spese"),
-                      Tab(icon: Icon(Icons.info_outline), text: "Info Utili"),
+                      Tab(icon: Icon(Icons.map_outlined, size: 20), text: "Itinerario"),
+                      Tab(icon: Icon(Icons.checklist_outlined, size: 20), text: "Checklist"),
+                      Tab(icon: Icon(Icons.euro_outlined, size: 20), text: "Spese"),
+                      Tab(icon: Icon(Icons.photo_library_outlined, size: 20), text: "Diario"),
+                      Tab(icon: Icon(Icons.info_outline, size: 20), text: "Info Utili"),
                     ],
                   ),
                 ),
@@ -241,6 +262,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
               _buildItineraryTab(provider),
               _buildChecklistTab(provider),
               _buildExpensesTab(provider),
+              _buildDiaryTab(provider),
               _buildUsefulInfoTab(provider),
             ],
           ),
@@ -289,6 +311,16 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
         label: const Text("Aggiungi Spesa"),
       );
     } else if (_tabController.index == 3) {
+      // Diary Tab FAB -> Add Diary Entry
+      return FloatingActionButton.extended(
+        key: const ValueKey('fab_diary'),
+        onPressed: () {
+          _showAddEditDiaryDialog(context, null);
+        },
+        icon: const Icon(Icons.add_photo_alternate_outlined),
+        label: const Text("Nuovo Ricordo"),
+      );
+    } else if (_tabController.index == 4) {
       // Useful Info Tab FAB -> Add Useful Info
       return FloatingActionButton.extended(
         key: const ValueKey('fab_useful_info'),
@@ -586,6 +618,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                     ],
                                   ],
                                 ),
+
                                 if (stop.description.isNotEmpty) ...[
                                   const SizedBox(height: 8),
                                   Text(
@@ -2661,6 +2694,767 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                   ],
                 ],
               ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDiaryTab(TravelProvider provider) {
+    final entries = provider.currentDiaryEntries;
+
+    if (entries.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.photo_library_outlined,
+              size: 70,
+              color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              "Il tuo Diario di Bordo è vuoto",
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              "Tocca 'Nuovo Ricordo' per aggiungere foto e note!",
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ],
+        ),
+      );
+    }
+
+    return GridView.builder(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: 0.75,
+      ),
+      itemCount: entries.length,
+      itemBuilder: (context, index) {
+        final entry = entries[index];
+        return Card(
+          clipBehavior: Clip.antiAlias,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: InkWell(
+            onTap: () => _showDiaryEntryDetailsDialog(provider, entry),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Hero(
+                        tag: 'diary_image_${entry.id}',
+                        child: _buildDiaryImage(entry.imagePath),
+                      ),
+                      Positioned(
+                        top: 8,
+                        left: 8,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.6),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            _formatDate(entry.date),
+                            style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        entry.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 14),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        entry.content,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 11),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildDiaryImage(String? imagePath) {
+    if (imagePath == null || imagePath.isEmpty) {
+      return Container(
+        color: Colors.grey.shade200,
+        child: const Icon(Icons.photo_outlined, color: Colors.grey, size: 40),
+      );
+    }
+    if (imagePath.startsWith('/') || imagePath.contains(':/')) {
+      return Image.file(
+        File(imagePath),
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return Container(
+            color: Colors.red.shade50,
+            child: const Icon(Icons.broken_image_outlined, color: Colors.redAccent),
+          );
+        },
+      );
+    }
+    return Image.network(
+      imagePath,
+      fit: BoxFit.cover,
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) return child;
+        return Container(
+          color: Colors.grey.shade100,
+          child: const Center(
+            child: SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          ),
+        );
+      },
+      errorBuilder: (context, error, stackTrace) {
+        return Container(
+          color: Colors.grey.shade200,
+          child: const Icon(Icons.broken_image_outlined, color: Colors.grey),
+        );
+      },
+    );
+  }
+
+  void _showDiaryEntryDetailsDialog(TravelProvider provider, DiaryEntry entry) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        contentPadding: EdgeInsets.zero,
+        content: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.9,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Stack(
+                children: [
+                  AspectRatio(
+                    aspectRatio: 1.33,
+                    child: GestureDetector(
+                      onTap: () => _showFullScreenImage(context, entry.imagePath, entry.id),
+                      child: Hero(
+                        tag: 'diary_image_${entry.id}',
+                        child: _buildDiaryImage(entry.imagePath),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 12,
+                    right: 12,
+                    child: CircleAvatar(
+                      backgroundColor: Colors.black.withOpacity(0.5),
+                      child: IconButton(
+                        icon: const Icon(Icons.close, color: Colors.white),
+                        onPressed: () => Navigator.pop(ctx),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            _formatDate(entry.date),
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.edit_outlined, size: 20),
+                              onPressed: () {
+                                Navigator.pop(ctx);
+                                _showAddEditDiaryDialog(context, entry);
+                              },
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete_outline, color: Colors.redAccent, size: 20),
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (subCtx) => AlertDialog(
+                                    title: const Text("Elimina Ricordo"),
+                                    content: const Text("Sei sicuro di voler eliminare questo ricordo permanentemente?"),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(subCtx),
+                                        child: const Text("Annulla"),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          provider.deleteDiaryEntry(entry.id!);
+                                          Navigator.pop(subCtx);
+                                          Navigator.pop(ctx);
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(content: Text("Ricordo eliminato con successo!")),
+                                          );
+                                        },
+                                        child: const Text("Elimina", style: TextStyle(color: Colors.redAccent)),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      entry.title,
+                      style: GoogleFonts.outfit(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Theme.of(context).colorScheme.onBackground,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      constraints: const BoxConstraints(maxHeight: 180),
+                      child: SingleChildScrollView(
+                        child: Text(
+                          entry.content,
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            height: 1.5,
+                            color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.85),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showAddEditDiaryDialog(BuildContext context, DiaryEntry? entry) {
+    final provider = Provider.of<TravelProvider>(context, listen: false);
+    final isEdit = entry != null;
+    final titleController = TextEditingController(text: entry?.title ?? '');
+    final contentController = TextEditingController(text: entry?.content ?? '');
+    DateTime selectedDate = entry?.date ?? DateTime.now();
+    String? selectedImagePath = entry?.imagePath;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setDialogState) {
+          
+          Future<void> pickImage(ImageSource source) async {
+            try {
+              final picker = ImagePicker();
+              final image = await picker.pickImage(
+                source: source,
+                maxWidth: 1200,
+                maxHeight: 1200,
+                imageQuality: 85,
+              );
+              if (image != null) {
+                setDialogState(() {
+                  selectedImagePath = image.path;
+                });
+              }
+            } catch (e) {
+              debugPrint("Error picking image: $e");
+            }
+          }
+
+          void showImageSourceSheet() {
+            showModalBottomSheet(
+              context: context,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              builder: (sheetCtx) => SafeArea(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ListTile(
+                      leading: const Icon(Icons.photo_library_outlined),
+                      title: const Text("Scegli dalla galleria"),
+                      onTap: () {
+                        Navigator.pop(sheetCtx);
+                        pickImage(ImageSource.gallery);
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.camera_alt_outlined),
+                      title: const Text("Scatta una foto"),
+                      onTap: () {
+                        Navigator.pop(sheetCtx);
+                        pickImage(ImageSource.camera);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+
+          return AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+            title: Row(
+              children: [
+                Icon(
+                  isEdit ? Icons.edit_note_outlined : Icons.add_photo_alternate_outlined,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                const SizedBox(width: 8),
+                Text(isEdit ? "Modifica Ricordo" : "Aggiungi Ricordo"),
+              ],
+            ),
+            content: SingleChildScrollView(
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.85,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    GestureDetector(
+                      onTap: showImageSourceSheet,
+                      child: Container(
+                        height: 150,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).cardColor,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: Theme.of(context).dividerColor.withOpacity(0.3),
+                          ),
+                        ),
+                        child: selectedImagePath == null
+                            ? Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.add_a_photo_outlined,
+                                    size: 36,
+                                    color: Theme.of(context).colorScheme.primary.withOpacity(0.7),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  const Text(
+                                    "Seleziona Foto",
+                                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    "Tocca per scegliere o scattare",
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: Theme.of(context).textTheme.bodySmall?.color,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : ClipRRect(
+                                borderRadius: BorderRadius.circular(16),
+                                child: Stack(
+                                  fit: StackFit.expand,
+                                  children: [
+                                    _buildDiaryImage(selectedImagePath),
+                                    Positioned(
+                                      right: 8,
+                                      bottom: 8,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(6),
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withOpacity(0.6),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const Icon(Icons.edit, color: Colors.white, size: 16),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: titleController,
+                      decoration: InputDecoration(
+                        labelText: "Titolo Ricordo *",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    OutlinedButton.icon(
+                      onPressed: () async {
+                        final picked = await showDatePicker(
+                          context: context,
+                          initialDate: selectedDate,
+                          firstDate: provider.selectedTrip!.startDate,
+                          lastDate: provider.selectedTrip!.endDate,
+                        );
+                        if (picked != null) {
+                          setDialogState(() {
+                            selectedDate = picked;
+                          });
+                        }
+                      },
+                      icon: const Icon(Icons.calendar_today, size: 16),
+                      label: Text("Data: ${_formatDate(selectedDate)}"),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: contentController,
+                      minLines: 3,
+                      maxLines: 5,
+                      decoration: InputDecoration(
+                        labelText: "Racconta questo momento... *",
+                        alignLabelWithHint: true,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text("Annulla"),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  final title = titleController.text.trim();
+                  final content = contentController.text.trim();
+
+                  if (title.isEmpty || title.startsWith(' ')) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Il titolo non può essere vuoto o iniziare con uno spazio.")),
+                    );
+                    return;
+                  }
+                  if (content.isEmpty || content.startsWith(' ')) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("La descrizione non può essere vuota o iniziare con uno spazio.")),
+                    );
+                    return;
+                  }
+
+                  String? finalPath = selectedImagePath;
+                  if (selectedImagePath != null &&
+                      (selectedImagePath!.startsWith('/') || selectedImagePath!.contains(':/')) &&
+                      (entry == null || entry.imagePath != selectedImagePath)) {
+                    
+                    try {
+                      final appDocDir = await getApplicationDocumentsDirectory();
+                      final extension = path.extension(selectedImagePath!);
+                      final fileName = "diary_${DateTime.now().millisecondsSinceEpoch}$extension";
+                      final savedFile = await File(selectedImagePath!).copy("${appDocDir.path}/$fileName");
+                      finalPath = savedFile.path;
+                    } catch (e) {
+                      debugPrint("Error copying file to persistent folder: $e");
+                    }
+                  }
+
+                  if (isEdit) {
+                    final updated = entry.copyWith(
+                      title: title,
+                      content: content,
+                      date: selectedDate,
+                      imagePath: finalPath,
+                    );
+                    provider.updateDiaryEntry(updated);
+                  } else {
+                    final newEntry = DiaryEntry(
+                      tripId: provider.selectedTrip!.id!,
+                      title: title,
+                      content: content,
+                      date: selectedDate,
+                      imagePath: finalPath,
+                    );
+                    provider.addDiaryEntry(newEntry);
+                  }
+
+                  Navigator.pop(ctx);
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(isEdit ? "Ricordo modificato!" : "Ricordo aggiunto!")),
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                child: Text(isEdit ? "Salva" : "Aggiungi"),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  void _showExportTripDialog(BuildContext context, TravelProvider provider) {
+    final trip = provider.selectedTrip!;
+    final stops = provider.currentStops;
+    final checklist = provider.currentChecklist;
+    final expenses = provider.currentExpenses;
+
+    final buffer = StringBuffer();
+    buffer.writeln("# Viaggio a ${trip.destination}: ${trip.title}");
+    buffer.writeln("**Periodo:** ${_formatDate(trip.startDate)} - ${_formatDate(trip.endDate)}");
+    if (trip.participants.isNotEmpty) {
+      buffer.writeln("**Partecipanti:** ${trip.participants}");
+    }
+    if (trip.generalInfo.isNotEmpty) {
+      buffer.writeln("\n## Informazioni Generali\n${trip.generalInfo}");
+    }
+
+    buffer.writeln("\n## Itinerario delle Tappe");
+    if (stops.isEmpty) {
+      buffer.writeln("*Nessuna tappa programmata.*");
+    } else {
+      for (var stop in stops) {
+        buffer.writeln("\n### Giorno ${stop.itineraryOrder}: ${stop.name}");
+        buffer.writeln("**Data/Ora:** ${_formatDate(stop.dateTime)} alle ${_formatTime(stop.dateTime.hour.toString().padLeft(2, '0'))}:${stop.dateTime.minute.toString().padLeft(2, '0')}");
+        if (stop.location.isNotEmpty) {
+          buffer.writeln("**Località:** ${stop.location}");
+        }
+        if (stop.description.isNotEmpty) {
+          buffer.writeln("**Descrizione:** ${stop.description}");
+        }
+        if (stop.notes.isNotEmpty) {
+          buffer.writeln("**Note:** ${stop.notes}");
+        }
+        
+        final activities = provider.getActivitiesForStop(stop.id!);
+        if (activities.isNotEmpty) {
+          buffer.writeln("\n**Attività pianificate:**");
+          for (var act in activities) {
+            final costStr = act.cost > 0 ? " (Costo: ${act.cost.toStringAsFixed(2)}€)" : "";
+            buffer.writeln("- [${act.status}] ${act.time} - **${act.name}** [${act.type}]$costStr");
+            if (act.description.isNotEmpty) {
+              buffer.writeln("  *${act.description}*");
+            }
+          }
+        }
+      }
+    }
+
+    buffer.writeln("\n## Checklist");
+    if (checklist.isEmpty) {
+      buffer.writeln("*Nessun elemento in checklist.*");
+    } else {
+      final completedCount = checklist.where((item) => item.isChecked).length;
+      buffer.writeln("**Progresso:** $completedCount/${checklist.length} completate\n");
+      for (var item in checklist) {
+        final checkSymbol = item.isChecked ? "[x]" : "[ ]";
+        buffer.writeln("- $checkSymbol ${item.itemText} (${item.category} - Priorità: ${item.priority})");
+      }
+    }
+
+    buffer.writeln("\n## Riepilogo Spese");
+    final double totalBudget = trip.budget;
+    double actualExpenses = 0.0;
+    double plannedExpenses = 0.0;
+    
+    for (var exp in expenses) {
+      if (exp.status == 'Sostenuta') {
+        actualExpenses += exp.amount;
+      } else if (exp.status == 'Prevista') {
+        plannedExpenses += exp.amount;
+      }
+    }
+    
+    buffer.writeln("- **Budget Totale:** ${totalBudget.toStringAsFixed(2)}€");
+    buffer.writeln("- **Spese Sostenute:** ${actualExpenses.toStringAsFixed(2)}€");
+    buffer.writeln("- **Spese Previste:** ${plannedExpenses.toStringAsFixed(2)}€");
+    final double remaining = totalBudget - actualExpenses;
+    buffer.writeln("- **Budget Rimanente:** ${remaining.toStringAsFixed(2)}€");
+
+    if (expenses.isNotEmpty) {
+      buffer.writeln("\n**Storico Spese:**");
+      for (var exp in expenses) {
+        buffer.writeln("- ${exp.date} - **${exp.title}**: ${exp.amount.toStringAsFixed(2)}€ [${exp.category}] (${exp.status})");
+      }
+    }
+
+    final formattedText = buffer.toString();
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: Row(
+          children: [
+            Icon(Icons.ios_share, color: Theme.of(context).colorScheme.primary),
+            const SizedBox(width: 8),
+            const Text("Esporta Viaggio"),
+          ],
+        ),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                "Copia il riepilogo in formato Markdown o condividilo tramite email.",
+                style: TextStyle(fontSize: 14),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                constraints: const BoxConstraints(maxHeight: 250),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.2)),
+                ),
+                child: Scrollbar(
+                  thumbVisibility: true,
+                  child: SingleChildScrollView(
+                    child: SelectableText(
+                      formattedText,
+                      style: const TextStyle(fontFamily: 'monospace', fontSize: 11),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actionsPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        actions: [
+          TextButton.icon(
+            onPressed: () async {
+              final subject = Uri.encodeComponent("Zefiro Viaggio: ${trip.title}");
+              final body = Uri.encodeComponent(formattedText);
+              final url = Uri.parse("mailto:?subject=$subject&body=$body");
+              if (await canLaunchUrl(url)) {
+                await launchUrl(url);
+              } else {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Impossibile aprire l'applicazione di posta predefinita.")),
+                  );
+                }
+              }
+            },
+            icon: const Icon(Icons.email_outlined),
+            label: const Text("Email"),
+          ),
+          ElevatedButton.icon(
+            onPressed: () {
+              Clipboard.setData(ClipboardData(text: formattedText));
+              Navigator.pop(ctx);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Riepilogo copiato negli appunti con successo!")),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+            icon: const Icon(Icons.copy),
+            label: const Text("Copia negli appunti"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text("Annulla"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showFullScreenImage(BuildContext context, String? imagePath, int? entryId) {
+    showDialog(
+      context: context,
+      barrierColor: Colors.black,
+      builder: (ctx) => Scaffold(
+        backgroundColor: Colors.black,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () => Navigator.pop(ctx),
+          ),
+        ),
+        body: Center(
+          child: InteractiveViewer(
+            panEnabled: true,
+            minScale: 0.5,
+            maxScale: 4.0,
+            child: Hero(
+              tag: 'diary_image_$entryId',
+              child: imagePath == null || imagePath.isEmpty
+                  ? const Icon(Icons.photo, color: Colors.white, size: 100)
+                  : (imagePath.startsWith('/') || imagePath.contains(':/')
+                      ? Image.file(File(imagePath))
+                      : Image.network(imagePath)),
             ),
           ),
         ),
