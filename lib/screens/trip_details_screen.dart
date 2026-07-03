@@ -21,6 +21,9 @@ import 'package:path/path.dart' as path;
 import '../models/diary_entry.dart';
 import '../models/travel_document.dart';
 import '../widgets/offline_code_painters.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 
 class TripDetailsScreen extends StatefulWidget {
   const TripDetailsScreen({super.key});
@@ -3371,11 +3374,17 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                     const SizedBox(height: 16),
                     InkWell(
                       onTap: () async {
+                        DateTime initDate = selectedDateTime ?? provider.selectedTrip!.startDate;
+                        if (initDate.isBefore(provider.selectedTrip!.startDate)) {
+                          initDate = provider.selectedTrip!.startDate;
+                        } else if (initDate.isAfter(provider.selectedTrip!.endDate)) {
+                          initDate = provider.selectedTrip!.endDate;
+                        }
                         final datePicked = await showDatePicker(
                           context: context,
-                          initialDate: selectedDateTime ?? provider.selectedTrip!.startDate,
-                          firstDate: provider.selectedTrip!.startDate.subtract(const Duration(days: 30)),
-                          lastDate: provider.selectedTrip!.endDate.add(const Duration(days: 30)),
+                          initialDate: initDate,
+                          firstDate: provider.selectedTrip!.startDate,
+                          lastDate: provider.selectedTrip!.endDate,
                         );
                         if (datePicked != null) {
                           final timePicked = await showTimePicker(
@@ -3879,7 +3888,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                     if (activeCodeType == 'QR')
                                       CustomPaint(
                                         painter: QrCodePainter(
-                                          code: doc.bookingCode ?? "ZEFIRO-PASS",
+                                          code: doc.bookingCode ?? "SAY-MY-TRAVEL-PASS",
                                           qrColor: Colors.black,
                                         ),
                                         size: const Size(140, 140),
@@ -3887,7 +3896,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                     else
                                       CustomPaint(
                                         painter: BarcodePainter(
-                                          code: doc.bookingCode ?? "ZEFIRO-PASS",
+                                          code: doc.bookingCode ?? "SAY-MY-TRAVEL-PASS",
                                           barColor: Colors.black,
                                         ),
                                         size: const Size(220, 60),
@@ -4804,7 +4813,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Text(
-                "Copia il riepilogo in formato Markdown o condividilo tramite email.",
+                "Copia il riepilogo in formato Markdown o genera un documento PDF stampabile (inclusi i biglietti del Wallet).",
                 style: TextStyle(fontSize: 14),
               ),
               const SizedBox(height: 16),
@@ -4832,24 +4841,6 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
         actionsPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         actions: [
           TextButton.icon(
-            onPressed: () async {
-              final subject = Uri.encodeComponent("Zefiro Viaggio: ${trip.title}");
-              final body = Uri.encodeComponent(formattedText);
-              final url = Uri.parse("mailto:?subject=$subject&body=$body");
-              if (await canLaunchUrl(url)) {
-                await launchUrl(url);
-              } else {
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Impossibile aprire l'applicazione di posta predefinita.")),
-                  );
-                }
-              }
-            },
-            icon: const Icon(Icons.email_outlined),
-            label: const Text("Email"),
-          ),
-          ElevatedButton.icon(
             onPressed: () {
               Clipboard.setData(ClipboardData(text: formattedText));
               Navigator.pop(ctx);
@@ -4857,13 +4848,21 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                 const SnackBar(content: Text("Riepilogo copiato negli appunti con successo!")),
               );
             },
+            icon: const Icon(Icons.copy),
+            label: const Text("Copia negli appunti"),
+          ),
+          ElevatedButton.icon(
+            onPressed: () async {
+              Navigator.pop(ctx);
+              await _exportTripToPdf(context, provider);
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.primary,
               foregroundColor: Theme.of(context).colorScheme.onPrimary,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
-            icon: const Icon(Icons.copy),
-            label: const Text("Copia negli appunti"),
+            icon: const Icon(Icons.picture_as_pdf),
+            label: const Text("Genera PDF"),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx),
@@ -4872,6 +4871,464 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
         ],
       ),
     );
+  }
+
+  Future<void> _exportTripToPdf(BuildContext context, TravelProvider provider) async {
+    final trip = provider.selectedTrip!;
+    final stops = provider.currentStops;
+    final checklist = provider.currentChecklist;
+    final expenses = provider.currentExpenses;
+    final documents = provider.currentTravelDocuments;
+
+    final pdf = pw.Document();
+
+    pdf.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        margin: const pw.EdgeInsets.all(32),
+        build: (pw.Context context) {
+          return [
+            // Header
+            pw.Header(
+              level: 0,
+              child: pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Text(
+                        trip.title,
+                        style: pw.TextStyle(
+                          fontSize: 24,
+                          fontWeight: pw.FontWeight.bold,
+                          color: PdfColors.blue800,
+                        ),
+                      ),
+                      pw.Text(
+                        "Destinazione: ${trip.destination}",
+                        style: pw.TextStyle(
+                          fontSize: 14,
+                          color: PdfColors.grey700,
+                        ),
+                      ),
+                    ],
+                  ),
+                  pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.end,
+                    children: [
+                      pw.Text(
+                        "Periodo: ${_formatDate(trip.startDate)} - ${_formatDate(trip.endDate)}",
+                        style: const pw.TextStyle(fontSize: 11),
+                      ),
+                      if (trip.participants.isNotEmpty)
+                        pw.Text(
+                          "Partecipanti: ${trip.participants}",
+                          style: const pw.TextStyle(fontSize: 11),
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            pw.SizedBox(height: 10),
+
+            // Informazioni Generali
+            if (trip.generalInfo.isNotEmpty) ...[
+              pw.Text(
+                "Informazioni Generali",
+                style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, color: PdfColors.blue800),
+              ),
+              pw.SizedBox(height: 4),
+              pw.Paragraph(
+                text: trip.generalInfo,
+                style: const pw.TextStyle(fontSize: 11),
+              ),
+              pw.SizedBox(height: 16),
+            ],
+
+            // Itinerario
+            pw.Text(
+              "Itinerario delle Tappe",
+              style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, color: PdfColors.blue800),
+            ),
+            pw.Divider(thickness: 1, color: PdfColors.blue200),
+            pw.SizedBox(height: 8),
+
+            if (stops.isEmpty)
+              pw.Paragraph(text: "Nessuna tappa programmata.", style: const pw.TextStyle(fontSize: 11, fontStyle: pw.FontStyle.italic))
+            else
+              ...stops.map((stop) {
+                final activities = provider.getActivitiesForStop(stop.id!);
+                return pw.Container(
+                  margin: const pw.EdgeInsets.only(bottom: 12),
+                  padding: const pw.EdgeInsets.all(8),
+                  decoration: pw.BoxDecoration(
+                    border: pw.Border.all(color: PdfColors.grey300),
+                    borderRadius: const pw.BorderRadius.all(pw.Radius.circular(6)),
+                  ),
+                  child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Row(
+                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                        children: [
+                          pw.Text(
+                            "Giorno ${stop.itineraryOrder}: ${stop.name}",
+                            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12),
+                          ),
+                          pw.Text(
+                            "${_formatDate(stop.dateTime)} alle ${stop.dateTime.hour.toString().padLeft(2, '0')}:${stop.dateTime.minute.toString().padLeft(2, '0')}",
+                            style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey700),
+                          ),
+                        ],
+                      ),
+                      if (stop.location.isNotEmpty)
+                        pw.Text("Località: ${stop.location}", style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey700)),
+                      if (stop.description.isNotEmpty)
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.only(top: 4),
+                          child: pw.Text(stop.description, style: const pw.TextStyle(fontSize: 10)),
+                        ),
+                      if (stop.notes.isNotEmpty)
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.only(top: 4),
+                          child: pw.Text("Note: ${stop.notes}", style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey600)),
+                        ),
+                      if (activities.isNotEmpty) ...[
+                        pw.SizedBox(height: 6),
+                        pw.Text("Attività:", style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
+                        ...activities.map((act) {
+                          final costStr = act.cost > 0 ? " (${act.cost.toStringAsFixed(2)} EUR)" : "";
+                          return pw.Bullet(
+                            text: "[${act.status}] ${act.time} - ${act.name} [${act.type}]$costStr",
+                            style: const pw.TextStyle(fontSize: 9),
+                          );
+                        }),
+                      ],
+                    ],
+                  ),
+                );
+              }),
+
+            pw.SizedBox(height: 16),
+
+            // Checklist
+            pw.Text(
+              "Checklist",
+              style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, color: PdfColors.blue800),
+            ),
+            pw.Divider(thickness: 1, color: PdfColors.blue200),
+            pw.SizedBox(height: 8),
+
+            if (checklist.isEmpty)
+              pw.Paragraph(text: "Nessun elemento in checklist.", style: const pw.TextStyle(fontSize: 11, fontStyle: pw.FontStyle.italic))
+            else ...[
+              pw.Text(
+                "Progresso: ${checklist.where((item) => item.isChecked).length}/${checklist.length} completate",
+                style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey700),
+              ),
+              pw.SizedBox(height: 6),
+              pw.Table(
+                border: pw.TableBorder.all(color: PdfColors.grey300),
+                children: [
+                  pw.TableRow(
+                    decoration: const pw.BoxDecoration(color: PdfColors.grey100),
+                    children: [
+                      pw.Padding(padding: const pw.EdgeInsets.all(4), child: pw.Text("Stato", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9))),
+                      pw.Padding(padding: const pw.EdgeInsets.all(4), child: pw.Text("Elemento", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9))),
+                      pw.Padding(padding: const pw.EdgeInsets.all(4), child: pw.Text("Categoria", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9))),
+                      pw.Padding(padding: const pw.EdgeInsets.all(4), child: pw.Text("Priorità", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9))),
+                    ],
+                  ),
+                  ...checklist.map((item) {
+                    return pw.TableRow(
+                      children: [
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(4),
+                          child: pw.Text(item.isChecked ? "SI" : "NO", style: pw.TextStyle(fontSize: 9, color: item.isChecked ? PdfColors.green : PdfColors.red)),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(4),
+                          child: pw.Text(item.itemText, style: const pw.TextStyle(fontSize: 9)),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(4),
+                          child: pw.Text(item.category, style: const pw.TextStyle(fontSize: 9)),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(4),
+                          child: pw.Text(item.priority, style: const pw.TextStyle(fontSize: 9)),
+                        ),
+                      ],
+                    );
+                  }),
+                ],
+              ),
+            ],
+
+            pw.SizedBox(height: 16),
+
+            // Spese
+            pw.Text(
+              "Riepilogo Spese",
+              style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, color: PdfColors.blue800),
+            ),
+            pw.Divider(thickness: 1, color: PdfColors.blue200),
+            pw.SizedBox(height: 8),
+
+            pw.Container(
+              padding: const pw.EdgeInsets.all(8),
+              color: PdfColors.grey100,
+              child: pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                    children: [
+                      pw.Text("Budget Totale:", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+                      pw.Text("${trip.budget.toStringAsFixed(2)} EUR", style: const pw.TextStyle(fontSize: 10)),
+                    ],
+                  ),
+                  pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                    children: [
+                      pw.Text("Spese Sostenute:", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+                      pw.Text(
+                        "${expenses.where((e) => e.status == 'Sostenuta').fold(0.0, (sum, e) => sum + e.amount).toStringAsFixed(2)} EUR",
+                        style: const pw.TextStyle(fontSize: 10),
+                      ),
+                    ],
+                  ),
+                  pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                    children: [
+                      pw.Text("Spese Previste:", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+                      pw.Text(
+                        "${expenses.where((e) => e.status == 'Prevista').fold(0.0, (sum, e) => sum + e.amount).toStringAsFixed(2)} EUR",
+                        style: const pw.TextStyle(fontSize: 10),
+                      ),
+                    ],
+                  ),
+                  pw.Divider(height: 8, thickness: 0.5),
+                  pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                    children: [
+                      pw.Text("Budget Rimanente:", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+                      pw.Text(
+                        "${(trip.budget - expenses.where((e) => e.status == 'Sostenuta').fold(0.0, (sum, e) => sum + e.amount)).toStringAsFixed(2)} EUR",
+                        style: pw.TextStyle(
+                          fontWeight: pw.FontWeight.bold,
+                          fontSize: 10,
+                          color: (trip.budget - expenses.where((e) => e.status == 'Sostenuta').fold(0.0, (sum, e) => sum + e.amount)) >= 0 ? PdfColors.green800 : PdfColors.red800,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            pw.SizedBox(height: 10),
+            if (expenses.isNotEmpty) ...[
+              pw.Text("Storico Spese:", style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
+              pw.SizedBox(height: 4),
+              pw.Table(
+                border: pw.TableBorder.all(color: PdfColors.grey300),
+                children: [
+                  pw.TableRow(
+                    decoration: const pw.BoxDecoration(color: PdfColors.grey100),
+                    children: [
+                      pw.Padding(padding: const pw.EdgeInsets.all(4), child: pw.Text("Data", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8))),
+                      pw.Padding(padding: const pw.EdgeInsets.all(4), child: pw.Text("Titolo", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8))),
+                      pw.Padding(padding: const pw.EdgeInsets.all(4), child: pw.Text("Categoria", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8))),
+                      pw.Padding(padding: const pw.EdgeInsets.all(4), child: pw.Text("Tipo", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8))),
+                      pw.Padding(padding: const pw.EdgeInsets.all(4), child: pw.Text("Importo", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8))),
+                    ],
+                  ),
+                  ...expenses.map((exp) {
+                    return pw.TableRow(
+                      children: [
+                        pw.Padding(padding: const pw.EdgeInsets.all(4), child: pw.Text(_formatDate(exp.date), style: const pw.TextStyle(fontSize: 8))),
+                        pw.Padding(padding: const pw.EdgeInsets.all(4), child: pw.Text(exp.title, style: const pw.TextStyle(fontSize: 8))),
+                        pw.Padding(padding: const pw.EdgeInsets.all(4), child: pw.Text(exp.category, style: const pw.TextStyle(fontSize: 8))),
+                        pw.Padding(padding: const pw.EdgeInsets.all(4), child: pw.Text(exp.status, style: const pw.TextStyle(fontSize: 8))),
+                        pw.Padding(padding: const pw.EdgeInsets.all(4), child: pw.Text("${exp.amount.toStringAsFixed(2)} EUR", style: const pw.TextStyle(fontSize: 8))),
+                      ],
+                    );
+                  }),
+                ],
+              ),
+            ],
+
+            pw.SizedBox(height: 20),
+
+            // Biglietti e Documenti (Wallet)
+            pw.Text(
+              "Wallet Biglietti e Documenti",
+              style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, color: PdfColors.blue800),
+            ),
+            pw.Divider(thickness: 1, color: PdfColors.blue200),
+            pw.SizedBox(height: 8),
+
+            if (documents.isEmpty)
+              pw.Paragraph(text: "Nessun biglietto o documento salvato nel Wallet.", style: const pw.TextStyle(fontSize: 11, fontStyle: pw.FontStyle.italic))
+            else
+              ...documents.map((doc) {
+                // Determine label depending on type
+                String labelGate = "Gate";
+                if (doc.documentType == 'Treno') {
+                  labelGate = "Carrozza";
+                } else if (doc.documentType == 'Pullman') {
+                  labelGate = "Fila";
+                } else if (doc.documentType == 'Hotel' || doc.documentType == 'Attrazione' || doc.documentType == 'Altro') {
+                  labelGate = "Luogo";
+                }
+
+                // Determine if seat is relevant
+                final bool showSeat = !(doc.documentType == 'Hotel' || doc.documentType == 'Attrazione' || doc.documentType == 'Altro');
+
+                // Color header
+                PdfColor headerColor = PdfColors.blue700;
+                if (doc.documentType == 'Volo') headerColor = PdfColors.teal700;
+                if (doc.documentType == 'Treno') headerColor = PdfColors.indigo700;
+                if (doc.documentType == 'Pullman') headerColor = PdfColors.deepOrange700;
+                if (doc.documentType == 'Hotel') headerColor = PdfColors.purple700;
+                if (doc.documentType == 'Attrazione') headerColor = PdfColors.green700;
+
+                // Code and Date strings
+                final String codeStr = doc.bookingCode ?? "SAY-MY-TRAVEL-PASS";
+                final bool isQrCode = codeStr.length <= 8;
+                final String docDateStr = doc.dateTime != null ? _formatDate(doc.dateTime!) : "N/D";
+                final String docTimeStr = doc.dateTime != null ? "${doc.dateTime!.hour.toString().padLeft(2, '0')}:${doc.dateTime!.minute.toString().padLeft(2, '0')}" : "N/D";
+
+                return pw.Container(
+                  margin: const pw.EdgeInsets.only(bottom: 16),
+                  decoration: pw.BoxDecoration(
+                    border: pw.Border.all(color: PdfColors.grey400, width: 1),
+                    borderRadius: const pw.BorderRadius.all(pw.Radius.circular(8)),
+                  ),
+                  child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      // Header Card
+                      pw.Container(
+                        width: double.infinity,
+                        padding: const pw.EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: pw.BoxDecoration(
+                          color: headerColor,
+                          borderRadius: const pw.BorderRadius.only(
+                            topLeft: pw.Radius.circular(7),
+                            topRight: pw.Radius.circular(7),
+                          ),
+                        ),
+                        child: pw.Row(
+                          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                          children: [
+                            pw.Text(
+                              doc.documentType.toUpperCase(),
+                              style: pw.TextStyle(color: PdfColors.white, fontWeight: pw.FontWeight.bold, fontSize: 11),
+                            ),
+                            pw.Text(
+                              doc.title,
+                              style: pw.TextStyle(color: PdfColors.white, fontSize: 11),
+                            ),
+                          ],
+                        ),
+                      ),
+                      
+                      // Body Card
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(12),
+                        child: pw.Row(
+                          children: [
+                            // Left column: Info
+                            pw.Expanded(
+                              flex: 2,
+                              child: pw.Column(
+                                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                                children: [
+                                  pw.Text(
+                                    "Codice (PNR): $codeStr",
+                                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
+                                  ),
+                                  pw.SizedBox(height: 4),
+                                  pw.Text(
+                                    "Data e Ora: $docDateStr alle $docTimeStr",
+                                    style: const pw.TextStyle(fontSize: 9),
+                                  ),
+                                  pw.SizedBox(height: 4),
+                                  if (showSeat) ...[
+                                    pw.Text("Posto/Sedile: ${doc.seat ?? 'N/D'}", style: const pw.TextStyle(fontSize: 9)),
+                                    pw.Text("$labelGate: ${doc.gate ?? 'N/D'}", style: const pw.TextStyle(fontSize: 9)),
+                                  ] else ...[
+                                    pw.Text("$labelGate: ${doc.gate ?? 'N/D'}", style: const pw.TextStyle(fontSize: 9)),
+                                  ],
+                                  if (doc.notes != null && doc.notes!.isNotEmpty) ...[
+                                    pw.SizedBox(height: 4),
+                                    pw.Text("Note: ${doc.notes}", style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey600)),
+                                  ],
+                                ],
+                              ),
+                            ),
+                            
+                            // Visual Tear line
+                            pw.Container(
+                              height: 60,
+                              width: 1,
+                              color: PdfColors.grey300,
+                              margin: const pw.EdgeInsets.symmetric(horizontal: 12),
+                            ),
+
+                            // Right column: Barcode / QR Code
+                            pw.Expanded(
+                              flex: 1,
+                              child: pw.Center(
+                                child: pw.Column(
+                                  mainAxisAlignment: pw.MainAxisAlignment.center,
+                                  children: [
+                                    if (isQrCode)
+                                      pw.BarcodeWidget(
+                                        barcode: pw.Barcode.qrCode(),
+                                        data: codeStr,
+                                        width: 60,
+                                        height: 60,
+                                      )
+                                    else
+                                      pw.BarcodeWidget(
+                                        barcode: pw.Barcode.code39(),
+                                        data: codeStr,
+                                        width: 100,
+                                        height: 35,
+                                      ),
+                                    pw.SizedBox(height: 3),
+                                    pw.Text(
+                                      codeStr,
+                                      style: const pw.TextStyle(fontSize: 7, color: PdfColors.grey600),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+          ];
+        },
+      ),
+    );
+
+    try {
+      await Printing.layoutPdf(
+        onLayout: (PdfPageFormat format) async => pdf.save(),
+        name: "Say_My_Travel_Viaggio_${trip.title.replaceAll(' ', '_')}.pdf",
+      );
+    } catch (e) {
+      debugPrint("Error exporting PDF: $e");
+    }
   }
 
   void _showFullScreenImage(BuildContext context, String? imagePath, int? entryId) {

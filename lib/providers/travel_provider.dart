@@ -56,17 +56,12 @@ class TravelProvider with ChangeNotifier {
   // Set the selected trip and load all its details
   Future<void> selectTrip(Trip trip) async {
     _selectedTrip = trip;
-    _isLoading = true;
-    notifyListeners();
-
     try {
       await loadTripDetails(trip.id!);
     } catch (e) {
       debugPrint('Error selecting trip: $e');
-    } finally {
-      _isLoading = false;
-      notifyListeners();
     }
+    notifyListeners();
   }
 
   // Reload details for the selected trip

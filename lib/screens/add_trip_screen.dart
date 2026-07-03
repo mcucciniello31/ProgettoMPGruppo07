@@ -178,7 +178,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
         'https://nominatim.openstreetmap.org/search?q=${Uri.encodeComponent(query)}&format=json&limit=5&accept-language=it,en',
       );
       final response = await http.get(url, headers: {
-        'User-Agent': 'zefiro_travel_planner_student_project',
+        'User-Agent': 'say_my_travel_planner_student_project',
         'Accept-Language': 'it,en',
       });
 

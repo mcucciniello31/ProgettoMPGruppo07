@@ -1,6 +1,6 @@
 {
-    "name": "zefiro",
-    "short_name": "zefiro",
+    "name": "Say My Travel",
+    "short_name": "Say My Travel",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

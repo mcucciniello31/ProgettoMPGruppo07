@@ -210,10 +210,6 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                         completedChecklistItems,
                         openChecklistItems,
                       ),
-                      const SizedBox(height: 16),
-
-                      // Top Active Days (Tappe più attive)
-                      _buildTopActiveDaysCard(topStopsList),
                     ],
                   ),
                 ),
@@ -773,81 +769,5 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     );
   }
 
-  Widget _buildTopActiveDaysCard(List<Map<String, dynamic>> topStops) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Giornate Più Attive",
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-                ),
-                Icon(
-                  Icons.flash_on_outlined,
-                  color: Colors.amber[700],
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            const Text(
-              "Tappe del viaggio con il maggior numero di attività",
-              style: TextStyle(color: Colors.grey, fontSize: 11),
-            ),
-            const Divider(height: 24),
-            
-            if (topStops.isEmpty)
-              const Center(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                  child: Text(
-                    "Nessuna attività pianificata.",
-                    style: TextStyle(color: Colors.grey, fontSize: 13, fontStyle: FontStyle.italic),
-                  ),
-                ),
-              )
-            else
-              Column(
-                children: topStops.map((stopInfo) {
-                  final stopName = stopInfo['stopName'];
-                  final tripTitle = stopInfo['tripTitle'];
-                  final count = stopInfo['count'];
-                  
-                  return ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    dense: true,
-                    leading: CircleAvatar(
-                      backgroundColor: Colors.amber.withOpacity(0.15),
-                      child: Text(
-                        "$count",
-                        style: GoogleFonts.outfit(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.amber[800],
-                        ),
-                      ),
-                    ),
-                    title: Text(
-                      stopName,
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                    ),
-                    subtitle: Text(
-                      tripTitle,
-                      style: const TextStyle(color: Colors.grey, fontSize: 11),
-                    ),
-                    trailing: const Text(
-                      "attività",
-                      style: TextStyle(color: Colors.grey, fontSize: 11),
-                    ),
-                  );
-                }).toList(),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
+
 }

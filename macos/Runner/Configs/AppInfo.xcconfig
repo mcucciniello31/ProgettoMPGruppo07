@@ -5,7 +5,7 @@
 // 'flutter create' template.
 
 // The application's name. By default this is also the title of the Flutter window.
-PRODUCT_NAME = zefiro
+PRODUCT_NAME = Say My Travel
 
 // The application's bundle identifier
 PRODUCT_BUNDLE_IDENTIFIER = com.gruppo07.zefiro.zefiro

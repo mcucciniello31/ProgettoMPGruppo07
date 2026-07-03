@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Zefiro</string>
+	<string>Say My Travel</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -15,7 +15,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>zefiro</string>
+	<string>say_my_travel</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -67,8 +67,8 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Zefiro richiede l'accesso alla galleria per permetterti di caricare le foto nel tuo diario di bordo.</string>
+	<string>Say My Travel richiede l'accesso alla galleria per permetterti di caricare le foto nel tuo diario di bordo.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Zefiro richiede l'accesso alla fotocamera per permetterti di scattare foto da aggiungere al tuo diario di bordo.</string>
+	<string>Say My Travel richiede l'accesso alla fotocamera per permetterti di scattare foto da aggiungere al tuo diario di bordo.</string>
 </dict>
 </plist>

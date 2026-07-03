@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:zefiro/models/stop.dart';
-import 'package:zefiro/models/trip.dart';
-import 'package:zefiro/providers/travel_provider.dart';
-import 'package:zefiro/services/database_helper.dart';
+import 'package:say_my_travel/models/stop.dart';
+import 'package:say_my_travel/models/trip.dart';
+import 'package:say_my_travel/providers/travel_provider.dart';
+import 'package:say_my_travel/services/database_helper.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

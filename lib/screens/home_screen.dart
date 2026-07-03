@@ -89,9 +89,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Zefiro",
+                          "Say My Travel",
                           style: GoogleFonts.outfit(
-                            fontSize: 36,
+                            fontSize: 32,
                             fontWeight: FontWeight.bold,
                             color: Theme.of(context).colorScheme.primary,
                           ),
@@ -107,7 +107,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   const SizedBox(width: 12),
                   IconButton(
                     icon: Icon(
-                      Icons.bar_chart_outlined,
+                      Icons.analytics_rounded,
                       color: Theme.of(context).colorScheme.primary,
                       size: 28,
                     ),
@@ -500,23 +500,23 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       statusIcon = Icons.archive_outlined;
     }
 
-    return InkWell(
-      onTap: () async {
-        await provider.selectTrip(trip);
-        if (mounted) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const TripDetailsScreen(),
-            ),
-          );
-        }
-      },
-      borderRadius: BorderRadius.circular(20),
-      child: Card(
-        margin: EdgeInsets.zero,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
+    return Card(
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: InkWell(
+          onTap: () async {
+            await provider.selectTrip(trip);
+            if (mounted) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const TripDetailsScreen(),
+                ),
+              );
+            }
+          },
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
