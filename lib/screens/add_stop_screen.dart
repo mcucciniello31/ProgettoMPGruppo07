@@ -85,6 +85,7 @@ class _AddStopScreenState extends State<AddStopScreen> {
         final tripStartDay = DateTime(_trip!.startDate.year, _trip!.startDate.month, _trip!.startDate.day);
         final stopDay = DateTime(stopDateTime.year, stopDateTime.month, stopDateTime.day);
         _selectedDayIndex = stopDay.difference(tripStartDay).inDays;
+        _selectedDayIndex = _selectedDayIndex.clamp(0, _tripTotalDays() - 1);
         _stopTime = TimeOfDay.fromDateTime(stopDateTime);
       } else if (_trip != null) {
         final now = DateTime.now();
@@ -98,8 +99,18 @@ class _AddStopScreenState extends State<AddStopScreen> {
           _selectedDayIndex = 0;
           _stopTime = TimeOfDay.now();
         }
+        _selectedDayIndex = _selectedDayIndex.clamp(0, _tripTotalDays() - 1);
       }
     }
+  }
+
+  /// Total number of days in the trip, guarded to always be at least 1
+  /// even if the trip's endDate is before its startDate.
+  int _tripTotalDays() {
+    final tripStartDay = DateTime(_trip!.startDate.year, _trip!.startDate.month, _trip!.startDate.day);
+    final tripEndDay = DateTime(_trip!.endDate.year, _trip!.endDate.month, _trip!.endDate.day);
+    final totalDays = tripEndDay.difference(tripStartDay).inDays + 1;
+    return totalDays < 1 ? 1 : totalDays;
   }
 
   @override
@@ -480,10 +491,10 @@ class _AddStopScreenState extends State<AddStopScreen> {
                 // Day dropdown (bounded to the trip's actual days)
                 Builder(builder: (context) {
                   final tripStartDay = DateTime(_trip!.startDate.year, _trip!.startDate.month, _trip!.startDate.day);
-                  final tripEndDay = DateTime(_trip!.endDate.year, _trip!.endDate.month, _trip!.endDate.day);
-                  final totalDays = tripEndDay.difference(tripStartDay).inDays + 1;
+                  final totalDays = _tripTotalDays();
+                  final dropdownValue = _selectedDayIndex.clamp(0, totalDays - 1);
                   return DropdownButtonFormField<int>(
-                    value: _selectedDayIndex,
+                    value: dropdownValue,
                     decoration: InputDecoration(
                       labelText: "Giorno del viaggio *",
                       prefixIcon: const Icon(Icons.calendar_month),
