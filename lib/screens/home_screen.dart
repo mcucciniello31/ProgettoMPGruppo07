@@ -15,12 +15,14 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   // Variabili per la ricerca e il filtraggio dei viaggi
   String _searchDestination = "";
-  String _selectedStatusFilter = "Tutti"; // Stati dei filtri di ricerca: Tutti, Futuro, In Corso, Completato
+  String _selectedStatusFilter =
+      "Tutti"; // Stati dei filtri di ricerca: Tutti, Futuro, In Corso, Completato
   DateTimeRange? _selectedDateRange;
   bool _showFilterPanel = false;
 
@@ -29,8 +31,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     // Carica tutti i viaggi memorizzati all'avvio dell'app
-    Future.microtask(() =>
-      Provider.of<TravelProvider>(context, listen: false).loadTrips()
+    Future.microtask(
+      () => Provider.of<TravelProvider>(context, listen: false).loadTrips(),
     );
   }
 
@@ -52,18 +54,37 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     // Filtra l'elenco dei viaggi in base a testo inserito, stato e periodo selezionato
     final filteredTrips = trips.where((t) {
       if (_searchDestination.isNotEmpty &&
-          !t.destination.toLowerCase().contains(_searchDestination.toLowerCase()) &&
+          !t.destination.toLowerCase().contains(
+            _searchDestination.toLowerCase(),
+          ) &&
           !t.title.toLowerCase().contains(_searchDestination.toLowerCase())) {
         return false;
       }
-      if (_selectedStatusFilter != "Tutti" && t.status != _selectedStatusFilter) {
+      if (_selectedStatusFilter != "Tutti" &&
+          t.status != _selectedStatusFilter) {
         return false;
       }
       if (_selectedDateRange != null) {
-        final tripStart = DateTime(t.startDate.year, t.startDate.month, t.startDate.day);
-        final tripEnd = DateTime(t.endDate.year, t.endDate.month, t.endDate.day);
-        final rangeStart = DateTime(_selectedDateRange!.start.year, _selectedDateRange!.start.month, _selectedDateRange!.start.day);
-        final rangeEnd = DateTime(_selectedDateRange!.end.year, _selectedDateRange!.end.month, _selectedDateRange!.end.day);
+        final tripStart = DateTime(
+          t.startDate.year,
+          t.startDate.month,
+          t.startDate.day,
+        );
+        final tripEnd = DateTime(
+          t.endDate.year,
+          t.endDate.month,
+          t.endDate.day,
+        );
+        final rangeStart = DateTime(
+          _selectedDateRange!.start.year,
+          _selectedDateRange!.start.month,
+          _selectedDateRange!.start.day,
+        );
+        final rangeEnd = DateTime(
+          _selectedDateRange!.end.year,
+          _selectedDateRange!.end.month,
+          _selectedDateRange!.end.day,
+        );
         if (tripStart.isAfter(rangeEnd) || tripEnd.isBefore(rangeStart)) {
           return false;
         }
@@ -71,8 +92,12 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       return true;
     }).toList();
 
-    final activeTrips = filteredTrips.where((t) => t.status != 'archiviato').toList();
-    final archivedTrips = filteredTrips.where((t) => t.status == 'archiviato').toList();
+    final activeTrips = filteredTrips
+        .where((t) => t.status != 'archiviato')
+        .toList();
+    final archivedTrips = filteredTrips
+        .where((t) => t.status == 'archiviato')
+        .toList();
 
     return Scaffold(
       body: SafeArea(
@@ -141,7 +166,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
                             ),
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
                           ),
                           onChanged: (val) {
                             setState(() {
@@ -153,22 +181,32 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       const SizedBox(width: 12),
                       IconButton(
                         style: IconButton.styleFrom(
-                          backgroundColor: _selectedStatusFilter != "Tutti" || _selectedDateRange != null
-                              ? Theme.of(context).colorScheme.primary.withOpacity(0.15)
+                          backgroundColor:
+                              _selectedStatusFilter != "Tutti" ||
+                                  _selectedDateRange != null
+                              ? Theme.of(
+                                  context,
+                                ).colorScheme.primary.withOpacity(0.15)
                               : Theme.of(context).cardColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                             side: BorderSide(
-                              color: _selectedStatusFilter != "Tutti" || _selectedDateRange != null
+                              color:
+                                  _selectedStatusFilter != "Tutti" ||
+                                      _selectedDateRange != null
                                   ? Theme.of(context).colorScheme.primary
-                                  : Theme.of(context).dividerColor.withOpacity(0.2),
+                                  : Theme.of(
+                                      context,
+                                    ).dividerColor.withOpacity(0.2),
                             ),
                           ),
                           padding: const EdgeInsets.all(12),
                         ),
                         icon: Icon(
                           Icons.filter_list,
-                          color: _selectedStatusFilter != "Tutti" || _selectedDateRange != null
+                          color:
+                              _selectedStatusFilter != "Tutti" ||
+                                  _selectedDateRange != null
                               ? Theme.of(context).colorScheme.primary
                               : Theme.of(context).iconTheme.color,
                         ),
@@ -184,10 +222,16 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     const SizedBox(height: 12),
                     Card(
                       elevation: 0,
-                      color: Theme.of(context).colorScheme.surface.withOpacity(0.4),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.surface.withOpacity(0.4),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
-                        side: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.1)),
+                        side: BorderSide(
+                          color: Theme.of(
+                            context,
+                          ).dividerColor.withOpacity(0.1),
+                        ),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(12),
@@ -196,45 +240,60 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           children: [
                             Text(
                               "Stato del Viaggio",
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(height: 8),
                             SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               child: Row(
-                                children: [
-                                  'Tutti', 'futuro', 'in_corso', 'completato'
-                                ].map((status) {
-                                  final display = status == 'futuro'
-                                      ? 'Futuro'
-                                      : status == 'in_corso'
+                                children:
+                                    [
+                                      'Tutti',
+                                      'futuro',
+                                      'in_corso',
+                                      'completato',
+                                    ].map((status) {
+                                      final display = status == 'futuro'
+                                          ? 'Futuro'
+                                          : status == 'in_corso'
                                           ? 'In Corso'
                                           : status == 'completato'
-                                              ? 'Completato'
-                                              : 'Tutti';
-                                  final isSelected = _selectedStatusFilter == status;
-                                  return Padding(
-                                    padding: const EdgeInsets.only(right: 8),
-                                    child: ChoiceChip(
-                                      label: Text(display),
-                                      selected: isSelected,
-                                      selectedColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
-                                      labelStyle: TextStyle(
-                                        fontSize: 12,
-                                        color: isSelected
-                                            ? Theme.of(context).colorScheme.primary
-                                            : Theme.of(context).textTheme.bodyMedium?.color,
-                                      ),
-                                      onSelected: (selected) {
-                                        if (selected) {
-                                          setState(() {
-                                            _selectedStatusFilter = status;
-                                          });
-                                        }
-                                      },
-                                    ),
-                                  );
-                                }).toList(),
+                                          ? 'Completato'
+                                          : 'Tutti';
+                                      final isSelected =
+                                          _selectedStatusFilter == status;
+                                      return Padding(
+                                        padding: const EdgeInsets.only(
+                                          right: 8,
+                                        ),
+                                        child: ChoiceChip(
+                                          label: Text(display),
+                                          selected: isSelected,
+                                          selectedColor: Theme.of(context)
+                                              .colorScheme
+                                              .primary
+                                              .withOpacity(0.2),
+                                          labelStyle: TextStyle(
+                                            fontSize: 12,
+                                            color: isSelected
+                                                ? Theme.of(
+                                                    context,
+                                                  ).colorScheme.primary
+                                                : Theme.of(
+                                                    context,
+                                                  ).textTheme.bodyMedium?.color,
+                                          ),
+                                          onSelected: (selected) {
+                                            if (selected) {
+                                              setState(() {
+                                                _selectedStatusFilter = status;
+                                              });
+                                            }
+                                          },
+                                        ),
+                                      );
+                                    }).toList(),
                               ),
                             ),
                             const Divider(height: 20),
@@ -243,7 +302,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                               children: [
                                 Text(
                                   "Intervallo di Date",
-                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
+                                  style: Theme.of(context).textTheme.bodySmall
+                                      ?.copyWith(fontWeight: FontWeight.bold),
                                 ),
                                 if (_selectedDateRange != null)
                                   TextButton(
@@ -252,14 +312,22 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                         _selectedDateRange = null;
                                       });
                                     },
-                                    child: const Text("Azzera", style: TextStyle(color: Colors.redAccent, fontSize: 12)),
+                                    child: const Text(
+                                      "Azzera",
+                                      style: TextStyle(
+                                        color: Colors.redAccent,
+                                        fontSize: 12,
+                                      ),
+                                    ),
                                   ),
                               ],
                             ),
                             const SizedBox(height: 4),
                             OutlinedButton.icon(
                               style: OutlinedButton.styleFrom(
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
                               ),
                               onPressed: () async {
                                 final picked = await showDateRangePicker(
@@ -293,18 +361,26 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
             // 2. Selettore per passare dai viaggi attivi a quelli archiviati
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 8.0,
+              ),
               child: TabBar(
                 controller: _tabController,
                 indicatorSize: TabBarIndicatorSize.tab,
                 indicator: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
-                  color: Theme.of(context).colorScheme.primary.withOpacity(0.12),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.primary.withOpacity(0.12),
                 ),
                 dividerColor: Colors.transparent,
                 labelColor: Theme.of(context).colorScheme.primary,
                 unselectedLabelColor: Colors.grey,
-                labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                labelStyle: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                ),
                 tabs: [
                   Tab(
                     child: Row(
@@ -337,8 +413,18 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   : TabBarView(
                       controller: _tabController,
                       children: [
-                        _buildTripsList(context, activeTrips, travelProvider, false),
-                        _buildTripsList(context, archivedTrips, travelProvider, true),
+                        _buildTripsList(
+                          context,
+                          activeTrips,
+                          travelProvider,
+                          false,
+                        ),
+                        _buildTripsList(
+                          context,
+                          archivedTrips,
+                          travelProvider,
+                          true,
+                        ),
                       ],
                     ),
             ),
@@ -358,7 +444,12 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildTripsList(BuildContext context, List<Trip> list, TravelProvider provider, bool isArchivedList) {
+  Widget _buildTripsList(
+    BuildContext context,
+    List<Trip> list,
+    TravelProvider provider,
+    bool isArchivedList,
+  ) {
     if (list.isEmpty) {
       return Center(
         child: Column(
@@ -371,12 +462,16 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             ),
             const SizedBox(height: 16),
             Text(
-              isArchivedList ? "Nessun viaggio archiviato" : "Ancora nessun viaggio creato",
+              isArchivedList
+                  ? "Nessun viaggio archiviato"
+                  : "Ancora nessun viaggio creato",
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
             Text(
-              isArchivedList ? "Puoi archiviare i viaggi trascinandoli verso sinistra." : "Tocca il tasto + in basso per iniziare!",
+              isArchivedList
+                  ? "Puoi archiviare i viaggi trascinandoli verso sinistra."
+                  : "Tocca il tasto + in basso per iniziare!",
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           ],
@@ -405,7 +500,13 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 children: [
                   Icon(Icons.delete, color: Colors.white),
                   SizedBox(width: 8),
-                  Text("Elimina", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  Text(
+                    "Elimina",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -421,10 +522,16 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 children: [
                   Text(
                     isArchivedList ? "Ripristina" : "Archivia",
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(width: 8),
-                  Icon(isArchivedList ? Icons.unarchive : Icons.archive, color: Colors.white),
+                  Icon(
+                    isArchivedList ? Icons.unarchive : Icons.archive,
+                    color: Colors.white,
+                  ),
                 ],
               ),
             ),
@@ -439,8 +546,16 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   String targetStatus = 'futuro';
                   final now = DateTime.now();
                   final today = DateTime(now.year, now.month, now.day);
-                  final startDay = DateTime(trip.startDate.year, trip.startDate.month, trip.startDate.day);
-                  final endDay = DateTime(trip.endDate.year, trip.endDate.month, trip.endDate.day);
+                  final startDay = DateTime(
+                    trip.startDate.year,
+                    trip.startDate.month,
+                    trip.startDate.day,
+                  );
+                  final endDay = DateTime(
+                    trip.endDate.year,
+                    trip.endDate.month,
+                    trip.endDate.day,
+                  );
 
                   if (today.isBefore(startDay)) {
                     targetStatus = 'futuro';
@@ -450,18 +565,26 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     targetStatus = 'in_corso';
                   }
 
-                  await provider.updateTrip(trip.copyWith(status: targetStatus));
+                  await provider.updateTrip(
+                    trip.copyWith(status: targetStatus),
+                  );
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Viaggio '${trip.title}' ripristinato")),
+                      SnackBar(
+                        content: Text("Viaggio '${trip.title}' ripristinato"),
+                      ),
                     );
                   }
                 } else {
                   // Archiviazione
-                  await provider.updateTrip(trip.copyWith(status: 'archiviato'));
+                  await provider.updateTrip(
+                    trip.copyWith(status: 'archiviato'),
+                  );
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Viaggio '${trip.title}' archiviato")),
+                      SnackBar(
+                        content: Text("Viaggio '${trip.title}' archiviato"),
+                      ),
                     );
                   }
                 }
@@ -475,11 +598,17 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildTripCard(BuildContext context, Trip trip, TravelProvider provider) {
+  Widget _buildTripCard(
+    BuildContext context,
+    Trip trip,
+    TravelProvider provider,
+  ) {
     // Genera i colori del gradiente di copertina in modo deterministico dal titolo del viaggio
     final gradientColors = [
       Color((trip.title.hashCode & 0xFFFFFF) | 0xFF000000).withOpacity(0.85),
-      Color((trip.destination.hashCode & 0xFFFFFF) | 0xFF000000).withOpacity(0.85),
+      Color(
+        (trip.destination.hashCode & 0xFFFFFF) | 0xFF000000,
+      ).withOpacity(0.85),
     ];
 
     // Determina i colori e le icone per il badge di stato
@@ -534,7 +663,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
-                  image: trip.coverImagePath != null &&
+                  image:
+                      trip.coverImagePath != null &&
                           trip.coverImagePath!.isNotEmpty &&
                           File(trip.coverImagePath!).existsSync()
                       ? DecorationImage(
@@ -595,7 +725,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                             children: [
                               Flexible(
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 4,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: Colors.white.withOpacity(0.2),
                                     borderRadius: BorderRadius.circular(12),
@@ -603,7 +736,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      const Icon(Icons.location_on_outlined, color: Colors.white, size: 14),
+                                      const Icon(
+                                        Icons.location_on_outlined,
+                                        color: Colors.white,
+                                        size: 14,
+                                      ),
                                       const SizedBox(width: 4),
                                       Flexible(
                                         child: Text(
@@ -623,14 +760,21 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                               ),
                               // Badge di stato del viaggio
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 4,
+                                ),
                                 decoration: BoxDecoration(
                                   color: badgeColor,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Row(
                                   children: [
-                                    Icon(statusIcon, color: Colors.white, size: 12),
+                                    Icon(
+                                      statusIcon,
+                                      color: Colors.white,
+                                      size: 12,
+                                    ),
                                     const SizedBox(width: 4),
                                     Text(
                                       statusText,
@@ -672,7 +816,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           );
                         },
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -692,9 +836,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         const SizedBox(width: 8),
                         Text(
                           "${_formatDate(trip.startDate)} - ${_formatDate(trip.endDate)}",
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w500,
-                          ),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(fontWeight: FontWeight.w500),
                         ),
                       ],
                     ),
@@ -715,12 +858,18 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
   }
 
-  Future<bool> _confirmDelete(BuildContext context, Trip trip, TravelProvider provider) async {
+  Future<bool> _confirmDelete(
+    BuildContext context,
+    Trip trip,
+    TravelProvider provider,
+  ) async {
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text("Elimina Viaggio"),
-        content: Text("Sei sicuro di voler eliminare definitivamente il viaggio '${trip.title}'? Questa azione non può essere annullata."),
+        content: Text(
+          "Sei sicuro di voler eliminare definitivamente il viaggio '${trip.title}'? Questa azione non può essere annullata.",
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),

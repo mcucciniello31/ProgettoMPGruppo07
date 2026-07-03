@@ -44,11 +44,20 @@ class _AddTripScreenState extends State<AddTripScreen> {
   void initState() {
     super.initState();
     _titleController = TextEditingController(text: widget.trip?.title ?? '');
-    _destinationController = TextEditingController(text: widget.trip?.destination ?? '');
+    _destinationController = TextEditingController(
+      text: widget.trip?.destination ?? '',
+    );
     _budgetController = TextEditingController(
-        text: widget.trip != null ? widget.trip!.budget.toStringAsFixed(2).replaceAll('.', ',') : '');
-    _participantsController = TextEditingController(text: widget.trip?.participants ?? '');
-    _generalInfoController = TextEditingController(text: widget.trip?.generalInfo ?? '');
+      text: widget.trip != null
+          ? widget.trip!.budget.toStringAsFixed(2).replaceAll('.', ',')
+          : '',
+    );
+    _participantsController = TextEditingController(
+      text: widget.trip?.participants ?? '',
+    );
+    _generalInfoController = TextEditingController(
+      text: widget.trip?.generalInfo ?? '',
+    );
     _startDate = widget.trip?.startDate;
     _endDate = widget.trip?.endDate;
     _latitude = widget.trip?.latitude;
@@ -106,7 +115,10 @@ class _AddTripScreenState extends State<AddTripScreen> {
   bool _isValidParticipantName(String text) {
     final alphaNum = RegExp(r'^[\p{L}\p{N}]$', unicode: true);
     final trimmed = text.trim();
-    final words = trimmed.split(RegExp(r'\s+')).where((w) => w.isNotEmpty).toList();
+    final words = trimmed
+        .split(RegExp(r'\s+'))
+        .where((w) => w.isNotEmpty)
+        .toList();
     if (words.isEmpty) return false;
 
     for (int i = 0; i < trimmed.length; i++) {
@@ -234,20 +246,27 @@ class _AddTripScreenState extends State<AddTripScreen> {
       final url = Uri.parse(
         'https://nominatim.openstreetmap.org/search?q=${Uri.encodeComponent(query)}&format=json&limit=5&accept-language=it,en',
       );
-      final response = await http.get(url, headers: {
-        'User-Agent': 'say_my_travel_planner_student_project',
-        'Accept-Language': 'it,en',
-      });
+      final response = await http.get(
+        url,
+        headers: {
+          'User-Agent': 'say_my_travel_planner_student_project',
+          'Accept-Language': 'it,en',
+        },
+      );
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         if (mounted) {
           setState(() {
-            _suggestions = data.map((item) => {
-              'display_name': item['display_name'] as String,
-              'lat': double.tryParse(item['lat'] as String) ?? 0.0,
-              'lon': double.tryParse(item['lon'] as String) ?? 0.0,
-            }).toList();
+            _suggestions = data
+                .map(
+                  (item) => {
+                    'display_name': item['display_name'] as String,
+                    'lat': double.tryParse(item['lat'] as String) ?? 0.0,
+                    'lon': double.tryParse(item['lon'] as String) ?? 0.0,
+                  },
+                )
+                .toList();
           });
         }
       }
@@ -282,16 +301,22 @@ class _AddTripScreenState extends State<AddTripScreen> {
     if (title.isEmpty) {
       validationErrors.add("Titolo del viaggio: campo obbligatorio");
     } else if (title.startsWith(' ')) {
-      validationErrors.add("Titolo del viaggio: non può iniziare con uno spazio");
+      validationErrors.add(
+        "Titolo del viaggio: non può iniziare con uno spazio",
+      );
     } else if (!_isValidTitle(title)) {
-      validationErrors.add("Titolo del viaggio: può contenere solo lettere, numeri, spazi e i caratteri speciali ' - , . ! : ? (che devono essere preceduti e seguiti da lettere o numeri)");
+      validationErrors.add(
+        "Titolo del viaggio: può contenere solo lettere, numeri, spazi e i caratteri speciali ' - , . ! : ? (che devono essere preceduti e seguiti da lettere o numeri)",
+      );
     }
 
     // 2. Validazione della destinazione principale
     if (destination.isEmpty) {
       validationErrors.add("Destinazione principale: campo obbligatorio");
     } else if (destination.startsWith(' ')) {
-      validationErrors.add("Destinazione principale: non può iniziare con uno spazio");
+      validationErrors.add(
+        "Destinazione principale: non può iniziare con uno spazio",
+      );
     }
 
     // 3. Validazione dell'importo del budget
@@ -300,11 +325,15 @@ class _AddTripScreenState extends State<AddTripScreen> {
     } else if (budgetText.startsWith(' ')) {
       validationErrors.add("Budget stimato: non può iniziare con uno spazio");
     } else if (!RegExp(r'^\d+,\d+$').hasMatch(budgetText)) {
-      validationErrors.add("Budget stimato: deve includere i decimali separati da una virgola (es: 1500,00)");
+      validationErrors.add(
+        "Budget stimato: deve includere i decimali separati da una virgola (es: 1500,00)",
+      );
     } else {
       final parsed = double.tryParse(budgetText.replaceAll(',', '.'));
       if (parsed == null || parsed <= 0) {
-        validationErrors.add("Budget stimato: deve essere maggiore di zero (es: 1500,00)");
+        validationErrors.add(
+          "Budget stimato: deve essere maggiore di zero (es: 1500,00)",
+        );
       }
     }
 
@@ -329,17 +358,26 @@ class _AddTripScreenState extends State<AddTripScreen> {
         }
       }
       if (!allValid) {
-        validationErrors.add("Partecipanti: ogni nome deve contenere solo lettere, numeri, spazi e i simboli ' e - (che non possono essere all'inizio o adiacenti a spazi)");
+        validationErrors.add(
+          "Partecipanti: ogni nome deve contenere solo lettere, numeri, spazi e i simboli ' e - (che non possono essere all'inizio o adiacenti a spazi)",
+        );
       }
     }
 
     // 6. Validazione delle informazioni utili (facoltative, ma devono contenere almeno una lettera)
     if (generalInfoText.startsWith(' ')) {
-      validationErrors.add("Informazioni utili: non possono iniziare con uno spazio");
+      validationErrors.add(
+        "Informazioni utili: non possono iniziare con uno spazio",
+      );
     } else if (generalInfoText.isNotEmpty) {
-      final hasLetter = RegExp(r'\p{L}', unicode: true).hasMatch(generalInfoText);
+      final hasLetter = RegExp(
+        r'\p{L}',
+        unicode: true,
+      ).hasMatch(generalInfoText);
       if (!hasLetter) {
-        validationErrors.add("Informazioni utili: non possono essere composte solo da numeri o caratteri speciali; inserisci almeno una lettera");
+        validationErrors.add(
+          "Informazioni utili: non possono essere composte solo da numeri o caratteri speciali; inserisci almeno una lettera",
+        );
       }
     }
 
@@ -354,9 +392,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
             children: [
               Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 28),
               SizedBox(width: 8),
-              Expanded(
-                child: Text("Controlli di Validazione"),
-              ),
+              Expanded(child: Text("Controlli di Validazione")),
             ],
           ),
           content: SingleChildScrollView(
@@ -364,27 +400,38 @@ class _AddTripScreenState extends State<AddTripScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text("Per salvare il viaggio, compila o correggi i seguenti campi:"),
+                const Text(
+                  "Per salvare il viaggio, compila o correggi i seguenti campi:",
+                ),
                 const SizedBox(height: 12),
-                ...validationErrors.map((error) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4.0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.only(top: 5.0),
-                        child: Icon(Icons.circle, size: 6, color: Colors.redAccent),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          error,
-                          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                ...validationErrors.map(
+                  (error) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(top: 5.0),
+                          child: Icon(
+                            Icons.circle,
+                            size: 6,
+                            color: Colors.redAccent,
+                          ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            error,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                )),
+                ),
               ],
             ),
           ),
@@ -396,7 +443,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
           ],
         ),
       );
-      
+
       // Esegue la validazione del form per colorare i campi mancanti in rosso
       _formKey.currentState!.validate();
       return;
@@ -405,18 +452,24 @@ class _AddTripScreenState extends State<AddTripScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     final provider = Provider.of<TravelProvider>(context, listen: false);
-    final budget = double.tryParse(_budgetController.text.trim().replaceAll(',', '.')) ?? 0.0;
+    final budget =
+        double.tryParse(_budgetController.text.trim().replaceAll(',', '.')) ??
+        0.0;
     final participants = _participantsController.text.trim();
     final generalInfo = _generalInfoController.text.trim();
 
     // Copia l'immagine selezionata nella memoria interna permanente dell'applicazione
     String? finalCoverPath = _coverImagePath;
-    if (_coverImagePath != null && _coverImagePath != widget.trip?.coverImagePath) {
+    if (_coverImagePath != null &&
+        _coverImagePath != widget.trip?.coverImagePath) {
       try {
         final appDocDir = await getApplicationDocumentsDirectory();
         final extension = path.extension(_coverImagePath!);
-        final fileName = "trip_cover_${DateTime.now().millisecondsSinceEpoch}$extension";
-        final savedFile = await File(_coverImagePath!).copy("${appDocDir.path}/$fileName");
+        final fileName =
+            "trip_cover_${DateTime.now().millisecondsSinceEpoch}$extension";
+        final savedFile = await File(
+          _coverImagePath!,
+        ).copy("${appDocDir.path}/$fileName");
         finalCoverPath = savedFile.path;
       } catch (e) {
         debugPrint("Error copying cover image to persistent folder: $e");
@@ -428,7 +481,11 @@ class _AddTripScreenState extends State<AddTripScreen> {
     if (status != 'archiviato') {
       final now = DateTime.now();
       final today = DateTime(now.year, now.month, now.day);
-      final startDay = DateTime(_startDate!.year, _startDate!.month, _startDate!.day);
+      final startDay = DateTime(
+        _startDate!.year,
+        _startDate!.month,
+        _startDate!.day,
+      );
       final endDay = DateTime(_endDate!.year, _endDate!.month, _endDate!.day);
 
       if (today.isBefore(startDay)) {
@@ -508,7 +565,9 @@ class _AddTripScreenState extends State<AddTripScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                isEdit ? "Aggiorna i dettagli del tuo viaggio" : "Comincia ad organizzare il tuo prossimo viaggio!",
+                isEdit
+                    ? "Aggiorna i dettagli del tuo viaggio"
+                    : "Comincia ad organizzare il tuo prossimo viaggio!",
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 28),
@@ -577,7 +636,9 @@ class _AddTripScreenState extends State<AddTripScreen> {
                     decoration: BoxDecoration(
                       color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.2)),
+                      border: Border.all(
+                        color: Theme.of(context).dividerColor.withOpacity(0.2),
+                      ),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.08),
@@ -593,7 +654,11 @@ class _AddTripScreenState extends State<AddTripScreen> {
                       itemBuilder: (context, index) {
                         final suggestion = _suggestions[index];
                         return ListTile(
-                          leading: const Icon(Icons.location_on, color: Colors.redAccent, size: 20),
+                          leading: const Icon(
+                            Icons.location_on,
+                            color: Colors.redAccent,
+                            size: 20,
+                          ),
                           title: Text(
                             suggestion['display_name'] as String,
                             maxLines: 2,
@@ -617,7 +682,9 @@ class _AddTripScreenState extends State<AddTripScreen> {
               // Input per specificare il budget stimato
               TextFormField(
                 controller: _budgetController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 decoration: InputDecoration(
                   labelText: "Budget Stimato (€) *",
                   hintText: "Es: 1500,00",
@@ -679,7 +746,8 @@ class _AddTripScreenState extends State<AddTripScreen> {
                 maxLines: 4,
                 decoration: InputDecoration(
                   labelText: "Informazioni Utili Generali",
-                  hintText: "Inserisci dettagli utili come hotel, numeri di emergenza, note sui voli...",
+                  hintText:
+                      "Inserisci dettagli utili come hotel, numeri di emergenza, note sui voli...",
                   prefixIcon: const Padding(
                     padding: EdgeInsets.only(bottom: 50.0),
                     child: Icon(Icons.info_outline),
@@ -694,7 +762,10 @@ class _AddTripScreenState extends State<AddTripScreen> {
                   if (text.startsWith(' ')) {
                     return "Non può iniziare con uno spazio";
                   }
-                  final hasLetter = RegExp(r'\p{L}', unicode: true).hasMatch(text);
+                  final hasLetter = RegExp(
+                    r'\p{L}',
+                    unicode: true,
+                  ).hasMatch(text);
                   if (!hasLetter) {
                     return "Inserisci almeno una lettera (non solo numeri o simboli)";
                   }
@@ -707,9 +778,9 @@ class _AddTripScreenState extends State<AddTripScreen> {
               Text(
                 "Sfondo del Viaggio",
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
               ),
               const SizedBox(height: 8),
               GestureDetector(
@@ -730,19 +801,26 @@ class _AddTripScreenState extends State<AddTripScreen> {
                             Icon(
                               Icons.add_photo_alternate_outlined,
                               size: 40,
-                              color: Theme.of(context).colorScheme.primary.withOpacity(0.7),
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.primary.withOpacity(0.7),
                             ),
                             const SizedBox(height: 8),
                             const Text(
                               "Seleziona Sfondo Viaggio",
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               "Verrà mostrato come copertina nella Home",
                               style: TextStyle(
                                 fontSize: 11,
-                                color: Theme.of(context).textTheme.bodySmall?.color,
+                                color: Theme.of(
+                                  context,
+                                ).textTheme.bodySmall?.color,
                               ),
                             ),
                           ],
@@ -758,7 +836,10 @@ class _AddTripScreenState extends State<AddTripScreen> {
                                 errorBuilder: (context, error, stackTrace) {
                                   return Container(
                                     color: Colors.red.shade50,
-                                    child: const Icon(Icons.broken_image_outlined, color: Colors.redAccent),
+                                    child: const Icon(
+                                      Icons.broken_image_outlined,
+                                      color: Colors.redAccent,
+                                    ),
                                   );
                                 },
                               ),
@@ -766,10 +847,16 @@ class _AddTripScreenState extends State<AddTripScreen> {
                                 right: 12,
                                 top: 12,
                                 child: CircleAvatar(
-                                  backgroundColor: Colors.black.withOpacity(0.6),
+                                  backgroundColor: Colors.black.withOpacity(
+                                    0.6,
+                                  ),
                                   radius: 18,
                                   child: IconButton(
-                                    icon: const Icon(Icons.delete, color: Colors.white, size: 16),
+                                    icon: const Icon(
+                                      Icons.delete,
+                                      color: Colors.white,
+                                      size: 16,
+                                    ),
                                     onPressed: () {
                                       setState(() {
                                         _coverImagePath = null;
@@ -782,7 +869,10 @@ class _AddTripScreenState extends State<AddTripScreen> {
                                 left: 12,
                                 bottom: 12,
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 6,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: Colors.black.withOpacity(0.6),
                                     borderRadius: BorderRadius.circular(12),
@@ -790,11 +880,19 @@ class _AddTripScreenState extends State<AddTripScreen> {
                                   child: const Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Icon(Icons.edit, color: Colors.white, size: 12),
+                                      Icon(
+                                        Icons.edit,
+                                        color: Colors.white,
+                                        size: 12,
+                                      ),
                                       SizedBox(width: 4),
                                       Text(
                                         "Modifica sfondo",
-                                        style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -822,10 +920,16 @@ class _AddTripScreenState extends State<AddTripScreen> {
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color: _validationTriggered && _startDate == null
+                                color:
+                                    _validationTriggered && _startDate == null
                                     ? Theme.of(context).colorScheme.error
-                                    : Theme.of(context).colorScheme.outline.withOpacity(0.5),
-                                width: _validationTriggered && _startDate == null ? 2.0 : 1.0,
+                                    : Theme.of(
+                                        context,
+                                      ).colorScheme.outline.withOpacity(0.5),
+                                width:
+                                    _validationTriggered && _startDate == null
+                                    ? 2.0
+                                    : 1.0,
                               ),
                               borderRadius: BorderRadius.circular(16),
                             ),
@@ -834,12 +938,19 @@ class _AddTripScreenState extends State<AddTripScreen> {
                               children: [
                                 Text(
                                   "Data Inizio *",
-                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: _validationTriggered && _startDate == null
-                                        ? Theme.of(context).colorScheme.error
-                                        : Theme.of(context).colorScheme.primary,
-                                  ),
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color:
+                                            _validationTriggered &&
+                                                _startDate == null
+                                            ? Theme.of(
+                                                context,
+                                              ).colorScheme.error
+                                            : Theme.of(
+                                                context,
+                                              ).colorScheme.primary,
+                                      ),
                                 ),
                                 const SizedBox(height: 6),
                                 Row(
@@ -847,7 +958,9 @@ class _AddTripScreenState extends State<AddTripScreen> {
                                     Icon(
                                       Icons.calendar_month,
                                       size: 16,
-                                      color: _validationTriggered && _startDate == null
+                                      color:
+                                          _validationTriggered &&
+                                              _startDate == null
                                           ? Theme.of(context).colorScheme.error
                                           : null,
                                     ),
@@ -856,8 +969,12 @@ class _AddTripScreenState extends State<AddTripScreen> {
                                       _formatDate(_startDate),
                                       style: TextStyle(
                                         fontWeight: FontWeight.w500,
-                                        color: _validationTriggered && _startDate == null
-                                            ? Theme.of(context).colorScheme.error
+                                        color:
+                                            _validationTriggered &&
+                                                _startDate == null
+                                            ? Theme.of(
+                                                context,
+                                              ).colorScheme.error
                                             : null,
                                       ),
                                     ),
@@ -869,7 +986,10 @@ class _AddTripScreenState extends State<AddTripScreen> {
                         ),
                         if (_validationTriggered && _startDate == null)
                           Padding(
-                            padding: const EdgeInsets.only(left: 12.0, top: 6.0),
+                            padding: const EdgeInsets.only(
+                              left: 12.0,
+                              top: 6.0,
+                            ),
                             child: Text(
                               "Seleziona la data di inizio",
                               style: TextStyle(
@@ -895,8 +1015,12 @@ class _AddTripScreenState extends State<AddTripScreen> {
                               border: Border.all(
                                 color: _validationTriggered && _endDate == null
                                     ? Theme.of(context).colorScheme.error
-                                    : Theme.of(context).colorScheme.outline.withOpacity(0.5),
-                                width: _validationTriggered && _endDate == null ? 2.0 : 1.0,
+                                    : Theme.of(
+                                        context,
+                                      ).colorScheme.outline.withOpacity(0.5),
+                                width: _validationTriggered && _endDate == null
+                                    ? 2.0
+                                    : 1.0,
                               ),
                               borderRadius: BorderRadius.circular(16),
                             ),
@@ -905,12 +1029,19 @@ class _AddTripScreenState extends State<AddTripScreen> {
                               children: [
                                 Text(
                                   "Data Fine *",
-                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: _validationTriggered && _endDate == null
-                                        ? Theme.of(context).colorScheme.error
-                                        : Theme.of(context).colorScheme.primary,
-                                  ),
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color:
+                                            _validationTriggered &&
+                                                _endDate == null
+                                            ? Theme.of(
+                                                context,
+                                              ).colorScheme.error
+                                            : Theme.of(
+                                                context,
+                                              ).colorScheme.primary,
+                                      ),
                                 ),
                                 const SizedBox(height: 6),
                                 Row(
@@ -918,7 +1049,9 @@ class _AddTripScreenState extends State<AddTripScreen> {
                                     Icon(
                                       Icons.calendar_month,
                                       size: 16,
-                                      color: _validationTriggered && _endDate == null
+                                      color:
+                                          _validationTriggered &&
+                                              _endDate == null
                                           ? Theme.of(context).colorScheme.error
                                           : null,
                                     ),
@@ -927,8 +1060,12 @@ class _AddTripScreenState extends State<AddTripScreen> {
                                       _formatDate(_endDate),
                                       style: TextStyle(
                                         fontWeight: FontWeight.w500,
-                                        color: _validationTriggered && _endDate == null
-                                            ? Theme.of(context).colorScheme.error
+                                        color:
+                                            _validationTriggered &&
+                                                _endDate == null
+                                            ? Theme.of(
+                                                context,
+                                              ).colorScheme.error
                                             : null,
                                       ),
                                     ),
@@ -940,7 +1077,10 @@ class _AddTripScreenState extends State<AddTripScreen> {
                         ),
                         if (_validationTriggered && _endDate == null)
                           Padding(
-                            padding: const EdgeInsets.only(left: 12.0, top: 6.0),
+                            padding: const EdgeInsets.only(
+                              left: 12.0,
+                              top: 6.0,
+                            ),
                             child: Text(
                               "Seleziona la data di fine",
                               style: TextStyle(

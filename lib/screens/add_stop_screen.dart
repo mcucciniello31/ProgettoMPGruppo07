@@ -8,7 +8,8 @@ import '../theme/app_theme.dart';
 
 class AddStopScreen extends StatefulWidget {
   final int tripId;
-  final Stop? parentStop; // Se impostato, aggiungiamo un'attività a questa tappa invece di creare una nuova tappa
+  final Stop?
+  parentStop; // Se impostato, aggiungiamo un'attività a questa tappa invece di creare una nuova tappa
   final Stop? stop; // Se impostato, stiamo modificando questa tappa
   final Activity? activity; // Se impostato, stiamo modificando questa attività
 
@@ -56,19 +57,27 @@ class _AddStopScreenState extends State<AddStopScreen> {
       text: isActivity ? widget.activity?.name ?? '' : widget.stop?.name ?? '',
     );
     _descriptionController = TextEditingController(
-      text: isActivity ? widget.activity?.description ?? '' : widget.stop?.description ?? '',
+      text: isActivity
+          ? widget.activity?.description ?? ''
+          : widget.stop?.description ?? '',
     );
     _locationController = TextEditingController(
-      text: isActivity ? widget.activity?.location ?? '' : widget.stop?.location ?? '',
+      text: isActivity
+          ? widget.activity?.location ?? ''
+          : widget.stop?.location ?? '',
     );
 
     _notesController = TextEditingController(
-      text: isActivity ? widget.activity?.notes ?? '' : widget.stop?.notes ?? '',
+      text: isActivity
+          ? widget.activity?.notes ?? ''
+          : widget.stop?.notes ?? '',
     );
 
     _costController = TextEditingController(
       text: isActivity
-          ? (widget.activity != null ? widget.activity!.cost.toStringAsFixed(2).replaceAll('.', ',') : '0,00')
+          ? (widget.activity != null
+                ? widget.activity!.cost.toStringAsFixed(2).replaceAll('.', ',')
+                : '0,00')
           : '',
     );
 
@@ -76,21 +85,41 @@ class _AddStopScreenState extends State<AddStopScreen> {
       text: isActivity ? widget.activity?.time ?? '' : '',
     );
 
-    _selectedActivityType = isActivity ? widget.activity?.type ?? 'Altro' : 'Altro';
-    _selectedActivityStatus = isActivity ? widget.activity?.status ?? 'Da svolgere' : 'Da svolgere';
+    _selectedActivityType = isActivity
+        ? widget.activity?.type ?? 'Altro'
+        : 'Altro';
+    _selectedActivityStatus = isActivity
+        ? widget.activity?.status ?? 'Da svolgere'
+        : 'Da svolgere';
 
     if (!isActivity) {
       if (isEdit) {
         final stopDateTime = widget.stop!.dateTime;
-        final tripStartDay = DateTime(_trip!.startDate.year, _trip!.startDate.month, _trip!.startDate.day);
-        final stopDay = DateTime(stopDateTime.year, stopDateTime.month, stopDateTime.day);
+        final tripStartDay = DateTime(
+          _trip!.startDate.year,
+          _trip!.startDate.month,
+          _trip!.startDate.day,
+        );
+        final stopDay = DateTime(
+          stopDateTime.year,
+          stopDateTime.month,
+          stopDateTime.day,
+        );
         _selectedDayIndex = stopDay.difference(tripStartDay).inDays;
         _selectedDayIndex = _selectedDayIndex.clamp(0, _tripTotalDays() - 1);
         _stopTime = TimeOfDay.fromDateTime(stopDateTime);
       } else if (_trip != null) {
         final now = DateTime.now();
-        final tripStartDay = DateTime(_trip!.startDate.year, _trip!.startDate.month, _trip!.startDate.day);
-        final tripEndDay = DateTime(_trip!.endDate.year, _trip!.endDate.month, _trip!.endDate.day);
+        final tripStartDay = DateTime(
+          _trip!.startDate.year,
+          _trip!.startDate.month,
+          _trip!.startDate.day,
+        );
+        final tripEndDay = DateTime(
+          _trip!.endDate.year,
+          _trip!.endDate.month,
+          _trip!.endDate.day,
+        );
         final today = DateTime(now.year, now.month, now.day);
         if (!today.isBefore(tripStartDay) && !today.isAfter(tripEndDay)) {
           _selectedDayIndex = today.difference(tripStartDay).inDays;
@@ -107,8 +136,16 @@ class _AddStopScreenState extends State<AddStopScreen> {
   /// Numero totale di giorni nel viaggio, garantito per essere almeno 1
   /// anche se la data di fine del viaggio è antecedente alla data di inizio.
   int _tripTotalDays() {
-    final tripStartDay = DateTime(_trip!.startDate.year, _trip!.startDate.month, _trip!.startDate.day);
-    final tripEndDay = DateTime(_trip!.endDate.year, _trip!.endDate.month, _trip!.endDate.day);
+    final tripStartDay = DateTime(
+      _trip!.startDate.year,
+      _trip!.startDate.month,
+      _trip!.startDate.day,
+    );
+    final tripEndDay = DateTime(
+      _trip!.endDate.year,
+      _trip!.endDate.month,
+      _trip!.endDate.day,
+    );
     final totalDays = tripEndDay.difference(tripStartDay).inDays + 1;
     return totalDays < 1 ? 1 : totalDays;
   }
@@ -165,7 +202,13 @@ class _AddStopScreenState extends State<AddStopScreen> {
 
   DateTime get _combinedStopDateTime {
     final dayDate = _trip!.startDate.add(Duration(days: _selectedDayIndex));
-    return DateTime(dayDate.year, dayDate.month, dayDate.day, _stopTime.hour, _stopTime.minute);
+    return DateTime(
+      dayDate.year,
+      dayDate.month,
+      dayDate.day,
+      _stopTime.hour,
+      _stopTime.minute,
+    );
   }
 
   Future<void> _selectActivityTime() async {
@@ -174,7 +217,8 @@ class _AddStopScreenState extends State<AddStopScreen> {
       initialTime: const TimeOfDay(hour: 12, minute: 0),
     );
     if (picked != null) {
-      final formatted = "${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}";
+      final formatted =
+          "${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}";
       setState(() {
         _timeController.text = formatted;
       });
@@ -199,13 +243,17 @@ class _AddStopScreenState extends State<AddStopScreen> {
       } else if (name.startsWith(' ')) {
         validationErrors.add("Nome tappa: non può iniziare con uno spazio");
       } else if (!_isValidTitle(name)) {
-        validationErrors.add("Nome tappa: può contenere solo lettere, numeri, spazi e i caratteri speciali ' - , . ! : ? (che devono essere preceduti e seguiti da lettere o numeri)");
+        validationErrors.add(
+          "Nome tappa: può contenere solo lettere, numeri, spazi e i caratteri speciali ' - , . ! : ? (che devono essere preceduti e seguiti da lettere o numeri)",
+        );
       }
 
       if (location.isEmpty) {
         validationErrors.add("Luogo / Località: campo obbligatorio");
       } else if (location.startsWith(' ')) {
-        validationErrors.add("Luogo / Località: non può iniziare con uno spazio");
+        validationErrors.add(
+          "Luogo / Località: non può iniziare con uno spazio",
+        );
       }
 
       if (description.isEmpty) {
@@ -228,13 +276,17 @@ class _AddStopScreenState extends State<AddStopScreen> {
       if (description.isEmpty) {
         validationErrors.add("Descrizione attività: campo obbligatorio");
       } else if (description.startsWith(' ')) {
-        validationErrors.add("Descrizione attività: non può iniziare con uno spazio");
+        validationErrors.add(
+          "Descrizione attività: non può iniziare con uno spazio",
+        );
       }
 
       if (timeText.isEmpty) {
         validationErrors.add("Orario / Fascia oraria: campo obbligatorio");
       } else if (timeText.startsWith(' ')) {
-        validationErrors.add("Orario / Fascia oraria: non può iniziare con uno spazio");
+        validationErrors.add(
+          "Orario / Fascia oraria: non può iniziare con uno spazio",
+        );
       }
 
       if (location.isEmpty) {
@@ -248,11 +300,15 @@ class _AddStopScreenState extends State<AddStopScreen> {
       } else if (costText.startsWith(' ')) {
         validationErrors.add("Costo previsto: non può iniziare con uno spazio");
       } else if (!RegExp(r'^\d+,\d+$').hasMatch(costText)) {
-        validationErrors.add("Costo previsto: deve includere i decimali separati da una virgola (es: 15,50 o 0,00)");
+        validationErrors.add(
+          "Costo previsto: deve includere i decimali separati da una virgola (es: 15,50 o 0,00)",
+        );
       } else {
         final parsed = double.tryParse(costText.replaceAll(',', '.'));
         if (parsed == null || parsed < 0) {
-          validationErrors.add("Costo previsto: deve essere maggiore o uguale a zero");
+          validationErrors.add(
+            "Costo previsto: deve essere maggiore o uguale a zero",
+          );
         }
       }
 
@@ -272,9 +328,7 @@ class _AddStopScreenState extends State<AddStopScreen> {
             children: [
               Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 28),
               SizedBox(width: 8),
-              Expanded(
-                child: Text("Controlli di Validazione"),
-              ),
+              Expanded(child: Text("Controlli di Validazione")),
             ],
           ),
           content: SingleChildScrollView(
@@ -284,25 +338,34 @@ class _AddStopScreenState extends State<AddStopScreen> {
               children: [
                 const Text("Per salvare, compila o correggi i seguenti campi:"),
                 const SizedBox(height: 12),
-                ...validationErrors.map((error) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4.0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.only(top: 5.0),
-                        child: Icon(Icons.circle, size: 6, color: Colors.redAccent),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          error,
-                          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                ...validationErrors.map(
+                  (error) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(top: 5.0),
+                          child: Icon(
+                            Icons.circle,
+                            size: 6,
+                            color: Colors.redAccent,
+                          ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            error,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                )),
+                ),
               ],
             ),
           ),
@@ -314,7 +377,7 @@ class _AddStopScreenState extends State<AddStopScreen> {
           ],
         ),
       );
-      
+
       _formKey.currentState!.validate();
       return;
     }
@@ -332,13 +395,16 @@ class _AddStopScreenState extends State<AddStopScreen> {
           description: description.trim(),
           dateTime: _combinedStopDateTime,
           location: location.trim(),
-          itineraryOrder: 1, // Sovrascritto da TravelProvider.addStop in base alla data della tappa
+          itineraryOrder:
+              1, // Sovrascritto da TravelProvider.addStop in base alla data della tappa
           notes: notesText.trim(),
         );
         provider.addStop(newStop);
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Tappa '${name.trim()}' aggiunta con successo!")),
+          SnackBar(
+            content: Text("Tappa '${name.trim()}' aggiunta con successo!"),
+          ),
         );
       } else {
         // Modifica di una Tappa
@@ -352,7 +418,9 @@ class _AddStopScreenState extends State<AddStopScreen> {
         provider.updateStop(updatedStop);
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Tappa '${name.trim()}' modificata con successo!")),
+          SnackBar(
+            content: Text("Tappa '${name.trim()}' modificata con successo!"),
+          ),
         );
       }
     } else {
@@ -376,7 +444,9 @@ class _AddStopScreenState extends State<AddStopScreen> {
         provider.addActivity(newActivity);
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Attività '${name.trim()}' aggiunta con successo!")),
+          SnackBar(
+            content: Text("Attività '${name.trim()}' aggiunta con successo!"),
+          ),
         );
       } else {
         // Modifica dell'Attività
@@ -393,7 +463,9 @@ class _AddStopScreenState extends State<AddStopScreen> {
         provider.updateActivity(updatedActivity);
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Attività '${name.trim()}' modificata con successo!")),
+          SnackBar(
+            content: Text("Attività '${name.trim()}' modificata con successo!"),
+          ),
         );
       }
     }
@@ -441,9 +513,15 @@ class _AddStopScreenState extends State<AddStopScreen> {
               TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(
-                  labelText: isActivity ? "Nome Attività *" : "Nome Tappa / Giornata *",
-                  hintText: isActivity ? "Es: Visita al Museo del Louvre" : "Es: Primo Giorno a Parigi",
-                  prefixIcon: Icon(isActivity ? Icons.local_activity : Icons.place),
+                  labelText: isActivity
+                      ? "Nome Attività *"
+                      : "Nome Tappa / Giornata *",
+                  hintText: isActivity
+                      ? "Es: Visita al Museo del Louvre"
+                      : "Es: Primo Giorno a Parigi",
+                  prefixIcon: Icon(
+                    isActivity ? Icons.local_activity : Icons.place,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
@@ -489,35 +567,46 @@ class _AddStopScreenState extends State<AddStopScreen> {
                 const SizedBox(height: 20),
 
                 // Selezione del giorno di itinerario (limitato ai giorni effettivi del viaggio)
-                Builder(builder: (context) {
-                  final tripStartDay = DateTime(_trip!.startDate.year, _trip!.startDate.month, _trip!.startDate.day);
-                  final totalDays = _tripTotalDays();
-                  final dropdownValue = _selectedDayIndex.clamp(0, totalDays - 1);
-                  return DropdownButtonFormField<int>(
-                    value: dropdownValue,
-                    decoration: InputDecoration(
-                      labelText: "Giorno del viaggio *",
-                      prefixIcon: const Icon(Icons.calendar_month),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
+                Builder(
+                  builder: (context) {
+                    final tripStartDay = DateTime(
+                      _trip!.startDate.year,
+                      _trip!.startDate.month,
+                      _trip!.startDate.day,
+                    );
+                    final totalDays = _tripTotalDays();
+                    final dropdownValue = _selectedDayIndex.clamp(
+                      0,
+                      totalDays - 1,
+                    );
+                    return DropdownButtonFormField<int>(
+                      value: dropdownValue,
+                      decoration: InputDecoration(
+                        labelText: "Giorno del viaggio *",
+                        prefixIcon: const Icon(Icons.calendar_month),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
                       ),
-                    ),
-                    items: List.generate(totalDays, (i) {
-                      final dayDate = tripStartDay.add(Duration(days: i));
-                      return DropdownMenuItem<int>(
-                        value: i,
-                        child: Text("Giorno ${i + 1} - ${_formatDate(dayDate)}"),
-                      );
-                    }),
-                    onChanged: (val) {
-                      if (val != null) {
-                        setState(() {
-                          _selectedDayIndex = val;
-                        });
-                      }
-                    },
-                  );
-                }),
+                      items: List.generate(totalDays, (i) {
+                        final dayDate = tripStartDay.add(Duration(days: i));
+                        return DropdownMenuItem<int>(
+                          value: i,
+                          child: Text(
+                            "Giorno ${i + 1} - ${_formatDate(dayDate)}",
+                          ),
+                        );
+                      }),
+                      onChanged: (val) {
+                        if (val != null) {
+                          setState(() {
+                            _selectedDayIndex = val;
+                          });
+                        }
+                      },
+                    );
+                  },
+                ),
                 const SizedBox(height: 20),
 
                 // Selettore dell'orario della tappa
@@ -527,7 +616,11 @@ class _AddStopScreenState extends State<AddStopScreen> {
                   child: Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.5)),
+                      border: Border.all(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.outline.withOpacity(0.5),
+                      ),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Column(
@@ -547,7 +640,10 @@ class _AddStopScreenState extends State<AddStopScreen> {
                             const SizedBox(width: 8),
                             Text(
                               "${_stopTime.hour.toString().padLeft(2, '0')}:${_stopTime.minute.toString().padLeft(2, '0')}",
-                              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 15,
+                              ),
                             ),
                           ],
                         ),
@@ -571,7 +667,11 @@ class _AddStopScreenState extends State<AddStopScreen> {
                       value: type,
                       child: Row(
                         children: [
-                          Icon(AppTheme.activityIcons[type], size: 20, color: Theme.of(context).colorScheme.primary),
+                          Icon(
+                            AppTheme.activityIcons[type],
+                            size: 20,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
                           const SizedBox(width: 10),
                           Text(type),
                         ],
@@ -599,9 +699,18 @@ class _AddStopScreenState extends State<AddStopScreen> {
                     ),
                   ),
                   items: const [
-                    DropdownMenuItem(value: 'Da svolgere', child: Text('Da svolgere')),
-                    DropdownMenuItem(value: 'Completata', child: Text('Completata')),
-                    DropdownMenuItem(value: 'Annullata', child: Text('Annullata')),
+                    DropdownMenuItem(
+                      value: 'Da svolgere',
+                      child: Text('Da svolgere'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'Completata',
+                      child: Text('Completata'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'Annullata',
+                      child: Text('Annullata'),
+                    ),
                   ],
                   onChanged: (val) {
                     if (val != null) {
@@ -667,7 +776,9 @@ class _AddStopScreenState extends State<AddStopScreen> {
                 // Input del costo dell'attività
                 TextFormField(
                   controller: _costController,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
                   decoration: InputDecoration(
                     labelText: "Costo previsto (€) *",
                     hintText: "Es: 15,50 o 0,00",
@@ -701,9 +812,11 @@ class _AddStopScreenState extends State<AddStopScreen> {
                 controller: _descriptionController,
                 maxLines: 3,
                 decoration: InputDecoration(
-                  labelText: isActivity ? "Descrizione Attività *" : "Descrizione della giornata *",
-                  hintText: isActivity 
-                      ? "Es: Visitare l'ala Denon per vedere la Gioconda." 
+                  labelText: isActivity
+                      ? "Descrizione Attività *"
+                      : "Descrizione della giornata *",
+                  hintText: isActivity
+                      ? "Es: Visitare l'ala Denon per vedere la Gioconda."
                       : "Es: Arrivo in hotel, check-in e prima passeggiata serale.",
                   prefixIcon: const Padding(
                     padding: EdgeInsets.only(bottom: 40),
@@ -731,7 +844,9 @@ class _AddStopScreenState extends State<AddStopScreen> {
                 maxLines: 2,
                 decoration: InputDecoration(
                   labelText: "Note aggiuntive",
-                  hintText: isActivity ? "Es: I biglietti sono sul telefono" : "Es: Ricordarsi la macchina fotografica",
+                  hintText: isActivity
+                      ? "Es: I biglietti sono sul telefono"
+                      : "Es: Ricordarsi la macchina fotografica",
                   prefixIcon: const Padding(
                     padding: EdgeInsets.only(bottom: 15),
                     child: Icon(Icons.sticky_note_2_outlined),
@@ -761,7 +876,9 @@ class _AddStopScreenState extends State<AddStopScreen> {
                   ),
                 ),
                 child: Text(
-                  isEdit ? "Salva Modifiche" : (isActivity ? "Aggiungi Attività" : "Aggiungi Tappa"),
+                  isEdit
+                      ? "Salva Modifiche"
+                      : (isActivity ? "Aggiungi Attività" : "Aggiungi Tappa"),
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,

@@ -10,7 +10,8 @@ import '../services/currency_service.dart';
 
 class AddExpenseScreen extends StatefulWidget {
   final int tripId;
-  final Expense? expense; // Null se si sta aggiungendo, non null se si sta modificando
+  final Expense?
+  expense; // Null se si sta aggiungendo, non null se si sta modificando
 
   const AddExpenseScreen({super.key, required this.tripId, this.expense});
 
@@ -31,7 +32,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   String _selectedStatus = 'Sostenuta'; // 'Prevista' o 'Sostenuta'
 
   // Proprietà per collegare la spesa ad altri elementi
-  String _associatedType = 'Generale'; // Livello di associazione: 'Generale', 'Tappa', 'Attivita'
+  String _associatedType =
+      'Generale'; // Livello di associazione: 'Generale', 'Tappa', 'Attivita'
   int? _selectedStopId;
   int? _selectedActivityId;
 
@@ -43,7 +45,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     super.initState();
     final provider = Provider.of<TravelProvider>(context, listen: false);
     _stops = provider.currentStops;
-    
+
     // Carica tutte le attività collegate a questo viaggio
     _activities = [];
     for (var stop in _stops) {
@@ -52,7 +54,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
     final trip = provider.selectedTrip;
     if (trip != null) {
-      if (DateTime.now().isAfter(trip.startDate) && DateTime.now().isBefore(trip.endDate)) {
+      if (DateTime.now().isAfter(trip.startDate) &&
+          DateTime.now().isBefore(trip.endDate)) {
         _expenseDate = DateTime.now();
       } else {
         _expenseDate = trip.startDate;
@@ -96,14 +99,15 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   Future<void> _selectDate() async {
     final provider = Provider.of<TravelProvider>(context, listen: false);
     final trip = provider.selectedTrip;
-    
+
     // Vincola il calendario delle date al periodo del viaggio
     final firstDate = trip?.startDate ?? DateTime(2020);
     final lastDate = trip?.endDate ?? DateTime(2030);
 
     final picked = await showDatePicker(
       context: context,
-      initialDate: _expenseDate.isAfter(firstDate) && _expenseDate.isBefore(lastDate)
+      initialDate:
+          _expenseDate.isAfter(firstDate) && _expenseDate.isBefore(lastDate)
           ? _expenseDate
           : firstDate,
       firstDate: firstDate,
@@ -123,27 +127,33 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         return AlertDialog(
           title: Row(
             children: [
-              Icon(Icons.warning_amber_rounded, color: Theme.of(context).colorScheme.error),
-              const SizedBox(width: 8),
-              const Expanded(
-                child: Text("Campi non validi o mancanti"),
+              Icon(
+                Icons.warning_amber_rounded,
+                color: Theme.of(context).colorScheme.error,
               ),
+              const SizedBox(width: 8),
+              const Expanded(child: Text("Campi non validi o mancanti")),
             ],
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: errors
-                .map((err) => Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text("• ", style: TextStyle(fontWeight: FontWeight.bold)),
-                          Expanded(child: Text(err)),
-                        ],
-                      ),
-                    ))
+                .map(
+                  (err) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "• ",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Expanded(child: Text(err)),
+                      ],
+                    ),
+                  ),
+                )
                 .toList(),
           ),
           actions: [
@@ -199,14 +209,18 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         errors.add("Seleziona la tappa da associare");
       } else {
         finalAssociatedId = _selectedStopId;
-        finalAssociatedName = _stops.firstWhere((s) => s.id == _selectedStopId).name;
+        finalAssociatedName = _stops
+            .firstWhere((s) => s.id == _selectedStopId)
+            .name;
       }
     } else if (_associatedType == 'Attivita') {
       if (_selectedActivityId == null) {
         errors.add("Seleziona l'attività da associare");
       } else {
         finalAssociatedId = _selectedActivityId;
-        finalAssociatedName = _activities.firstWhere((a) => a.id == _selectedActivityId).name;
+        finalAssociatedName = _activities
+            .firstWhere((a) => a.id == _selectedActivityId)
+            .name;
       }
     }
 
@@ -246,9 +260,11 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     final symbol = CurrencyService.getSymbol(_selectedCurrency);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(isEditing
-            ? "Spesa di $symbol${amount.toStringAsFixed(2)} modificata con successo!"
-            : "Spesa di $symbol${amount.toStringAsFixed(2)} registrata con successo!"),
+        content: Text(
+          isEditing
+              ? "Spesa di $symbol${amount.toStringAsFixed(2)} modificata con successo!"
+              : "Spesa di $symbol${amount.toStringAsFixed(2)} registrata con successo!",
+        ),
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -271,12 +287,12 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
           decoration: BoxDecoration(
-            color: isSelected 
-                ? primaryColor.withOpacity(0.15) 
+            color: isSelected
+                ? primaryColor.withOpacity(0.15)
                 : Colors.transparent,
             border: Border.all(
-              color: isSelected 
-                  ? primaryColor 
+              color: isSelected
+                  ? primaryColor
                   : theme.dividerColor.withOpacity(0.2),
               width: isSelected ? 2 : 1,
             ),
@@ -289,9 +305,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               Icon(
                 icon,
                 size: 18,
-                color: isSelected 
-                    ? primaryColor 
-                    : onSurface.withOpacity(0.6),
+                color: isSelected ? primaryColor : onSurface.withOpacity(0.6),
               ),
               const SizedBox(height: 4),
               Text(
@@ -300,9 +314,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                  color: isSelected 
-                      ? primaryColor 
-                      : onSurface.withOpacity(0.8),
+                  color: isSelected ? primaryColor : onSurface.withOpacity(0.8),
                 ),
               ),
             ],
@@ -360,8 +372,13 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                     flex: 3,
                     child: TextFormField(
                       controller: _amountController,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                       decoration: InputDecoration(
                         labelText: "Importo *",
                         hintText: "0,00",
@@ -383,14 +400,20 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 16,
+                        ),
                       ),
                       items: CurrencyService.currencies.map((curr) {
                         return DropdownMenuItem<String>(
                           value: curr.code,
                           child: Text(
                             "${curr.code} (${curr.symbol})",
-                            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         );
                       }).toList(),
@@ -421,7 +444,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                         ),
                       ),
                       items: AppTheme.categoryColors.keys.map((cat) {
-                        final color = AppTheme.categoryColors[cat] ?? Colors.grey;
+                        final color =
+                            AppTheme.categoryColors[cat] ?? Colors.grey;
                         return DropdownMenuItem<String>(
                           value: cat,
                           child: Row(
@@ -429,7 +453,10 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                               Container(
                                 width: 10,
                                 height: 10,
-                                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+                                decoration: BoxDecoration(
+                                  color: color,
+                                  shape: BoxShape.circle,
+                                ),
                               ),
                               const SizedBox(width: 8),
                               Text(cat, style: const TextStyle(fontSize: 13)),
@@ -458,8 +485,20 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                         ),
                       ),
                       items: const [
-                        DropdownMenuItem(value: 'Prevista', child: Text("Prevista", style: TextStyle(fontSize: 13))),
-                        DropdownMenuItem(value: 'Sostenuta', child: Text("Sostenuta", style: TextStyle(fontSize: 13))),
+                        DropdownMenuItem(
+                          value: 'Prevista',
+                          child: Text(
+                            "Prevista",
+                            style: TextStyle(fontSize: 13),
+                          ),
+                        ),
+                        DropdownMenuItem(
+                          value: 'Sostenuta',
+                          child: Text(
+                            "Sostenuta",
+                            style: TextStyle(fontSize: 13),
+                          ),
+                        ),
                       ],
                       onChanged: (val) {
                         if (val != null) {
@@ -487,18 +526,25 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                       ),
-                      items: const [
-                        'Contanti',
-                        'Carta di Credito',
-                        'Carta di Debito',
-                        'Apple Pay',
-                        'Google Pay',
-                        'Altro'
-                      ].map((method) => DropdownMenuItem(
-                            value: method,
-                            child: Text(method, style: const TextStyle(fontSize: 13)),
-                          ))
-                          .toList(),
+                      items:
+                          const [
+                                'Contanti',
+                                'Carta di Credito',
+                                'Carta di Debito',
+                                'Apple Pay',
+                                'Google Pay',
+                                'Altro',
+                              ]
+                              .map(
+                                (method) => DropdownMenuItem(
+                                  value: method,
+                                  child: Text(
+                                    method,
+                                    style: const TextStyle(fontSize: 13),
+                                  ),
+                                ),
+                              )
+                              .toList(),
                       onChanged: (val) {
                         if (val != null) {
                           setState(() {
@@ -514,9 +560,16 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                       onTap: _selectDate,
                       borderRadius: BorderRadius.circular(16),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 18,
+                        ),
                         decoration: BoxDecoration(
-                          border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.5)),
+                          border: Border.all(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.outline.withOpacity(0.5),
+                          ),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Row(
@@ -526,7 +579,10 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                             Expanded(
                               child: Text(
                                 _formatDate(_expenseDate),
-                                style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 13,
+                                ),
                               ),
                             ),
                           ],
@@ -543,7 +599,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
-                  side: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.15)),
+                  side: BorderSide(
+                    color: Theme.of(context).dividerColor.withOpacity(0.15),
+                  ),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -552,16 +610,30 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                     children: [
                       Text(
                         "Associazione Spesa *",
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 12),
                       Row(
                         children: [
-                          _buildAssociationChip('Generale', 'Generale', Icons.receipt_long_outlined),
+                          _buildAssociationChip(
+                            'Generale',
+                            'Generale',
+                            Icons.receipt_long_outlined,
+                          ),
                           const SizedBox(width: 8),
-                          _buildAssociationChip('Tappa', 'Tappa', Icons.map_outlined),
+                          _buildAssociationChip(
+                            'Tappa',
+                            'Tappa',
+                            Icons.map_outlined,
+                          ),
                           const SizedBox(width: 8),
-                          _buildAssociationChip('Attività', 'Attivita', Icons.local_activity_outlined),
+                          _buildAssociationChip(
+                            'Attività',
+                            'Attivita',
+                            Icons.local_activity_outlined,
+                          ),
                         ],
                       ),
                       if (_associatedType == 'Tappa') ...[
@@ -577,7 +649,10 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                           items: _stops.map((stop) {
                             return DropdownMenuItem<int>(
                               value: stop.id,
-                              child: Text(stop.name, style: const TextStyle(fontSize: 13)),
+                              child: Text(
+                                stop.name,
+                                style: const TextStyle(fontSize: 13),
+                              ),
                             );
                           }).toList(),
                           onChanged: (val) {
@@ -594,7 +669,10 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                                 padding: EdgeInsets.all(8.0),
                                 child: Text(
                                   "Nessuna attività programmata in questo viaggio da poter associare.",
-                                  style: TextStyle(color: Colors.orange, fontSize: 12),
+                                  style: TextStyle(
+                                    color: Colors.orange,
+                                    fontSize: 12,
+                                  ),
                                 ),
                               )
                             : DropdownButtonFormField<int>(
@@ -608,7 +686,10 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                                 items: _activities.map((act) {
                                   return DropdownMenuItem<int>(
                                     value: act.id,
-                                    child: Text(act.name, style: const TextStyle(fontSize: 13)),
+                                    child: Text(
+                                      act.name,
+                                      style: const TextStyle(fontSize: 13),
+                                    ),
                                   );
                                 }).toList(),
                                 onChanged: (val) {

@@ -61,12 +61,13 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   Widget build(BuildContext context) {
     final selectedTrip = _selectedFilterTripId == null
         ? null
-        : _allTrips.firstWhere((t) => t.id == _selectedFilterTripId, orElse: () => _allTrips.first);
+        : _allTrips.firstWhere(
+            (t) => t.id == _selectedFilterTripId,
+            orElse: () => _allTrips.first,
+          );
 
     // Filtra i dati in base al viaggio selezionato
-    final activeTrips = selectedTrip == null
-        ? _allTrips
-        : [selectedTrip];
+    final activeTrips = selectedTrip == null ? _allTrips : [selectedTrip];
 
     final activeStops = selectedTrip == null
         ? _allStops
@@ -88,41 +89,68 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
     // 1. Calcoli - Viaggi (Rilevante per la vista globale)
     final totalTrips = _allTrips.length;
-    final futureTripsCount = _allTrips.where((t) => t.status == 'futuro').length;
-    final ongoingTripsCount = _allTrips.where((t) => t.status == 'in_corso').length;
-    final completedTripsCount = _allTrips.where((t) => t.status == 'completato').length;
-    final archivedTripsCount = _allTrips.where((t) => t.status == 'archiviato').length;
+    final futureTripsCount = _allTrips
+        .where((t) => t.status == 'futuro')
+        .length;
+    final ongoingTripsCount = _allTrips
+        .where((t) => t.status == 'in_corso')
+        .length;
+    final completedTripsCount = _allTrips
+        .where((t) => t.status == 'completato')
+        .length;
+    final archivedTripsCount = _allTrips
+        .where((t) => t.status == 'archiviato')
+        .length;
 
     // 2. Calcoli - Spese (Convertite in EUR)
     final totalBudget = activeTrips.fold(0.0, (sum, t) => sum + t.budget);
     final totalSpentActual = activeExpenses
         .where((e) => e.status == 'Sostenuta')
-        .fold(0.0, (sum, e) => sum + CurrencyService.convert(e.amount, e.currency, 'EUR'));
+        .fold(
+          0.0,
+          (sum, e) =>
+              sum + CurrencyService.convert(e.amount, e.currency, 'EUR'),
+        );
     final totalSpentPlanned = activeExpenses
         .where((e) => e.status == 'Prevista')
-        .fold(0.0, (sum, e) => sum + CurrencyService.convert(e.amount, e.currency, 'EUR'));
+        .fold(
+          0.0,
+          (sum, e) =>
+              sum + CurrencyService.convert(e.amount, e.currency, 'EUR'),
+        );
 
     // Distribuzione per Categoria (Solo spese effettivamente sostenute)
     Map<String, double> categoryDistribution = {};
     for (var e in activeExpenses.where((e) => e.status == 'Sostenuta')) {
       final eurAmount = CurrencyService.convert(e.amount, e.currency, 'EUR');
-      categoryDistribution[e.category] = (categoryDistribution[e.category] ?? 0.0) + eurAmount;
+      categoryDistribution[e.category] =
+          (categoryDistribution[e.category] ?? 0.0) + eurAmount;
     }
-    
+
     // Ordina la distribuzione per importo speso in ordine decrescente
     final sortedCategories = categoryDistribution.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
 
     // 3. Calcoli - Attività pianificate
     final totalActivities = activeActivities.length;
-    final completedActivities = activeActivities.where((a) => a.status == 'Completata').length;
-    final pendingActivities = activeActivities.where((a) => a.status == 'Da svolgere').length;
-    final cancelledActivities = activeActivities.where((a) => a.status == 'Annullata').length;
+    final completedActivities = activeActivities
+        .where((a) => a.status == 'Completata')
+        .length;
+    final pendingActivities = activeActivities
+        .where((a) => a.status == 'Da svolgere')
+        .length;
+    final cancelledActivities = activeActivities
+        .where((a) => a.status == 'Annullata')
+        .length;
 
     // 4. Calcoli - Elementi della Checklist
     final totalChecklistItems = activeChecklistItems.length;
-    final completedChecklistItems = activeChecklistItems.where((i) => i.isChecked).length;
-    final openChecklistItems = activeChecklistItems.where((i) => !i.isChecked).length;
+    final completedChecklistItems = activeChecklistItems
+        .where((i) => i.isChecked)
+        .length;
+    final openChecklistItems = activeChecklistItems
+        .where((i) => !i.isChecked)
+        .length;
 
     // 5. Calcoli - Giorni più attivi (Tappe con più attività)
     Map<int, int> stopActivityCounts = {};
@@ -137,8 +165,27 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     for (var entry in topStopsData.take(5)) {
       final stopId = entry.key;
       final activityCount = entry.value;
-      final stop = _allStops.firstWhere((s) => s.id == stopId, orElse: () => Stop(tripId: 0, name: 'Tappa Sconosciuta', description: '', dateTime: DateTime.now(), location: '', itineraryOrder: 1));
-      final trip = _allTrips.firstWhere((t) => t.id == stop.tripId, orElse: () => Trip(title: 'Viaggio Sconosciuto', destination: '', startDate: DateTime.now(), endDate: DateTime.now(), budget: 0.0));
+      final stop = _allStops.firstWhere(
+        (s) => s.id == stopId,
+        orElse: () => Stop(
+          tripId: 0,
+          name: 'Tappa Sconosciuta',
+          description: '',
+          dateTime: DateTime.now(),
+          location: '',
+          itineraryOrder: 1,
+        ),
+      );
+      final trip = _allTrips.firstWhere(
+        (t) => t.id == stop.tripId,
+        orElse: () => Trip(
+          title: 'Viaggio Sconosciuto',
+          destination: '',
+          startDate: DateTime.now(),
+          endDate: DateTime.now(),
+          budget: 0.0,
+        ),
+      );
       topStopsList.add({
         'stopName': stop.name,
         'tripTitle': trip.title,
@@ -157,62 +204,62 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             icon: const Icon(Icons.refresh),
             tooltip: "Aggiorna dati",
             onPressed: _loadAnalyticsData,
-          )
+          ),
         ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _allTrips.isEmpty
-              ? _buildEmptyState()
-              : SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // Menu a discesa per il filtraggio del Selettore dei Viaggi
-                      _buildTripFilterSelector(),
-                      const SizedBox(height: 20),
+          ? _buildEmptyState()
+          : SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Menu a discesa per il filtraggio del Selettore dei Viaggi
+                  _buildTripFilterSelector(),
+                  const SizedBox(height: 20),
 
-                      // Stato Globale dei Viaggi (Visibile solo quando la selezione è Globale)
-                      if (_selectedFilterTripId == null) ...[
-                        _buildTripsStatusCard(
-                          totalTrips,
-                          futureTripsCount,
-                          ongoingTripsCount,
-                          completedTripsCount,
-                          archivedTripsCount,
-                        ),
-                        const SizedBox(height: 16),
-                      ],
+                  // Stato Globale dei Viaggi (Visibile solo quando la selezione è Globale)
+                  if (_selectedFilterTripId == null) ...[
+                    _buildTripsStatusCard(
+                      totalTrips,
+                      futureTripsCount,
+                      ongoingTripsCount,
+                      completedTripsCount,
+                      archivedTripsCount,
+                    ),
+                    const SizedBox(height: 16),
+                  ],
 
-                      // Pannello di Panoramica del Budget e delle Spese
-                      _buildBudgetExpensesCard(
-                        totalBudget,
-                        totalSpentActual,
-                        totalSpentPlanned,
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Scheda della Distribuzione delle Spese per Categoria
-                      _buildCategoryDistributionCard(
-                        totalSpentActual,
-                        sortedCategories,
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Statistiche di Completamento di Attività e Checklist
-                      _buildActivitiesChecklistCard(
-                        totalActivities,
-                        completedActivities,
-                        pendingActivities,
-                        cancelledActivities,
-                        totalChecklistItems,
-                        completedChecklistItems,
-                        openChecklistItems,
-                      ),
-                    ],
+                  // Pannello di Panoramica del Budget e delle Spese
+                  _buildBudgetExpensesCard(
+                    totalBudget,
+                    totalSpentActual,
+                    totalSpentPlanned,
                   ),
-                ),
+                  const SizedBox(height: 16),
+
+                  // Scheda della Distribuzione delle Spese per Categoria
+                  _buildCategoryDistributionCard(
+                    totalSpentActual,
+                    sortedCategories,
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Statistiche di Completamento di Attività e Checklist
+                  _buildActivitiesChecklistCard(
+                    totalActivities,
+                    completedActivities,
+                    pendingActivities,
+                    cancelledActivities,
+                    totalChecklistItems,
+                    completedChecklistItems,
+                    openChecklistItems,
+                  ),
+                ],
+              ),
+            ),
     );
   }
 
@@ -232,7 +279,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             Text(
               "Nessun viaggio disponibile per l'analisi",
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
@@ -252,13 +301,18 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       color: Theme.of(context).colorScheme.primary.withOpacity(0.06),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: Theme.of(context).colorScheme.primary.withOpacity(0.15)),
+        side: BorderSide(
+          color: Theme.of(context).colorScheme.primary.withOpacity(0.15),
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Row(
           children: [
-            Icon(Icons.filter_alt_outlined, color: Theme.of(context).colorScheme.primary),
+            Icon(
+              Icons.filter_alt_outlined,
+              color: Theme.of(context).colorScheme.primary,
+            ),
             const SizedBox(width: 12),
             Expanded(
               child: DropdownButtonHideUnderline(
@@ -279,10 +333,12 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
-                    ..._allTrips.map((t) => DropdownMenuItem<int?>(
-                          value: t.id,
-                          child: Text(t.title),
-                        )),
+                    ..._allTrips.map(
+                      (t) => DropdownMenuItem<int?>(
+                        value: t.id,
+                        child: Text(t.title),
+                      ),
+                    ),
                   ],
                   onChanged: (tripId) {
                     setState(() {
@@ -306,7 +362,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     int archived,
   ) {
     final hasActiveTrips = total > 0;
-    
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -315,7 +371,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           children: [
             Text(
               "Stato dei Viaggi",
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
             Text(
@@ -323,7 +381,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               style: const TextStyle(color: Colors.grey, fontSize: 12),
             ),
             const Divider(height: 24),
-            
+
             // Grafico a barre segmentato della ripartizione del budget
             if (hasActiveTrips) ...[
               ClipRRect(
@@ -367,7 +425,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               children: [
                 _buildStatusLegendItem("Futuro", future, Colors.blueAccent),
                 _buildStatusLegendItem("In Corso", ongoing, Colors.green),
-                _buildStatusLegendItem("Completato", completed, Colors.blueGrey),
+                _buildStatusLegendItem(
+                  "Completato",
+                  completed,
+                  Colors.blueGrey,
+                ),
                 _buildStatusLegendItem("Archiviato", archived, Colors.orange),
               ],
             ),
@@ -386,10 +448,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             Container(
               width: 8,
               height: 8,
-              decoration: BoxDecoration(
-                color: color,
-                shape: BoxShape.circle,
-              ),
+              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
             ),
             const SizedBox(width: 4),
             Text(
@@ -401,10 +460,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         const SizedBox(height: 2),
         Text(
           "$count",
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
       ],
     );
@@ -415,10 +471,14 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     double totalSpentActual,
     double totalSpentPlanned,
   ) {
-    final spendRate = totalBudget > 0 ? (totalSpentActual / totalBudget).clamp(0.0, 1.0) : 0.0;
-    final plannedSpendRate = totalBudget > 0 ? (totalSpentPlanned / totalBudget).clamp(0.0, 1.0) : 0.0;
+    final spendRate = totalBudget > 0
+        ? (totalSpentActual / totalBudget).clamp(0.0, 1.0)
+        : 0.0;
+    final plannedSpendRate = totalBudget > 0
+        ? (totalSpentPlanned / totalBudget).clamp(0.0, 1.0)
+        : 0.0;
     final isOverBudget = totalSpentActual > totalBudget;
-    
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -430,7 +490,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               children: [
                 Text(
                   "Riepilogo Budget Globale",
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 Icon(
                   Icons.account_balance_wallet_outlined,
@@ -439,7 +501,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               ],
             ),
             const SizedBox(height: 16),
-            
+
             // Riga dei KPI e delle statistiche principali
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -456,7 +518,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                         strokeWidth: 8,
                         backgroundColor: Colors.grey.withOpacity(0.1),
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          isOverBudget ? Colors.redAccent : Theme.of(context).colorScheme.primary,
+                          isOverBudget
+                              ? Colors.redAccent
+                              : Theme.of(context).colorScheme.primary,
                         ),
                       ),
                       Text(
@@ -464,7 +528,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: isOverBudget ? Colors.redAccent : Theme.of(context).colorScheme.primary,
+                          color: isOverBudget
+                              ? Colors.redAccent
+                              : Theme.of(context).colorScheme.primary,
                         ),
                       ),
                     ],
@@ -475,22 +541,38 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                 Expanded(
                   child: Column(
                     children: [
-                      _buildBudgetMiniRow("Budget Totale", totalBudget, Colors.grey),
+                      _buildBudgetMiniRow(
+                        "Budget Totale",
+                        totalBudget,
+                        Colors.grey,
+                      ),
                       const SizedBox(height: 6),
-                      _buildBudgetMiniRow("Speso Effettivo", totalSpentActual, isOverBudget ? Colors.redAccent : Colors.green),
+                      _buildBudgetMiniRow(
+                        "Speso Effettivo",
+                        totalSpentActual,
+                        isOverBudget ? Colors.redAccent : Colors.green,
+                      ),
                       const SizedBox(height: 6),
-                      _buildBudgetMiniRow("Speso Stimato", totalSpentPlanned, Colors.orange),
+                      _buildBudgetMiniRow(
+                        "Speso Stimato",
+                        totalSpentPlanned,
+                        Colors.orange,
+                      ),
                     ],
                   ),
                 ),
               ],
             ),
             const Divider(height: 24),
-            
+
             // Confronto visivo con indicatore lineare di progresso
             const Text(
               "Andamento Spesa Stimata vs Speso Effettivo",
-              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.grey),
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey,
+              ),
             ),
             const SizedBox(height: 6),
             ClipRRect(
@@ -506,9 +588,12 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text("Speso Effettivo (Sotto)", style: TextStyle(fontSize: 9, color: Colors.grey)),
+                const Text(
+                  "Speso Effettivo (Sotto)",
+                  style: TextStyle(fontSize: 9, color: Colors.grey),
+                ),
                 Text(
-                  isOverBudget 
+                  isOverBudget
                       ? "Fuori Budget di ${_formatCurrency(totalSpentActual - totalBudget)}"
                       : "Rimanente Effettivo: ${_formatCurrency(totalBudget - totalSpentActual)}",
                   style: TextStyle(
@@ -529,10 +614,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          label,
-          style: const TextStyle(fontSize: 12, color: Colors.grey),
-        ),
+        Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
         Text(
           _formatCurrency(amount),
           style: TextStyle(
@@ -560,7 +642,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               children: [
                 Text(
                   "Distribuzione delle Spese",
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 Icon(
                   Icons.pie_chart_outline,
@@ -574,14 +658,18 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               style: TextStyle(color: Colors.grey, fontSize: 11),
             ),
             const Divider(height: 24),
-            
+
             if (categories.isEmpty)
               const Center(
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 24),
                   child: Text(
                     "Nessuna spesa sostenuta registrata.",
-                    style: TextStyle(color: Colors.grey, fontSize: 13, fontStyle: FontStyle.italic),
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 13,
+                      fontStyle: FontStyle.italic,
+                    ),
                   ),
                 ),
               )
@@ -591,8 +679,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   final cat = entry.key;
                   final amount = entry.value;
                   final color = AppTheme.categoryColors[cat] ?? Colors.grey;
-                  final rate = totalSpentActual > 0 ? (amount / totalSpentActual) : 0.0;
-                  
+                  final rate = totalSpentActual > 0
+                      ? (amount / totalSpentActual)
+                      : 0.0;
+
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 12),
                     child: Column(
@@ -614,7 +704,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                                 const SizedBox(width: 8),
                                 Text(
                                   cat,
-                                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 12,
+                                  ),
                                 ),
                               ],
                             ),
@@ -658,7 +751,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     int openChecklist,
   ) {
     final actCompletionRate = totalActs > 0 ? (completedActs / totalActs) : 0.0;
-    final checklistCompletionRate = totalChecklist > 0 ? (completedChecklist / totalChecklist) : 0.0;
+    final checklistCompletionRate = totalChecklist > 0
+        ? (completedChecklist / totalChecklist)
+        : 0.0;
 
     return Row(
       children: [
@@ -672,7 +767,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                 children: [
                   Text(
                     "Attività",
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                   const SizedBox(height: 12),
                   Center(
@@ -686,11 +784,16 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                             value: actCompletionRate,
                             strokeWidth: 6,
                             backgroundColor: Colors.grey.withOpacity(0.1),
-                            valueColor: const AlwaysStoppedAnimation<Color>(Colors.green),
+                            valueColor: const AlwaysStoppedAnimation<Color>(
+                              Colors.green,
+                            ),
                           ),
                           Text(
                             "${(actCompletionRate * 100).toStringAsFixed(0)}%",
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
                           ),
                         ],
                       ),
@@ -717,7 +820,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                 children: [
                   Text(
                     "Checklist",
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                   const SizedBox(height: 12),
                   Center(
@@ -731,11 +837,16 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                             value: checklistCompletionRate,
                             strokeWidth: 6,
                             backgroundColor: Colors.grey.withOpacity(0.1),
-                            valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Theme.of(context).colorScheme.primary,
+                            ),
                           ),
                           Text(
                             "${(checklistCompletionRate * 100).toStringAsFixed(0)}%",
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
                           ),
                         ],
                       ),
@@ -763,11 +874,12 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label, style: const TextStyle(fontSize: 11, color: Colors.grey)),
-          Text("$val", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+          Text(
+            "$val",
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+          ),
         ],
       ),
     );
   }
-
-
 }

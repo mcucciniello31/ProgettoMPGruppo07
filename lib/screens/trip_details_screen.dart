@@ -32,7 +32,8 @@ class TripDetailsScreen extends StatefulWidget {
   State<TripDetailsScreen> createState() => _TripDetailsScreenState();
 }
 
-class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTickerProviderStateMixin {
+class _TripDetailsScreenState extends State<TripDetailsScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final TextEditingController _checklistController = TextEditingController();
   bool _isInfoExpanded = false;
@@ -41,8 +42,10 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
   String _selectedChecklistCategory = 'Tutti';
   String _addChecklistCategory = 'Bagaglio';
   String _addChecklistPriority = 'Media';
-  String _selectedChecklistStatusFilter = "Tutti"; // Opzioni: Tutti, Da completare, Completati
-  String _selectedChecklistPriorityFilter = "Tutte"; // Opzioni: Tutte, Bassa, Media, Alta
+  String _selectedChecklistStatusFilter =
+      "Tutti"; // Opzioni: Tutti, Da completare, Completati
+  String _selectedChecklistPriorityFilter =
+      "Tutte"; // Opzioni: Tutte, Bassa, Media, Alta
 
   // Variabili per il filtraggio e la ricerca delle info utili
   String _selectedUsefulInfoCategory = 'Tutti';
@@ -53,7 +56,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
   String _selectedExpenseCategoryFilter = "Tutte";
   String _selectedExpenseAmountRangeFilter = "Tutti";
   String _selectedExpenseAssociationFilter = "Tutti";
-  final TextEditingController _convAmountController = TextEditingController(text: '100');
+  final TextEditingController _convAmountController = TextEditingController(
+    text: '100',
+  );
   String _convFrom = 'EUR';
   String _convTo = 'USD';
 
@@ -81,7 +86,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
     super.initState();
     _tabController = TabController(length: 5, vsync: this);
     _tabController.addListener(() {
-      setState(() {}); // Ricostruisce l'interfaccia per cambiare l'azione del FAB in base alla scheda attiva
+      setState(
+        () {},
+      ); // Ricostruisce l'interfaccia per cambiare l'azione del FAB in base alla scheda attiva
     });
   }
 
@@ -115,7 +122,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
 
     final gradientColors = [
       Color((trip.title.hashCode & 0xFFFFFF) | 0xFF000000).withOpacity(0.85),
-      Color((trip.destination.hashCode & 0xFFFFFF) | 0xFF000000).withOpacity(0.85),
+      Color(
+        (trip.destination.hashCode & 0xFFFFFF) | 0xFF000000,
+      ).withOpacity(0.85),
     ];
 
     final isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
@@ -137,15 +146,21 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                           width: double.infinity,
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
-                              colors: [gradientColors[0], gradientColors[1].withBlue(180)],
+                              colors: [
+                                gradientColors[0],
+                                gradientColors[1].withBlue(180),
+                              ],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                             ),
-                            image: trip.coverImagePath != null &&
+                            image:
+                                trip.coverImagePath != null &&
                                     trip.coverImagePath!.isNotEmpty &&
                                     File(trip.coverImagePath!).existsSync()
                                 ? DecorationImage(
-                                    image: FileImage(File(trip.coverImagePath!)),
+                                    image: FileImage(
+                                      File(trip.coverImagePath!),
+                                    ),
                                     fit: BoxFit.cover,
                                     colorFilter: ColorFilter.mode(
                                       Colors.black.withOpacity(0.45),
@@ -168,10 +183,14 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     IconButton(
-                                      icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+                                      icon: const Icon(
+                                        Icons.arrow_back_ios,
+                                        color: Colors.white,
+                                      ),
                                       onPressed: () => Navigator.pop(context),
                                     ),
                                     Expanded(
@@ -179,7 +198,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                         child: Text(
                                           trip.destination,
                                           style: TextStyle(
-                                            color: Colors.white.withOpacity(0.9),
+                                            color: Colors.white.withOpacity(
+                                              0.9,
+                                            ),
                                             fontWeight: FontWeight.w600,
                                             fontSize: 16,
                                           ),
@@ -188,9 +209,15 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                       ),
                                     ),
                                     IconButton(
-                                      icon: const Icon(Icons.ios_share, color: Colors.white),
+                                      icon: const Icon(
+                                        Icons.ios_share,
+                                        color: Colors.white,
+                                      ),
                                       tooltip: "Esporta Viaggio",
-                                      onPressed: () => _showExportTripDialog(context, provider),
+                                      onPressed: () => _showExportTripDialog(
+                                        context,
+                                        provider,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -206,11 +233,18 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                 const SizedBox(height: 8),
                                 Row(
                                   children: [
-                                    const Icon(Icons.calendar_month, color: Colors.white70, size: 16),
+                                    const Icon(
+                                      Icons.calendar_month,
+                                      color: Colors.white70,
+                                      size: 16,
+                                    ),
                                     const SizedBox(width: 6),
                                     Text(
                                       "${_formatDate(trip.startDate)} - ${_formatDate(trip.endDate)}",
-                                      style: const TextStyle(color: Colors.white70, fontSize: 13),
+                                      style: const TextStyle(
+                                        color: Colors.white70,
+                                        fontSize: 13,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -229,7 +263,11 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                         child: Row(
                           children: [
                             IconButton(
-                              icon: Icon(Icons.arrow_back_ios, color: Theme.of(context).colorScheme.primary, size: 20),
+                              icon: Icon(
+                                Icons.arrow_back_ios,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 20,
+                              ),
                               onPressed: () => Navigator.pop(context),
                             ),
                             const SizedBox(width: 4),
@@ -240,7 +278,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
-                                  color: Theme.of(context).colorScheme.onBackground,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onBackground,
                                 ),
                               ),
                             ),
@@ -259,16 +299,36 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                     isScrollable: false,
                     indicatorColor: Theme.of(context).colorScheme.primary,
                     labelColor: Theme.of(context).colorScheme.onBackground,
-                    unselectedLabelColor: Theme.of(context).textTheme.bodyMedium?.color,
+                    unselectedLabelColor: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.color,
                     labelPadding: EdgeInsets.zero,
-                    labelStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+                    labelStyle: const TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
                     unselectedLabelStyle: const TextStyle(fontSize: 10),
                     tabs: const [
-                      Tab(icon: Icon(Icons.map_outlined, size: 20), text: "Itinerario"),
-                      Tab(icon: Icon(Icons.checklist_outlined, size: 20), text: "Checklist"),
-                      Tab(icon: Icon(Icons.euro_outlined, size: 20), text: "Spese"),
-                      Tab(icon: Icon(Icons.photo_library_outlined, size: 20), text: "Diario"),
-                      Tab(icon: Icon(Icons.info_outline, size: 20), text: "Info Utili"),
+                      Tab(
+                        icon: Icon(Icons.map_outlined, size: 20),
+                        text: "Itinerario",
+                      ),
+                      Tab(
+                        icon: Icon(Icons.checklist_outlined, size: 20),
+                        text: "Checklist",
+                      ),
+                      Tab(
+                        icon: Icon(Icons.euro_outlined, size: 20),
+                        text: "Spese",
+                      ),
+                      Tab(
+                        icon: Icon(Icons.photo_library_outlined, size: 20),
+                        text: "Diario",
+                      ),
+                      Tab(
+                        icon: Icon(Icons.info_outline, size: 20),
+                        text: "Info Utili",
+                      ),
                     ],
                   ),
                 ),
@@ -307,7 +367,8 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => AddStopScreen(tripId: provider.selectedTrip!.id!),
+              builder: (context) =>
+                  AddStopScreen(tripId: provider.selectedTrip!.id!),
             ),
           );
         },
@@ -322,7 +383,8 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => AddExpenseScreen(tripId: provider.selectedTrip!.id!),
+              builder: (context) =>
+                  AddExpenseScreen(tripId: provider.selectedTrip!.id!),
             ),
           );
         },
@@ -375,19 +437,33 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
     // Filtra le tappe per posizione, nome, data e categoria delle attività contenute
     final filteredStops = stops.where((stop) {
       if (_searchStopLocation.isNotEmpty &&
-          !stop.location.toLowerCase().contains(_searchStopLocation.toLowerCase()) &&
-          !stop.name.toLowerCase().contains(_searchStopLocation.toLowerCase())) {
+          !stop.location.toLowerCase().contains(
+            _searchStopLocation.toLowerCase(),
+          ) &&
+          !stop.name.toLowerCase().contains(
+            _searchStopLocation.toLowerCase(),
+          )) {
         return false;
       }
       if (_selectedStopDate != null) {
-        final stopDate = DateTime(stop.dateTime.year, stop.dateTime.month, stop.dateTime.day);
-        final selectedDate = DateTime(_selectedStopDate!.year, _selectedStopDate!.month, _selectedStopDate!.day);
+        final stopDate = DateTime(
+          stop.dateTime.year,
+          stop.dateTime.month,
+          stop.dateTime.day,
+        );
+        final selectedDate = DateTime(
+          _selectedStopDate!.year,
+          _selectedStopDate!.month,
+          _selectedStopDate!.day,
+        );
         if (stopDate != selectedDate) {
           return false;
         }
       }
       if (_selectedActivityCategoryFilter != 'Tutti') {
-        final hasMatchingActivity = provider.getActivitiesForStop(stop.id!).any((act) => act.type == _selectedActivityCategoryFilter);
+        final hasMatchingActivity = provider
+            .getActivitiesForStop(stop.id!)
+            .any((act) => act.type == _selectedActivityCategoryFilter);
         if (!hasMatchingActivity) {
           return false;
         }
@@ -409,7 +485,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                   Icon(
                     Icons.add_road,
                     size: 70,
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.primary.withOpacity(0.5),
                   ),
                   const SizedBox(height: 16),
                   Text(
@@ -426,319 +504,439 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
             ),
           )
         else ...[
-        // Pannello a scomparsa per cercare e filtrare le spese
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: "Cerca per località",
-                        prefixIcon: const Icon(Icons.search, size: 20),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+          // Pannello a scomparsa per cercare e filtrare le spese
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        decoration: InputDecoration(
+                          hintText: "Cerca per località",
+                          prefixIcon: const Icon(Icons.search, size: 20),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
                         ),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      ),
-                      onChanged: (val) {
-                        setState(() {
-                          _searchStopLocation = val;
-                        });
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  IconButton(
-                    style: IconButton.styleFrom(
-                      backgroundColor: _selectedStopDate != null
-                          ? Theme.of(context).colorScheme.primary.withOpacity(0.15)
-                          : Theme.of(context).cardColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        side: BorderSide(
-                          color: _selectedStopDate != null
-                              ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context).dividerColor.withOpacity(0.2),
-                        ),
-                      ),
-                    ),
-                    icon: Icon(
-                      Icons.calendar_month,
-                      color: _selectedStopDate != null
-                          ? Theme.of(context).colorScheme.primary
-                          : Theme.of(context).iconTheme.color,
-                    ),
-                    onPressed: () async {
-                      final picked = await showDatePicker(
-                        context: context,
-                        initialDate: provider.selectedTrip!.startDate,
-                        firstDate: provider.selectedTrip!.startDate,
-                        lastDate: provider.selectedTrip!.endDate,
-                      );
-                      if (picked != null) {
-                        setState(() {
-                          _selectedStopDate = picked;
-                        });
-                      }
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: DropdownButtonFormField<String>(
-                      value: _selectedActivityCategoryFilter,
-                      isExpanded: true,
-                      decoration: InputDecoration(
-                        labelText: "Filtra Attività per Categoria",
-                        isDense: true,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      items: [
-                        'Tutti', 'Visita', 'Escursione', 'Prenotazione', 'Pasto', 'Spostamento', 'Evento', 'Momento Libero', 'Altro'
-                      ].map((cat) => DropdownMenuItem<String>(
-                            value: cat,
-                            child: Text(cat == 'Tutti' ? 'Tutte le Attività' : cat),
-                          )).toList(),
-                      onChanged: (val) {
-                        if (val != null) {
+                        onChanged: (val) {
                           setState(() {
-                            _selectedActivityCategoryFilter = val;
+                            _searchStopLocation = val;
+                          });
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    IconButton(
+                      style: IconButton.styleFrom(
+                        backgroundColor: _selectedStopDate != null
+                            ? Theme.of(
+                                context,
+                              ).colorScheme.primary.withOpacity(0.15)
+                            : Theme.of(context).cardColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          side: BorderSide(
+                            color: _selectedStopDate != null
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(
+                                    context,
+                                  ).dividerColor.withOpacity(0.2),
+                          ),
+                        ),
+                      ),
+                      icon: Icon(
+                        Icons.calendar_month,
+                        color: _selectedStopDate != null
+                            ? Theme.of(context).colorScheme.primary
+                            : Theme.of(context).iconTheme.color,
+                      ),
+                      onPressed: () async {
+                        final picked = await showDatePicker(
+                          context: context,
+                          initialDate: provider.selectedTrip!.startDate,
+                          firstDate: provider.selectedTrip!.startDate,
+                          lastDate: provider.selectedTrip!.endDate,
+                        );
+                        if (picked != null) {
+                          setState(() {
+                            _selectedStopDate = picked;
                           });
                         }
                       },
                     ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-        if (_selectedStopDate != null)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: InputChip(
-                label: Text("Data: ${_formatDate(_selectedStopDate!)}"),
-                onDeleted: () {
-                  setState(() {
-                    _selectedStopDate = null;
-                  });
-                },
-              ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: DropdownButtonFormField<String>(
+                        value: _selectedActivityCategoryFilter,
+                        isExpanded: true,
+                        decoration: InputDecoration(
+                          labelText: "Filtra Attività per Categoria",
+                          isDense: true,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 8,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        items:
+                            [
+                                  'Tutti',
+                                  'Visita',
+                                  'Escursione',
+                                  'Prenotazione',
+                                  'Pasto',
+                                  'Spostamento',
+                                  'Evento',
+                                  'Momento Libero',
+                                  'Altro',
+                                ]
+                                .map(
+                                  (cat) => DropdownMenuItem<String>(
+                                    value: cat,
+                                    child: Text(
+                                      cat == 'Tutti'
+                                          ? 'Tutte le Attività'
+                                          : cat,
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                        onChanged: (val) {
+                          if (val != null) {
+                            setState(() {
+                              _selectedActivityCategoryFilter = val;
+                            });
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
-        
-        Expanded(
-          child: filteredStops.isEmpty
-              ? Center(
-                  child: Text(
-                    "Nessuna tappa trovata per i filtri selezionati.",
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                )
-              : ListView.builder(
-                  padding: const EdgeInsets.all(24),
-                  itemCount: filteredStops.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index == filteredStops.length) {
-                      return const SizedBox(height: 80);
-                    }
-                    final stop = filteredStops[index];
-                    final activities = provider.getActivitiesForStop(stop.id!).where((act) {
-                      if (_selectedActivityCategoryFilter != 'Tutti' && act.type != _selectedActivityCategoryFilter) {
-                        return false;
-                      }
-                      return true;
-                    }).toList();
+          if (_selectedStopDate != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: InputChip(
+                  label: Text("Data: ${_formatDate(_selectedStopDate!)}"),
+                  onDeleted: () {
+                    setState(() {
+                      _selectedStopDate = null;
+                    });
+                  },
+                ),
+              ),
+            ),
 
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Scheda contenente la singola tappa dell'itinerario
-                        Card(
-                          margin: const EdgeInsets.only(bottom: 8),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        "Giorno ${stop.itineraryOrder} • ${stop.name}",
-                                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                          fontWeight: FontWeight.bold,
+          Expanded(
+            child: filteredStops.isEmpty
+                ? Center(
+                    child: Text(
+                      "Nessuna tappa trovata per i filtri selezionati.",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.all(24),
+                    itemCount: filteredStops.length + 1,
+                    itemBuilder: (context, index) {
+                      if (index == filteredStops.length) {
+                        return const SizedBox(height: 80);
+                      }
+                      final stop = filteredStops[index];
+                      final activities = provider
+                          .getActivitiesForStop(stop.id!)
+                          .where((act) {
+                            if (_selectedActivityCategoryFilter != 'Tutti' &&
+                                act.type != _selectedActivityCategoryFilter) {
+                              return false;
+                            }
+                            return true;
+                          })
+                          .toList();
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Scheda contenente la singola tappa dell'itinerario
+                          Card(
+                            margin: const EdgeInsets.only(bottom: 8),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          "Giorno ${stop.itineraryOrder} • ${stop.name}",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleMedium
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                         ),
                                       ),
-                                    ),
-                                    Row(
-                                      children: [
-                                        IconButton(
-                                          icon: const Icon(Icons.edit_outlined, size: 20),
-                                          tooltip: "Modifica tappa",
-                                          onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) => AddStopScreen(
-                                                  tripId: provider.selectedTrip!.id!,
-                                                  stop: stop,
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            icon: const Icon(
+                                              Icons.edit_outlined,
+                                              size: 20,
+                                            ),
+                                            tooltip: "Modifica tappa",
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AddStopScreen(
+                                                        tripId: provider
+                                                            .selectedTrip!
+                                                            .id!,
+                                                        stop: stop,
+                                                      ),
                                                 ),
-                                              ),
-                                            );
-                                          },
+                                              );
+                                            },
+                                          ),
+                                          IconButton(
+                                            icon: const Icon(
+                                              Icons.delete_outline,
+                                              size: 20,
+                                              color: Colors.redAccent,
+                                            ),
+                                            tooltip: "Rimuovi tappa",
+                                            onPressed: () {
+                                              showDialog(
+                                                context: context,
+                                                builder: (ctx) => AlertDialog(
+                                                  title: const Text(
+                                                    "Elimina Tappa",
+                                                  ),
+                                                  content: Text(
+                                                    "Sei sicuro di voler eliminare la tappa '${stop.name}' e tutte le sue attività associate?",
+                                                  ),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () =>
+                                                          Navigator.pop(ctx),
+                                                      child: const Text(
+                                                        "Annulla",
+                                                      ),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(ctx);
+                                                        provider.deleteStop(
+                                                          stop.id!,
+                                                        );
+                                                      },
+                                                      child: const Text(
+                                                        "Elimina",
+                                                        style: TextStyle(
+                                                          color:
+                                                              Colors.redAccent,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.access_time,
+                                        size: 14,
+                                        color: Colors.grey,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        "${_formatDate(stop.dateTime)} alle ${_formatTime(stop.dateTime.hour.toString().padLeft(2, '0'))}:${stop.dateTime.minute.toString().padLeft(2, '0')}",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium
+                                            ?.copyWith(fontSize: 12),
+                                      ),
+                                      if (stop.location.isNotEmpty) ...[
+                                        const SizedBox(width: 12),
+                                        const Icon(
+                                          Icons.location_on_outlined,
+                                          size: 14,
+                                          color: Colors.grey,
                                         ),
-                                        IconButton(
-                                          icon: const Icon(Icons.delete_outline, size: 20, color: Colors.redAccent),
-                                          tooltip: "Rimuovi tappa",
-                                          onPressed: () {
-                                            showDialog(
-                                              context: context,
-                                              builder: (ctx) => AlertDialog(
-                                                title: const Text("Elimina Tappa"),
-                                                content: Text("Sei sicuro di voler eliminare la tappa '${stop.name}' e tutte le sue attività associate?"),
-                                                actions: [
-                                                  TextButton(
-                                                    onPressed: () => Navigator.pop(ctx),
-                                                    child: const Text("Annulla"),
-                                                  ),
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(ctx);
-                                                      provider.deleteStop(stop.id!);
-                                                    },
-                                                    child: const Text("Elimina", style: TextStyle(color: Colors.redAccent)),
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                          },
+                                        const SizedBox(width: 4),
+                                        Expanded(
+                                          child: Text(
+                                            stop.location,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium
+                                                ?.copyWith(fontSize: 12),
+                                          ),
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+
+                                  if (stop.description.isNotEmpty) ...[
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      stop.description,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                            color: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium
+                                                ?.color
+                                                ?.withOpacity(0.8),
+                                          ),
+                                    ),
+                                  ],
+                                  if (stop.notes.isNotEmpty) ...[
+                                    const SizedBox(height: 8),
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Icon(
+                                          Icons.sticky_note_2_outlined,
+                                          size: 14,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .secondary
+                                              .withOpacity(0.8),
+                                        ),
+                                        const SizedBox(width: 6),
+                                        Expanded(
+                                          child: Text(
+                                            stop.notes,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium
+                                                ?.copyWith(
+                                                  fontStyle: FontStyle.italic,
+                                                  fontSize: 13,
+                                                  color: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium
+                                                      ?.color
+                                                      ?.withOpacity(0.7),
+                                                ),
+                                          ),
                                         ),
                                       ],
                                     ),
                                   ],
-                                ),
-                                Row(
-                                  children: [
-                                    const Icon(Icons.access_time, size: 14, color: Colors.grey),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      "${_formatDate(stop.dateTime)} alle ${_formatTime(stop.dateTime.hour.toString().padLeft(2, '0'))}:${stop.dateTime.minute.toString().padLeft(2, '0')}",
-                                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 12),
-                                    ),
-                                    if (stop.location.isNotEmpty) ...[
-                                      const SizedBox(width: 12),
-                                      const Icon(Icons.location_on_outlined, size: 14, color: Colors.grey),
-                                      const SizedBox(width: 4),
-                                      Expanded(
-                                        child: Text(
-                                          stop.location,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 12),
+                                  const SizedBox(height: 12),
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: OutlinedButton.icon(
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => AddStopScreen(
+                                              tripId:
+                                                  provider.selectedTrip!.id!,
+                                              parentStop: stop,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      icon: const Icon(
+                                        Icons.add_task,
+                                        size: 16,
+                                      ),
+                                      label: const Text(
+                                        "Aggiungi attività per questa tappa",
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                    ],
-                                  ],
-                                ),
-
-                                if (stop.description.isNotEmpty) ...[
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    stop.description,
-                                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                      color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.8),
-                                    ),
-                                  ),
-                                ],
-                                if (stop.notes.isNotEmpty) ...[
-                                  const SizedBox(height: 8),
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Icon(
-                                        Icons.sticky_note_2_outlined,
-                                        size: 14,
-                                        color: Theme.of(context).colorScheme.secondary.withOpacity(0.8),
-                                      ),
-                                      const SizedBox(width: 6),
-                                      Expanded(
-                                        child: Text(
-                                          stop.notes,
-                                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                            fontStyle: FontStyle.italic,
-                                            fontSize: 13,
-                                            color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
+                                      style: OutlinedButton.styleFrom(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                          vertical: 8,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
                                           ),
                                         ),
                                       ),
-                                    ],
+                                    ),
                                   ),
                                 ],
-                                const SizedBox(height: 12),
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: OutlinedButton.icon(
-                                    onPressed: () {
-                                      Navigator.push(
+                              ),
+                            ),
+                          ),
+
+                          // Lista delle singole attività programmate per questa tappa
+                          if (activities.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: 12,
+                                bottom: 16,
+                              ),
+                              child: Column(
+                                children: activities
+                                    .map(
+                                      (act) => _buildActivityRow(
                                         context,
-                                        MaterialPageRoute(
-                                          builder: (context) => AddStopScreen(
-                                            tripId: provider.selectedTrip!.id!,
-                                            parentStop: stop,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    icon: const Icon(Icons.add_task, size: 16),
-                                    label: const Text(
-                                      "Aggiungi attività per questa tappa",
-                                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                                    ),
-                                    style: OutlinedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
+                                        act,
+                                        provider,
                                       ),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                                    )
+                                    .toList(),
+                              ),
                             ),
-                          ),
-                        ),
+                        ],
+                      );
+                    },
+                  ),
+          ),
+        ],
+      ],
+    );
+  }
 
-                        // Lista delle singole attività programmate per questa tappa
-                        if (activities.isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(left: 12, bottom: 16),
-                            child: Column(
-                              children: activities.map((act) => _buildActivityRow(context, act, provider)).toList(),
-                            ),
-                          ),
-                      ],
-                    );
-      },
-    ),
-  ),
-]
-],
-);
-}
-
-  Widget _buildActivityRow(BuildContext context, Activity activity, TravelProvider provider) {
-    final categoryIcon = AppTheme.activityIcons[activity.type] ?? Icons.local_activity;
+  Widget _buildActivityRow(
+    BuildContext context,
+    Activity activity,
+    TravelProvider provider,
+  ) {
+    final categoryIcon =
+        AppTheme.activityIcons[activity.type] ?? Icons.local_activity;
 
     // Determina il colore e l'icona in base allo stato
     IconData statusIcon;
@@ -770,10 +968,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
       default:
         statusIcon = Icons.radio_button_off;
         statusColor = Theme.of(context).colorScheme.primary;
-        textStyle = const TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
-        );
+        textStyle = const TextStyle(fontSize: 13, fontWeight: FontWeight.w600);
         break;
     }
 
@@ -800,18 +995,33 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                   icon: Icon(statusIcon, color: statusColor, size: 20),
                   tooltip: "Cambia stato attività",
                   onSelected: (newStatus) {
-                    final updatedActivity = activity.copyWith(status: newStatus);
+                    final updatedActivity = activity.copyWith(
+                      status: newStatus,
+                    );
                     provider.updateActivity(updatedActivity);
                   },
                   itemBuilder: (context) => [
-                    const PopupMenuItem(value: 'Da svolgere', child: Text('Da svolgere')),
-                    const PopupMenuItem(value: 'Completata', child: Text('Completata')),
-                    const PopupMenuItem(value: 'Annullata', child: Text('Annullata')),
+                    const PopupMenuItem(
+                      value: 'Da svolgere',
+                      child: Text('Da svolgere'),
+                    ),
+                    const PopupMenuItem(
+                      value: 'Completata',
+                      child: Text('Completata'),
+                    ),
+                    const PopupMenuItem(
+                      value: 'Annullata',
+                      child: Text('Annullata'),
+                    ),
                   ],
                 ),
                 const SizedBox(width: 4),
                 // 2. Icona della categoria associata
-                Icon(categoryIcon, size: 16, color: Theme.of(context).colorScheme.secondary),
+                Icon(
+                  categoryIcon,
+                  size: 16,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
                 const SizedBox(width: 8),
                 // 3. Orario e Titolo dell'attività
                 Expanded(
@@ -824,13 +1034,20 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                 if (activity.cost > 0) ...[
                   Text(
                     "€${activity.cost.toStringAsFixed(2).replaceAll('.', ',')}",
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
                   ),
                   const SizedBox(width: 4),
                 ],
                 // 5. Azioni (Modifica / Elimina)
                 IconButton(
-                  icon: const Icon(Icons.edit_outlined, size: 16, color: Colors.grey),
+                  icon: const Icon(
+                    Icons.edit_outlined,
+                    size: 16,
+                    color: Colors.grey,
+                  ),
                   tooltip: "Modifica attività",
                   onPressed: () {
                     Navigator.push(
@@ -845,14 +1062,20 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                   },
                 ),
                 IconButton(
-                  icon: const Icon(Icons.close, size: 16, color: Colors.redAccent),
+                  icon: const Icon(
+                    Icons.close,
+                    size: 16,
+                    color: Colors.redAccent,
+                  ),
                   tooltip: "Elimina attività",
                   onPressed: () {
                     showDialog(
                       context: context,
                       builder: (ctx) => AlertDialog(
                         title: const Text("Elimina Attività"),
-                        content: Text("Sei sicuro di voler eliminare l'attività '${activity.name}'?"),
+                        content: Text(
+                          "Sei sicuro di voler eliminare l'attività '${activity.name}'?",
+                        ),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(ctx),
@@ -863,7 +1086,10 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                               Navigator.pop(ctx);
                               provider.deleteActivity(activity.id!);
                             },
-                            child: const Text("Elimina", style: TextStyle(color: Colors.redAccent)),
+                            child: const Text(
+                              "Elimina",
+                              style: TextStyle(color: Colors.redAccent),
+                            ),
                           ),
                         ],
                       ),
@@ -872,7 +1098,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                 ),
               ],
             ),
-            
+
             // Dettagli secondari visualizzati dentro la scheda
             Padding(
               padding: const EdgeInsets.only(left: 36.0, top: 2.0),
@@ -882,12 +1108,19 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                   // Località
                   Row(
                     children: [
-                      const Icon(Icons.location_on_outlined, size: 12, color: Colors.grey),
+                      const Icon(
+                        Icons.location_on_outlined,
+                        size: 12,
+                        color: Colors.grey,
+                      ),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
                           activity.location,
-                          style: const TextStyle(fontSize: 11, color: Colors.grey),
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: Colors.grey,
+                          ),
                         ),
                       ),
                     ],
@@ -899,7 +1132,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                       activity.description,
                       style: TextStyle(
                         fontSize: 11,
-                        color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.8),
+                        color: Theme.of(
+                          context,
+                        ).textTheme.bodyMedium?.color?.withOpacity(0.8),
                       ),
                     ),
                   ],
@@ -909,7 +1144,11 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(Icons.sticky_note_2_outlined, size: 12, color: Colors.grey),
+                        const Icon(
+                          Icons.sticky_note_2_outlined,
+                          size: 12,
+                          color: Colors.grey,
+                        ),
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
@@ -965,7 +1204,10 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
     );
   }
 
-  void _showEditChecklistItemDialog(TravelProvider provider, ChecklistItem item) {
+  void _showEditChecklistItemDialog(
+    TravelProvider provider,
+    ChecklistItem item,
+  ) {
     final textController = TextEditingController(text: item.itemText);
     String selectedCategory = item.category;
     String selectedPriority = item.priority;
@@ -998,18 +1240,31 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    items: ['Bagaglio', 'Documenti', 'Pre-partenza', 'Prenotazioni', 'Acquisti', 'Altro']
-                        .map((cat) => DropdownMenuItem<String>(
-                              value: cat,
-                              child: Row(
-                                children: [
-                                  Icon(_getChecklistCategoryIcon(cat), size: 18),
-                                  const SizedBox(width: 8),
-                                  Text(cat),
-                                ],
+                    items:
+                        [
+                              'Bagaglio',
+                              'Documenti',
+                              'Pre-partenza',
+                              'Prenotazioni',
+                              'Acquisti',
+                              'Altro',
+                            ]
+                            .map(
+                              (cat) => DropdownMenuItem<String>(
+                                value: cat,
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      _getChecklistCategoryIcon(cat),
+                                      size: 18,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(cat),
+                                  ],
+                                ),
                               ),
-                            ))
-                        .toList(),
+                            )
+                            .toList(),
                     onChanged: (val) {
                       if (val != null) {
                         setDialogState(() {
@@ -1028,16 +1283,22 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                       ),
                     ),
                     items: ['Bassa', 'Media', 'Alta']
-                        .map((pri) => DropdownMenuItem<String>(
-                              value: pri,
-                              child: Row(
-                                children: [
-                                  Icon(Icons.flag, size: 18, color: _getPriorityColor(pri)),
-                                  const SizedBox(width: 8),
-                                  Text(pri),
-                                ],
-                              ),
-                            ))
+                        .map(
+                          (pri) => DropdownMenuItem<String>(
+                            value: pri,
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.flag,
+                                  size: 18,
+                                  color: _getPriorityColor(pri),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(pri),
+                              ],
+                            ),
+                          ),
+                        )
                         .toList(),
                     onChanged: (val) {
                       if (val != null) {
@@ -1062,7 +1323,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                       return;
                     }
                     if (textController.text.startsWith(' ')) {
-                      _showValidationError("Il testo non può iniziare con uno spazio");
+                      _showValidationError(
+                        "Il testo non può iniziare con uno spazio",
+                      );
                       return;
                     }
                     provider.updateChecklistItem(
@@ -1084,7 +1347,10 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
     );
   }
 
-  void _showDeleteChecklistItemConfirmation(TravelProvider provider, ChecklistItem item) {
+  void _showDeleteChecklistItemConfirmation(
+    TravelProvider provider,
+    ChecklistItem item,
+  ) {
     showDialog(
       context: context,
       builder: (context) {
@@ -1145,30 +1411,57 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
     );
   }
 
-  Widget _buildMonthCalendar(DateTime monthDate, Trip trip, List<Stop> stops, TravelProvider provider) {
+  Widget _buildMonthCalendar(
+    DateTime monthDate,
+    Trip trip,
+    List<Stop> stops,
+    TravelProvider provider,
+  ) {
     final year = monthDate.year;
     final month = monthDate.month;
     final firstDayOfMonth = DateTime(year, month, 1);
     final daysInMonth = DateTime(year, month + 1, 0).day;
-    final offset = firstDayOfMonth.weekday - 1; // 0 indica Lunedì, 6 indica Domenica
+    final offset =
+        firstDayOfMonth.weekday - 1; // 0 indica Lunedì, 6 indica Domenica
 
     final monthNames = [
-      "", "Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno",
-      "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"
+      "",
+      "Gennaio",
+      "Febbraio",
+      "Marzo",
+      "Aprile",
+      "Maggio",
+      "Giugno",
+      "Luglio",
+      "Agosto",
+      "Settembre",
+      "Ottobre",
+      "Novembre",
+      "Dicembre",
     ];
     final monthName = monthNames[month];
 
     final weekDays = ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"];
 
-    final tripStart = DateTime(trip.startDate.year, trip.startDate.month, trip.startDate.day);
-    final tripEnd = DateTime(trip.endDate.year, trip.endDate.month, trip.endDate.day);
+    final tripStart = DateTime(
+      trip.startDate.year,
+      trip.startDate.month,
+      trip.startDate.day,
+    );
+    final tripEnd = DateTime(
+      trip.endDate.year,
+      trip.endDate.month,
+      trip.endDate.day,
+    );
 
     return Card(
       margin: const EdgeInsets.only(bottom: 20),
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.1)),
+        side: BorderSide(
+          color: Theme.of(context).dividerColor.withOpacity(0.1),
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -1221,11 +1514,14 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                 final dayNumber = index - offset + 1;
                 final dayDate = DateTime(year, month, dayNumber);
 
-                final isWithinTrip = !dayDate.isBefore(tripStart) && !dayDate.isAfter(tripEnd);
+                final isWithinTrip =
+                    !dayDate.isBefore(tripStart) && !dayDate.isAfter(tripEnd);
 
                 final dayStops = stops.where((stop) {
                   final sDate = stop.dateTime;
-                  return sDate.year == year && sDate.month == month && sDate.day == dayNumber;
+                  return sDate.year == year &&
+                      sDate.month == month &&
+                      sDate.day == dayNumber;
                 }).toList();
 
                 final hasStops = dayStops.isNotEmpty;
@@ -1238,7 +1534,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: isWithinTrip
-                          ? Theme.of(context).colorScheme.primary.withOpacity(0.12)
+                          ? Theme.of(
+                              context,
+                            ).colorScheme.primary.withOpacity(0.12)
                           : Colors.transparent,
                       border: Border.all(
                         color: hasStops
@@ -1256,10 +1554,14 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                             style: TextStyle(
                               fontFamily: 'Outfit',
                               fontSize: 14,
-                              fontWeight: isWithinTrip || hasStops ? FontWeight.bold : FontWeight.normal,
+                              fontWeight: isWithinTrip || hasStops
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
                               color: isWithinTrip
                                   ? Theme.of(context).colorScheme.primary
-                                  : Theme.of(context).textTheme.bodyLarge?.color,
+                                  : Theme.of(
+                                      context,
+                                    ).textTheme.bodyLarge?.color,
                             ),
                           ),
                           if (hasStops)
@@ -1285,7 +1587,11 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
     );
   }
 
-  void _showDayDetailsBottomSheet(DateTime date, List<Stop> dayStops, TravelProvider provider) {
+  void _showDayDetailsBottomSheet(
+    DateTime date,
+    List<Stop> dayStops,
+    TravelProvider provider,
+  ) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -1339,7 +1645,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                             Icon(
                               Icons.calendar_today_outlined,
                               size: 48,
-                              color: Theme.of(context).hintColor.withOpacity(0.5),
+                              color: Theme.of(
+                                context,
+                              ).hintColor.withOpacity(0.5),
                             ),
                             const SizedBox(height: 12),
                             Text(
@@ -1360,14 +1668,22 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                         itemCount: dayStops.length,
                         itemBuilder: (context, sIndex) {
                           final stop = dayStops[sIndex];
-                          final stopActivities = provider.getActivitiesForStop(stop.id!);
+                          final stopActivities = provider.getActivitiesForStop(
+                            stop.id!,
+                          );
                           return Card(
                             margin: const EdgeInsets.only(bottom: 16),
                             elevation: 0,
-                            color: Theme.of(context).colorScheme.primary.withOpacity(0.04),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.primary.withOpacity(0.04),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
-                              side: BorderSide(color: Theme.of(context).colorScheme.primary.withOpacity(0.1)),
+                              side: BorderSide(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.primary.withOpacity(0.1),
+                              ),
                             ),
                             child: Padding(
                               padding: const EdgeInsets.all(16),
@@ -1375,7 +1691,8 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Expanded(
                                         child: Text(
@@ -1388,14 +1705,22 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                         ),
                                       ),
                                       if (stop.notes.isNotEmpty)
-                                        Icon(Icons.notes, size: 18, color: Theme.of(context).hintColor),
+                                        Icon(
+                                          Icons.notes,
+                                          size: 18,
+                                          color: Theme.of(context).hintColor,
+                                        ),
                                     ],
                                   ),
                                   if (stop.location.isNotEmpty) ...[
                                     const SizedBox(height: 4),
                                     Row(
                                       children: [
-                                        Icon(Icons.location_on, size: 14, color: Theme.of(context).hintColor),
+                                        Icon(
+                                          Icons.location_on,
+                                          size: 14,
+                                          color: Theme.of(context).hintColor,
+                                        ),
                                         const SizedBox(width: 4),
                                         Expanded(
                                           child: Text(
@@ -1403,7 +1728,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                             style: TextStyle(
                                               fontFamily: 'Outfit',
                                               fontSize: 13,
-                                              color: Theme.of(context).hintColor,
+                                              color: Theme.of(
+                                                context,
+                                              ).hintColor,
                                             ),
                                           ),
                                         ),
@@ -1446,14 +1773,19 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                     Column(
                                       children: stopActivities.map((act) {
                                         return Padding(
-                                          padding: const EdgeInsets.only(bottom: 6),
+                                          padding: const EdgeInsets.only(
+                                            bottom: 6,
+                                          ),
                                           child: Row(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Icon(
                                                 Icons.check_circle_outline,
                                                 size: 14,
-                                                color: Theme.of(context).colorScheme.primary,
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.primary,
                                               ),
                                               const SizedBox(width: 6),
                                               Expanded(
@@ -1540,7 +1872,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                         Icon(
                           Icons.list_alt,
                           size: 18,
-                          color: !_isCalendarView ? Colors.white : Theme.of(context).textTheme.bodyMedium?.color,
+                          color: !_isCalendarView
+                              ? Colors.white
+                              : Theme.of(context).textTheme.bodyMedium?.color,
                         ),
                         const SizedBox(width: 6),
                         Text(
@@ -1548,7 +1882,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                           style: TextStyle(
                             fontFamily: 'Outfit',
                             fontWeight: FontWeight.w600,
-                            color: !_isCalendarView ? Colors.white : Theme.of(context).textTheme.bodyMedium?.color,
+                            color: !_isCalendarView
+                                ? Colors.white
+                                : Theme.of(context).textTheme.bodyMedium?.color,
                           ),
                         ),
                       ],
@@ -1579,7 +1915,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                         Icon(
                           Icons.calendar_month,
                           size: 18,
-                          color: _isCalendarView ? Colors.white : Theme.of(context).textTheme.bodyMedium?.color,
+                          color: _isCalendarView
+                              ? Colors.white
+                              : Theme.of(context).textTheme.bodyMedium?.color,
                         ),
                         const SizedBox(width: 6),
                         Text(
@@ -1587,7 +1925,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                           style: TextStyle(
                             fontFamily: 'Outfit',
                             fontWeight: FontWeight.w600,
-                            color: _isCalendarView ? Colors.white : Theme.of(context).textTheme.bodyMedium?.color,
+                            color: _isCalendarView
+                                ? Colors.white
+                                : Theme.of(context).textTheme.bodyMedium?.color,
                           ),
                         ),
                       ],
@@ -1604,10 +1944,11 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
 
   Widget _buildChecklistTab(TravelProvider provider) {
     final list = provider.currentChecklist;
-    
+
     // Filtra la lista della checklist per categoria, stato e priorità
     final filteredList = list.where((item) {
-      if (_selectedChecklistCategory != 'Tutti' && item.category != _selectedChecklistCategory) {
+      if (_selectedChecklistCategory != 'Tutti' &&
+          item.category != _selectedChecklistCategory) {
         return false;
       }
       if (_selectedChecklistStatusFilter != 'Tutti') {
@@ -1616,7 +1957,8 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
           return false;
         }
       }
-      if (_selectedChecklistPriorityFilter != 'Tutte' && item.priority != _selectedChecklistPriorityFilter) {
+      if (_selectedChecklistPriorityFilter != 'Tutte' &&
+          item.priority != _selectedChecklistPriorityFilter) {
         return false;
       }
       return true;
@@ -1625,10 +1967,16 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
     // La percentuale di avanzamento della checklist si adatta ai filtri correnti
     final categoryOnlyList = _selectedChecklistCategory == 'Tutti'
         ? list
-        : list.where((item) => item.category == _selectedChecklistCategory).toList();
+        : list
+              .where((item) => item.category == _selectedChecklistCategory)
+              .toList();
 
-    final categoryCheckedCount = categoryOnlyList.where((i) => i.isChecked).length;
-    final categoryRate = categoryOnlyList.isEmpty ? 0.0 : categoryCheckedCount / categoryOnlyList.length;
+    final categoryCheckedCount = categoryOnlyList
+        .where((i) => i.isChecked)
+        .length;
+    final categoryRate = categoryOnlyList.isEmpty
+        ? 0.0
+        : categoryCheckedCount / categoryOnlyList.length;
 
     final overallCheckedCount = list.where((i) => i.isChecked).length;
     final overallRate = list.isEmpty ? 0.0 : overallCheckedCount / list.length;
@@ -1647,17 +1995,31 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                   decoration: InputDecoration(
                     labelText: "Categoria",
                     isDense: true,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 8,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  items: [
-                    'Tutti', 'Bagaglio', 'Documenti', 'Pre-partenza', 'Prenotazioni', 'Acquisti', 'Altro'
-                  ].map((cat) => DropdownMenuItem<String>(
-                        value: cat,
-                        child: Text(cat),
-                      )).toList(),
+                  items:
+                      [
+                            'Tutti',
+                            'Bagaglio',
+                            'Documenti',
+                            'Pre-partenza',
+                            'Prenotazioni',
+                            'Acquisti',
+                            'Altro',
+                          ]
+                          .map(
+                            (cat) => DropdownMenuItem<String>(
+                              value: cat,
+                              child: Text(cat),
+                            ),
+                          )
+                          .toList(),
                   onChanged: (val) {
                     if (val != null) {
                       setState(() {
@@ -1679,15 +2041,22 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                   decoration: InputDecoration(
                     labelText: "Stato",
                     isDense: true,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 8,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  items: ['Tutti', 'Da completare', 'Completati'].map((status) => DropdownMenuItem<String>(
-                        value: status,
-                        child: Text(status),
-                      )).toList(),
+                  items: ['Tutti', 'Da completare', 'Completati']
+                      .map(
+                        (status) => DropdownMenuItem<String>(
+                          value: status,
+                          child: Text(status),
+                        ),
+                      )
+                      .toList(),
                   onChanged: (val) {
                     if (val != null) {
                       setState(() {
@@ -1705,23 +2074,34 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                   decoration: InputDecoration(
                     labelText: "Priorità",
                     isDense: true,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 8,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  items: ['Tutte', 'Bassa', 'Media', 'Alta'].map((prio) => DropdownMenuItem<String>(
-                        value: prio,
-                        child: Row(
-                          children: [
-                            if (prio != 'Tutte') ...[
-                              Icon(Icons.flag, size: 14, color: _getPriorityColor(prio)),
-                              const SizedBox(width: 4),
+                  items: ['Tutte', 'Bassa', 'Media', 'Alta']
+                      .map(
+                        (prio) => DropdownMenuItem<String>(
+                          value: prio,
+                          child: Row(
+                            children: [
+                              if (prio != 'Tutte') ...[
+                                Icon(
+                                  Icons.flag,
+                                  size: 14,
+                                  color: _getPriorityColor(prio),
+                                ),
+                                const SizedBox(width: 4),
+                              ],
+                              Text(prio),
                             ],
-                            Text(prio),
-                          ],
+                          ),
                         ),
-                      )).toList(),
+                      )
+                      .toList(),
                   onChanged: (val) {
                     if (val != null) {
                       setState(() {
@@ -1751,9 +2131,8 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                         _selectedChecklistCategory == 'Tutti'
                             ? "Progresso Checklist Totale"
                             : "Progresso $_selectedChecklistCategory",
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       Text(
                         "${(categoryRate * 100).toStringAsFixed(0)}%",
@@ -1771,8 +2150,12 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                     child: LinearProgressIndicator(
                       value: categoryRate,
                       minHeight: 10,
-                      backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                      valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
+                      backgroundColor: Theme.of(
+                        context,
+                      ).colorScheme.primary.withOpacity(0.1),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Theme.of(context).colorScheme.primary,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -1786,7 +2169,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                       if (_selectedChecklistCategory != 'Tutti')
                         Text(
                           "Totale: $overallCheckedCount su ${list.length} (${(overallRate * 100).toStringAsFixed(0)}%)",
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodySmall?.copyWith(color: Colors.grey),
                         ),
                     ],
                   ),
@@ -1824,7 +2209,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                         title: Text(
                           item.itemText,
                           style: TextStyle(
-                            decoration: item.isChecked ? TextDecoration.lineThrough : null,
+                            decoration: item.isChecked
+                                ? TextDecoration.lineThrough
+                                : null,
                             color: item.isChecked ? Colors.grey : null,
                           ),
                         ),
@@ -1833,15 +2220,26 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                           child: Row(
                             children: [
                               if (_selectedChecklistCategory == 'Tutti') ...[
-                                Icon(_getChecklistCategoryIcon(item.category), size: 12, color: Colors.grey),
+                                Icon(
+                                  _getChecklistCategoryIcon(item.category),
+                                  size: 12,
+                                  color: Colors.grey,
+                                ),
                                 const SizedBox(width: 4),
                                 Text(
                                   item.category,
-                                  style: const TextStyle(fontSize: 11, color: Colors.grey),
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.grey,
+                                  ),
                                 ),
                                 const SizedBox(width: 12),
                               ],
-                              Icon(Icons.flag, size: 12, color: _getPriorityColor(item.priority)),
+                              Icon(
+                                Icons.flag,
+                                size: 12,
+                                color: _getPriorityColor(item.priority),
+                              ),
                             ],
                           ),
                         ),
@@ -1849,14 +2247,25 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
-                              icon: const Icon(Icons.edit_outlined, color: Colors.blue),
-                              onPressed: () => _showEditChecklistItemDialog(provider, item),
+                              icon: const Icon(
+                                Icons.edit_outlined,
+                                color: Colors.blue,
+                              ),
+                              onPressed: () =>
+                                  _showEditChecklistItemDialog(provider, item),
                               constraints: const BoxConstraints(),
                               padding: const EdgeInsets.all(8),
                             ),
                             IconButton(
-                              icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
-                              onPressed: () => _showDeleteChecklistItemConfirmation(provider, item),
+                              icon: const Icon(
+                                Icons.delete_outline,
+                                color: Colors.redAccent,
+                              ),
+                              onPressed: () =>
+                                  _showDeleteChecklistItemConfirmation(
+                                    provider,
+                                    item,
+                                  ),
                               constraints: const BoxConstraints(),
                               padding: const EdgeInsets.all(8),
                             ),
@@ -1874,7 +2283,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
           decoration: BoxDecoration(
             color: Theme.of(context).cardColor,
             border: Border(
-              top: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.1)),
+              top: BorderSide(
+                color: Theme.of(context).dividerColor.withOpacity(0.1),
+              ),
             ),
           ),
           child: Row(
@@ -1892,18 +2303,28 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                     _addChecklistCategory = cat;
                   });
                 },
-                itemBuilder: (context) => [
-                  'Bagaglio', 'Documenti', 'Pre-partenza', 'Prenotazioni', 'Acquisti', 'Altro'
-                ].map((cat) => PopupMenuItem<String>(
-                  value: cat,
-                  child: Row(
-                    children: [
-                      Icon(_getChecklistCategoryIcon(cat), size: 18),
-                      const SizedBox(width: 8),
-                      Text(cat),
-                    ],
-                  ),
-                )).toList(),
+                itemBuilder: (context) =>
+                    [
+                          'Bagaglio',
+                          'Documenti',
+                          'Pre-partenza',
+                          'Prenotazioni',
+                          'Acquisti',
+                          'Altro',
+                        ]
+                        .map(
+                          (cat) => PopupMenuItem<String>(
+                            value: cat,
+                            child: Row(
+                              children: [
+                                Icon(_getChecklistCategoryIcon(cat), size: 18),
+                                const SizedBox(width: 8),
+                                Text(cat),
+                              ],
+                            ),
+                          ),
+                        )
+                        .toList(),
               ),
               const SizedBox(width: 4),
               // Menu per selezionare la priorità del bagaglio/promemoria
@@ -1919,18 +2340,24 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                     _addChecklistPriority = prio;
                   });
                 },
-                itemBuilder: (context) => [
-                  'Bassa', 'Media', 'Alta'
-                ].map((prio) => PopupMenuItem<String>(
-                  value: prio,
-                  child: Row(
-                    children: [
-                      Icon(Icons.flag, color: _getPriorityColor(prio), size: 18),
-                      const SizedBox(width: 8),
-                      Text(prio),
-                    ],
-                  ),
-                )).toList(),
+                itemBuilder: (context) => ['Bassa', 'Media', 'Alta']
+                    .map(
+                      (prio) => PopupMenuItem<String>(
+                        value: prio,
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.flag,
+                              color: _getPriorityColor(prio),
+                              size: 18,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(prio),
+                          ],
+                        ),
+                      ),
+                    )
+                    .toList(),
               ),
               const SizedBox(width: 4),
               Expanded(
@@ -1941,11 +2368,16 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                   ),
                   onSubmitted: (val) {
                     if (val.startsWith(' ')) {
-                      _showValidationError("Il testo non può iniziare con uno spazio");
+                      _showValidationError(
+                        "Il testo non può iniziare con uno spazio",
+                      );
                       return;
                     }
                     if (val.trim().isNotEmpty) {
@@ -1967,14 +2399,18 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                 style: IconButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.primary,
                   foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   padding: const EdgeInsets.all(12),
                 ),
                 icon: const Icon(Icons.send),
                 onPressed: () {
                   final text = _checklistController.text;
                   if (text.startsWith(' ')) {
-                    _showValidationError("Il testo non può iniziare con uno spazio");
+                    _showValidationError(
+                      "Il testo non può iniziare con uno spazio",
+                    );
                     return;
                   }
                   final trimmed = text.trim();
@@ -2008,7 +2444,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
       builder: (context) {
         return AlertDialog(
           title: const Text("Elimina Spesa"),
-          content: Text("Sei sicuro di voler eliminare la spesa '${ex.title}'?"),
+          content: Text(
+            "Sei sicuro di voler eliminare la spesa '${ex.title}'?",
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -2040,7 +2478,10 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
             return AlertDialog(
               title: Row(
                 children: [
-                  Icon(Icons.currency_exchange, color: Theme.of(context).colorScheme.primary),
+                  Icon(
+                    Icons.currency_exchange,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                   const SizedBox(width: 8),
                   const Text("Convertitore Valuta"),
                 ],
@@ -2051,10 +2492,14 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                 children: [
                   TextField(
                     controller: _convAmountController,
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
                     decoration: InputDecoration(
                       labelText: "Importo",
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     onChanged: (val) {
                       setDialogState(() {});
@@ -2068,12 +2513,24 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                           value: _convFrom,
                           decoration: InputDecoration(
                             labelText: "Da",
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
-                          items: CurrencyService.currencies.map((c) => DropdownMenuItem(
-                            value: c.code,
-                            child: Text(c.code, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                          )).toList(),
+                          items: CurrencyService.currencies
+                              .map(
+                                (c) => DropdownMenuItem(
+                                  value: c.code,
+                                  child: Text(
+                                    c.code,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              )
+                              .toList(),
                           onChanged: (val) {
                             if (val != null) {
                               setDialogState(() {
@@ -2084,19 +2541,35 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                         ),
                       ),
                       const SizedBox(width: 8),
-                      const Icon(Icons.arrow_forward, size: 16, color: Colors.grey),
+                      const Icon(
+                        Icons.arrow_forward,
+                        size: 16,
+                        color: Colors.grey,
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: DropdownButtonFormField<String>(
                           value: _convTo,
                           decoration: InputDecoration(
                             labelText: "A",
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
-                          items: CurrencyService.currencies.map((c) => DropdownMenuItem(
-                            value: c.code,
-                            child: Text(c.code, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                          )).toList(),
+                          items: CurrencyService.currencies
+                              .map(
+                                (c) => DropdownMenuItem(
+                                  value: c.code,
+                                  child: Text(
+                                    c.code,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              )
+                              .toList(),
                           onChanged: (val) {
                             if (val != null) {
                               setDialogState(() {
@@ -2111,15 +2584,25 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                   const SizedBox(height: 16),
                   Builder(
                     builder: (context) {
-                      final parsed = double.tryParse(_convAmountController.text.replaceAll(',', '.')) ?? 0.0;
-                      final converted = CurrencyService.convert(parsed, _convFrom, _convTo);
+                      final parsed =
+                          double.tryParse(
+                            _convAmountController.text.replaceAll(',', '.'),
+                          ) ??
+                          0.0;
+                      final converted = CurrencyService.convert(
+                        parsed,
+                        _convFrom,
+                        _convTo,
+                      );
                       final symbolFrom = CurrencyService.getSymbol(_convFrom);
                       final symbolTo = CurrencyService.getSymbol(_convTo);
                       return Container(
                         width: double.infinity,
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary.withOpacity(0.05),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.primary.withOpacity(0.05),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Center(
@@ -2133,7 +2616,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                           ),
                         ),
                       );
-                    }
+                    },
                   ),
                 ],
               ),
@@ -2165,7 +2648,10 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
               Container(
                 width: 12,
                 height: 12,
-                decoration: BoxDecoration(color: accentColor, shape: BoxShape.circle),
+                decoration: BoxDecoration(
+                  color: accentColor,
+                  shape: BoxShape.circle,
+                ),
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -2181,16 +2667,24 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                _buildDetailRow("Importo:", "$localSymbol${ex.amount.toStringAsFixed(2)} ${ex.currency}"),
+                _buildDetailRow(
+                  "Importo:",
+                  "$localSymbol${ex.amount.toStringAsFixed(2)} ${ex.currency}",
+                ),
                 if (showEurConv)
-                  _buildDetailRow("Equivalente EUR:", "€${amountInEur.toStringAsFixed(2)}"),
+                  _buildDetailRow(
+                    "Equivalente EUR:",
+                    "€${amountInEur.toStringAsFixed(2)}",
+                  ),
                 _buildDetailRow("Categoria:", ex.category),
                 _buildDetailRow("Data:", _formatDate(ex.date)),
                 _buildDetailRow("Stato:", ex.status),
                 _buildDetailRow("Metodo Pagamento:", ex.paymentMethod),
-                _buildDetailRow("Associazione:", "${ex.associatedType}: ${ex.associatedName}"),
-                if (ex.notes.isNotEmpty)
-                  _buildDetailRow("Note:", ex.notes),
+                _buildDetailRow(
+                  "Associazione:",
+                  "${ex.associatedType}: ${ex.associatedName}",
+                ),
+                if (ex.notes.isNotEmpty) _buildDetailRow("Note:", ex.notes),
               ],
             ),
           ),
@@ -2203,11 +2697,16 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
               icon: const Icon(Icons.edit_outlined, color: Colors.blue),
               tooltip: "Modifica",
               onPressed: () {
-                Navigator.pop(context); // Chiude la finestra di dialogo dei dettagli
+                Navigator.pop(
+                  context,
+                ); // Chiude la finestra di dialogo dei dettagli
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AddExpenseScreen(tripId: provider.selectedTrip!.id!, expense: ex),
+                    builder: (context) => AddExpenseScreen(
+                      tripId: provider.selectedTrip!.id!,
+                      expense: ex,
+                    ),
                   ),
                 );
               },
@@ -2216,7 +2715,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
               icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
               tooltip: "Elimina",
               onPressed: () {
-                Navigator.pop(context); // Chiude la finestra di dialogo dei dettagli
+                Navigator.pop(
+                  context,
+                ); // Chiude la finestra di dialogo dei dettagli
                 _showDeleteExpenseConfirmation(provider, ex);
               },
             ),
@@ -2234,7 +2735,11 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
         children: [
           Text(
             "$label ",
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.grey),
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 13,
+              color: Colors.grey,
+            ),
           ),
           Expanded(
             child: Text(
@@ -2257,8 +2762,12 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
     final remainingActual = provider.remainingBudget;
     final remainingPlanned = provider.remainingBudgetPlanned;
 
-    final percentSpentActual = budget > 0 ? (totalSpentActual / budget).clamp(0.0, 1.0) : 0.0;
-    final percentSpentPlanned = budget > 0 ? (totalSpentPlanned / budget).clamp(0.0, 1.0) : 0.0;
+    final percentSpentActual = budget > 0
+        ? (totalSpentActual / budget).clamp(0.0, 1.0)
+        : 0.0;
+    final percentSpentPlanned = budget > 0
+        ? (totalSpentPlanned / budget).clamp(0.0, 1.0)
+        : 0.0;
 
     final isOverBudgetActual = remainingActual < 0;
     final isOverBudgetPlanned = remainingPlanned < 0;
@@ -2267,7 +2776,11 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
     Map<String, double> catSpent = {};
     for (var ex in expenses) {
       if (ex.status == 'Sostenuta') {
-        final amountInEur = CurrencyService.convert(ex.amount, ex.currency, 'EUR');
+        final amountInEur = CurrencyService.convert(
+          ex.amount,
+          ex.currency,
+          'EUR',
+        );
         catSpent[ex.category] = (catSpent[ex.category] ?? 0.0) + amountInEur;
       }
     }
@@ -2285,20 +2798,33 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
     // Elenco delle transazioni registrate storiche che corrispondono ai filtri selezionati
     final filteredExpenses = expenses.where((ex) {
       // 1. Filtro di stato del viaggio
-      if (_selectedExpenseFilter == 'Sostenute' && ex.status != 'Sostenuta') return false;
-      if (_selectedExpenseFilter == 'Previste' && ex.status != 'Prevista') return false;
+      if (_selectedExpenseFilter == 'Sostenute' && ex.status != 'Sostenuta')
+        return false;
+      if (_selectedExpenseFilter == 'Previste' && ex.status != 'Prevista')
+        return false;
 
       // 2. Filtro per categoria delle spese
-      if (_selectedExpenseCategoryFilter != 'Tutte' && ex.category != _selectedExpenseCategoryFilter) {
+      if (_selectedExpenseCategoryFilter != 'Tutte' &&
+          ex.category != _selectedExpenseCategoryFilter) {
         return false;
       }
 
       // 3. Filtro per range di spesa (basato sul valore convertito in EUR)
-      final amountInEur = CurrencyService.convert(ex.amount, ex.currency, 'EUR');
+      final amountInEur = CurrencyService.convert(
+        ex.amount,
+        ex.currency,
+        'EUR',
+      );
       if (_selectedExpenseAmountRangeFilter != 'Tutti') {
-        if (_selectedExpenseAmountRangeFilter == 'Fino a €50' && amountInEur > 50) return false;
-        if (_selectedExpenseAmountRangeFilter == '€50 - €200' && (amountInEur < 50 || amountInEur > 200)) return false;
-        if (_selectedExpenseAmountRangeFilter == 'Oltre €200' && amountInEur < 200) return false;
+        if (_selectedExpenseAmountRangeFilter == 'Fino a €50' &&
+            amountInEur > 50)
+          return false;
+        if (_selectedExpenseAmountRangeFilter == '€50 - €200' &&
+            (amountInEur < 50 || amountInEur > 200))
+          return false;
+        if (_selectedExpenseAmountRangeFilter == 'Oltre €200' &&
+            amountInEur < 200)
+          return false;
       }
 
       // 4. Filtro per collegare la spesa ad una tappa/attività
@@ -2332,7 +2858,8 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                     children: [
                       Text(
                         "Riepilogo Budget (Base Euro)",
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       IconButton(
                         icon: const Icon(Icons.currency_exchange, size: 20),
@@ -2352,8 +2879,21 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text("Speso Effettivo (Sostenuto)", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
-                      Text("€${totalSpentActual.toStringAsFixed(2)}", style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.green)),
+                      const Text(
+                        "Speso Effettivo (Sostenuto)",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                        ),
+                      ),
+                      Text(
+                        "€${totalSpentActual.toStringAsFixed(2)}",
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green,
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 6),
@@ -2373,12 +2913,25 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        isOverBudgetActual ? "Fuori Budget di:" : "Rimanente Effettivo:",
-                        style: TextStyle(fontSize: 11, color: isOverBudgetActual ? Colors.redAccent : Colors.grey),
+                        isOverBudgetActual
+                            ? "Fuori Budget di:"
+                            : "Rimanente Effettivo:",
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: isOverBudgetActual
+                              ? Colors.redAccent
+                              : Colors.grey,
+                        ),
                       ),
                       Text(
                         "€${remainingActual.abs().toStringAsFixed(2)}",
-                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: isOverBudgetActual ? Colors.redAccent : Colors.green),
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: isOverBudgetActual
+                              ? Colors.redAccent
+                              : Colors.green,
+                        ),
                       ),
                     ],
                   ),
@@ -2389,8 +2942,21 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text("Speso Stimato (Previsto)", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
-                      Text("€${totalSpentPlanned.toStringAsFixed(2)}", style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.orange)),
+                      const Text(
+                        "Speso Stimato (Previsto)",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                        ),
+                      ),
+                      Text(
+                        "€${totalSpentPlanned.toStringAsFixed(2)}",
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.orange,
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 6),
@@ -2410,12 +2976,25 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        isOverBudgetPlanned ? "Fuori Stima Budget di:" : "Rimanente Stimato:",
-                        style: TextStyle(fontSize: 11, color: isOverBudgetPlanned ? Colors.redAccent : Colors.grey),
+                        isOverBudgetPlanned
+                            ? "Fuori Stima Budget di:"
+                            : "Rimanente Stimato:",
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: isOverBudgetPlanned
+                              ? Colors.redAccent
+                              : Colors.grey,
+                        ),
                       ),
                       Text(
                         "€${remainingPlanned.abs().toStringAsFixed(2)}",
-                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: isOverBudgetPlanned ? Colors.redAccent : Colors.orange),
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: isOverBudgetPlanned
+                              ? Colors.redAccent
+                              : Colors.orange,
+                        ),
                       ),
                     ],
                   ),
@@ -2432,12 +3011,15 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
             children: [
               Text(
                 "Storico Spese",
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
               IconButton(
                 icon: Icon(
                   Icons.filter_alt_outlined,
-                  color: _selectedExpenseFilter != "Tutte" ||
+                  color:
+                      _selectedExpenseFilter != "Tutte" ||
                           _selectedExpenseCategoryFilter != "Tutte" ||
                           _selectedExpenseAmountRangeFilter != "Tutti" ||
                           _selectedExpenseAssociationFilter != "Tutti"
@@ -2460,7 +3042,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
               color: Theme.of(context).colorScheme.surface.withOpacity(0.4),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
-                side: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.1)),
+                side: BorderSide(
+                  color: Theme.of(context).dividerColor.withOpacity(0.1),
+                ),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(12),
@@ -2472,13 +3056,22 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                       decoration: InputDecoration(
                         labelText: "Filtra per Stato Spesa",
                         isDense: true,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 8,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
-                      items: ['Tutte', 'Sostenute', 'Previste'].map((status) => DropdownMenuItem<String>(
-                            value: status,
-                            child: Text(status),
-                          )).toList(),
+                      items: ['Tutte', 'Sostenute', 'Previste']
+                          .map(
+                            (status) => DropdownMenuItem<String>(
+                              value: status,
+                              child: Text(status),
+                            ),
+                          )
+                          .toList(),
                       onChanged: (val) {
                         if (val != null) {
                           setState(() {
@@ -2494,13 +3087,32 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                       decoration: InputDecoration(
                         labelText: "Filtra per Categoria",
                         isDense: true,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 8,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
-                      items: ['Tutte', 'Trasporto', 'Alloggio', 'Cibo', 'Attività', 'Shopping', 'Spese Mediche', 'Altro'].map((cat) => DropdownMenuItem<String>(
-                            value: cat,
-                            child: Text(cat),
-                          )).toList(),
+                      items:
+                          [
+                                'Tutte',
+                                'Trasporto',
+                                'Alloggio',
+                                'Cibo',
+                                'Attività',
+                                'Shopping',
+                                'Spese Mediche',
+                                'Altro',
+                              ]
+                              .map(
+                                (cat) => DropdownMenuItem<String>(
+                                  value: cat,
+                                  child: Text(cat),
+                                ),
+                              )
+                              .toList(),
                       onChanged: (val) {
                         if (val != null) {
                           setState(() {
@@ -2516,13 +3128,22 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                       decoration: InputDecoration(
                         labelText: "Filtra per Fascia di Importo",
                         isDense: true,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 8,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
-                      items: ['Tutti', 'Fino a €50', '€50 - €200', 'Oltre €200'].map((range) => DropdownMenuItem<String>(
-                            value: range,
-                            child: Text(range),
-                          )).toList(),
+                      items: ['Tutti', 'Fino a €50', '€50 - €200', 'Oltre €200']
+                          .map(
+                            (range) => DropdownMenuItem<String>(
+                              value: range,
+                              child: Text(range),
+                            ),
+                          )
+                          .toList(),
                       onChanged: (val) {
                         if (val != null) {
                           setState(() {
@@ -2538,13 +3159,22 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                       decoration: InputDecoration(
                         labelText: "Filtra per Elemento Associato",
                         isDense: true,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 8,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
-                      items: associations.map((assoc) => DropdownMenuItem<String>(
-                            value: assoc,
-                            child: Text(assoc),
-                          )).toList(),
+                      items: associations
+                          .map(
+                            (assoc) => DropdownMenuItem<String>(
+                              value: assoc,
+                              child: Text(assoc),
+                            ),
+                          )
+                          .toList(),
                       onChanged: (val) {
                         if (val != null) {
                           setState(() {
@@ -2573,9 +3203,14 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                   itemCount: filteredExpenses.length,
                   itemBuilder: (context, index) {
                     final ex = filteredExpenses[index];
-                    final color = AppTheme.categoryColors[ex.category] ?? Colors.grey;
+                    final color =
+                        AppTheme.categoryColors[ex.category] ?? Colors.grey;
                     final localSymbol = CurrencyService.getSymbol(ex.currency);
-                    final amountInEur = CurrencyService.convert(ex.amount, ex.currency, 'EUR');
+                    final amountInEur = CurrencyService.convert(
+                      ex.amount,
+                      ex.currency,
+                      'EUR',
+                    );
                     final showEurConv = ex.currency != 'EUR';
 
                     return Card(
@@ -2590,10 +3225,20 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                           ),
                           child: Text(
                             localSymbol,
-                            style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 16),
+                            style: TextStyle(
+                              color: color,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
                           ),
                         ),
-                        title: Text(ex.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                        title: Text(
+                          ex.title,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -2605,7 +3250,10 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                               const SizedBox(height: 2),
                               Text(
                                 "Note: ${ex.notes}",
-                                style: const TextStyle(fontSize: 11, color: Colors.grey),
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  color: Colors.grey,
+                                ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -2620,18 +3268,26 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                               "- $localSymbol${ex.amount.toStringAsFixed(2)}",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: ex.status == 'Sostenuta' ? Colors.redAccent : Colors.orange,
+                                color: ex.status == 'Sostenuta'
+                                    ? Colors.redAccent
+                                    : Colors.orange,
                                 fontSize: 14,
                               ),
                             ),
                             if (showEurConv)
                               Text(
                                 "(- €${amountInEur.toStringAsFixed(2)})",
-                                style: const TextStyle(fontSize: 11, color: Colors.grey),
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  color: Colors.grey,
+                                ),
                               ),
                             const SizedBox(height: 4),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
                               decoration: BoxDecoration(
                                 color: ex.status == 'Sostenuta'
                                     ? Colors.green.withOpacity(0.1)
@@ -2643,7 +3299,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                 style: TextStyle(
                                   fontSize: 9,
                                   fontWeight: FontWeight.bold,
-                                  color: ex.status == 'Sostenuta' ? Colors.green : Colors.orange,
+                                  color: ex.status == 'Sostenuta'
+                                      ? Colors.green
+                                      : Colors.orange,
                                 ),
                               ),
                             ),
@@ -2660,7 +3318,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
           if (expenses.any((e) => e.status == 'Sostenuta')) ...[
             Text(
               "Ripartizione Spese Effettive",
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Card(
@@ -2669,7 +3329,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                 child: Column(
                   children: AppTheme.categoryColors.keys.map((category) {
                     final spent = catSpent[category] ?? 0.0;
-                    final fraction = totalSpentActual > 0 ? (spent / totalSpentActual) : 0.0;
+                    final fraction = totalSpentActual > 0
+                        ? (spent / totalSpentActual)
+                        : 0.0;
                     if (spent == 0.0) return const SizedBox.shrink();
 
                     return Padding(
@@ -2690,10 +3352,22 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                     ),
                                   ),
                                   const SizedBox(width: 8),
-                                  Text(category, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13)),
+                                  Text(
+                                    category,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 13,
+                                    ),
+                                  ),
                                 ],
                               ),
-                              Text("€${spent.toStringAsFixed(2)} (${(fraction * 100).toStringAsFixed(0)}%)", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                              Text(
+                                "€${spent.toStringAsFixed(2)} (${(fraction * 100).toStringAsFixed(0)}%)",
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ],
                           ),
                           const SizedBox(height: 6),
@@ -2703,7 +3377,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                               value: fraction,
                               minHeight: 6,
                               backgroundColor: Colors.grey.withOpacity(0.1),
-                              valueColor: AlwaysStoppedAnimation<Color>(AppTheme.categoryColors[category]!),
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                AppTheme.categoryColors[category]!,
+                              ),
                             ),
                           ),
                         ],
@@ -2760,7 +3436,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
     // Filtra gli elementi in base alla categoria selezionata
     final filteredList = _selectedUsefulInfoCategory == 'Tutti'
         ? list
-        : list.where((item) => item.category == _selectedUsefulInfoCategory).toList();
+        : list
+              .where((item) => item.category == _selectedUsefulInfoCategory)
+              .toList();
 
     return Column(
       children: [
@@ -2778,17 +3456,30 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                     decoration: InputDecoration(
                       labelText: "Categoria",
                       isDense: true,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 8,
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    items: [
-                      'Tutti', 'Nota', 'Promemoria', 'Prenotazione', 'Indirizzo', 'Altro'
-                    ].map((cat) => DropdownMenuItem<String>(
-                          value: cat,
-                          child: Text(cat),
-                        )).toList(),
+                    items:
+                        [
+                              'Tutti',
+                              'Nota',
+                              'Promemoria',
+                              'Prenotazione',
+                              'Indirizzo',
+                              'Altro',
+                            ]
+                            .map(
+                              (cat) => DropdownMenuItem<String>(
+                                value: cat,
+                                child: Text(cat),
+                              ),
+                            )
+                            .toList(),
                     onChanged: (val) {
                       if (val != null) {
                         setState(() {
@@ -2814,7 +3505,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                           Icon(
                             Icons.info_outline,
                             size: 64,
-                            color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.primary.withOpacity(0.5),
                           ),
                           const SizedBox(height: 16),
                           Text(
@@ -2825,7 +3518,8 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                           const SizedBox(height: 8),
                           Text(
                             "Aggiungi note, promemoria, prenotazioni o indirizzi con il pulsante in basso.",
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(color: Colors.grey),
                             textAlign: TextAlign.center,
                           ),
                         ],
@@ -2840,24 +3534,28 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                         return const SizedBox(height: 80);
                       }
                       final info = filteredList[index];
-                      final accentColor = _getUsefulInfoCategoryColor(info.category);
+                      final accentColor = _getUsefulInfoCategoryColor(
+                        info.category,
+                      );
                       return Card(
-                        margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+                        margin: const EdgeInsets.symmetric(
+                          vertical: 6,
+                          horizontal: 16,
+                        ),
                         elevation: 1,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                           side: BorderSide(
-                            color: Theme.of(context).dividerColor.withOpacity(0.1),
+                            color: Theme.of(
+                              context,
+                            ).dividerColor.withOpacity(0.1),
                             width: 1,
                           ),
                         ),
                         child: Container(
                           decoration: BoxDecoration(
                             border: Border(
-                              left: BorderSide(
-                                color: accentColor,
-                                width: 6,
-                              ),
+                              left: BorderSide(color: accentColor, width: 6),
                             ),
                           ),
                           padding: const EdgeInsets.all(16),
@@ -2865,22 +3563,30 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   // Badge colorato della categoria
                                   Row(
                                     children: [
                                       Icon(
-                                        _getUsefulInfoCategoryIcon(info.category),
+                                        _getUsefulInfoCategoryIcon(
+                                          info.category,
+                                        ),
                                         color: accentColor,
                                         size: 18,
                                       ),
                                       const SizedBox(width: 8),
                                       Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                          vertical: 4,
+                                        ),
                                         decoration: BoxDecoration(
                                           color: accentColor.withOpacity(0.1),
-                                          borderRadius: BorderRadius.circular(6),
+                                          borderRadius: BorderRadius.circular(
+                                            6,
+                                          ),
                                         ),
                                         child: Text(
                                           info.category,
@@ -2898,14 +3604,30 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       IconButton(
-                                        icon: const Icon(Icons.edit_outlined, size: 18, color: Colors.blue),
-                                        onPressed: () => _showAddEditUsefulInfoDialog(provider, info),
+                                        icon: const Icon(
+                                          Icons.edit_outlined,
+                                          size: 18,
+                                          color: Colors.blue,
+                                        ),
+                                        onPressed: () =>
+                                            _showAddEditUsefulInfoDialog(
+                                              provider,
+                                              info,
+                                            ),
                                         constraints: const BoxConstraints(),
                                         padding: const EdgeInsets.all(6),
                                       ),
                                       IconButton(
-                                        icon: const Icon(Icons.delete_outline, size: 18, color: Colors.redAccent),
-                                        onPressed: () => _showDeleteUsefulInfoConfirmation(provider, info),
+                                        icon: const Icon(
+                                          Icons.delete_outline,
+                                          size: 18,
+                                          color: Colors.redAccent,
+                                        ),
+                                        onPressed: () =>
+                                            _showDeleteUsefulInfoConfirmation(
+                                              provider,
+                                              info,
+                                            ),
                                         constraints: const BoxConstraints(),
                                         padding: const EdgeInsets.all(6),
                                       ),
@@ -2924,9 +3646,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                               const SizedBox(height: 6),
                               Text(
                                 info.content,
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  height: 1.4,
-                                ),
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.bodyMedium?.copyWith(height: 1.4),
                               ),
                             ],
                           ),
@@ -2937,12 +3659,15 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
           ),
         ] else ...[
           Expanded(child: _buildTravelDocumentsList(provider)),
-        ]
+        ],
       ],
     );
   }
 
-  void _showAddEditUsefulInfoDialog(TravelProvider provider, [UsefulInfo? info]) {
+  void _showAddEditUsefulInfoDialog(
+    TravelProvider provider, [
+    UsefulInfo? info,
+  ]) {
     final isEditing = info != null;
     final titleController = TextEditingController(text: info?.title ?? '');
     final contentController = TextEditingController(text: info?.content ?? '');
@@ -2954,7 +3679,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              title: Text(isEditing ? "Modifica Info Utile" : "Nuova Info Utile"),
+              title: Text(
+                isEditing ? "Modifica Info Utile" : "Nuova Info Utile",
+              ),
               content: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -2988,18 +3715,31 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      items: ['Nota', 'Promemoria', 'Prenotazione', 'Indirizzo', 'Altro']
-                          .map((cat) => DropdownMenuItem<String>(
-                                value: cat,
-                                child: Row(
-                                  children: [
-                                    Icon(_getUsefulInfoCategoryIcon(cat), size: 18, color: _getUsefulInfoCategoryColor(cat)),
-                                    const SizedBox(width: 8),
-                                    Text(cat),
-                                  ],
+                      items:
+                          [
+                                'Nota',
+                                'Promemoria',
+                                'Prenotazione',
+                                'Indirizzo',
+                                'Altro',
+                              ]
+                              .map(
+                                (cat) => DropdownMenuItem<String>(
+                                  value: cat,
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        _getUsefulInfoCategoryIcon(cat),
+                                        size: 18,
+                                        color: _getUsefulInfoCategoryColor(cat),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(cat),
+                                    ],
+                                  ),
                                 ),
-                              ))
-                          .toList(),
+                              )
+                              .toList(),
                       onChanged: (val) {
                         if (val != null) {
                           setDialogState(() {
@@ -3023,7 +3763,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
 
                     // Validazione per prevenire gli spazi iniziali vuoti
                     if (title.startsWith(' ') || content.startsWith(' ')) {
-                      _showValidationError("Il testo non può iniziare con uno spazio");
+                      _showValidationError(
+                        "Il testo non può iniziare con uno spazio",
+                      );
                       return;
                     }
 
@@ -3031,7 +3773,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                     final trimmedContent = content.trim();
 
                     if (trimmedTitle.isEmpty || trimmedContent.isEmpty) {
-                      _showValidationError("Titolo e Contenuto sono obbligatori");
+                      _showValidationError(
+                        "Titolo e Contenuto sono obbligatori",
+                      );
                       return;
                     }
 
@@ -3113,7 +3857,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                         Icon(
                           Icons.note_alt_outlined,
                           size: 18,
-                          color: _infoSubTab == 'Note' ? Colors.white : Theme.of(context).textTheme.bodyMedium?.color,
+                          color: _infoSubTab == 'Note'
+                              ? Colors.white
+                              : Theme.of(context).textTheme.bodyMedium?.color,
                         ),
                         const SizedBox(width: 6),
                         Text(
@@ -3121,7 +3867,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                           style: TextStyle(
                             fontFamily: 'Outfit',
                             fontWeight: FontWeight.w600,
-                            color: _infoSubTab == 'Note' ? Colors.white : Theme.of(context).textTheme.bodyMedium?.color,
+                            color: _infoSubTab == 'Note'
+                                ? Colors.white
+                                : Theme.of(context).textTheme.bodyMedium?.color,
                           ),
                         ),
                       ],
@@ -3152,7 +3900,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                         Icon(
                           Icons.confirmation_number_outlined,
                           size: 18,
-                          color: _infoSubTab == 'Biglietti' ? Colors.white : Theme.of(context).textTheme.bodyMedium?.color,
+                          color: _infoSubTab == 'Biglietti'
+                              ? Colors.white
+                              : Theme.of(context).textTheme.bodyMedium?.color,
                         ),
                         const SizedBox(width: 6),
                         Text(
@@ -3160,7 +3910,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                           style: TextStyle(
                             fontFamily: 'Outfit',
                             fontWeight: FontWeight.w600,
-                            color: _infoSubTab == 'Biglietti' ? Colors.white : Theme.of(context).textTheme.bodyMedium?.color,
+                            color: _infoSubTab == 'Biglietti'
+                                ? Colors.white
+                                : Theme.of(context).textTheme.bodyMedium?.color,
                           ),
                         ),
                       ],
@@ -3239,7 +3991,10 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
               borderRadius: BorderRadius.circular(16),
             ),
             child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 8,
+              ),
               leading: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
@@ -3265,7 +4020,11 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                   color: Colors.white.withOpacity(0.8),
                 ),
               ),
-              trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 16),
+              trailing: const Icon(
+                Icons.arrow_forward_ios,
+                color: Colors.white,
+                size: 16,
+              ),
               onTap: () {
                 _showTravelDocumentDetailBottomSheet(context, doc, provider);
               },
@@ -3276,14 +4035,20 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
     );
   }
 
-  void _showAddEditTravelDocumentDialog(BuildContext context, TravelProvider provider, [TravelDocument? doc]) {
+  void _showAddEditTravelDocumentDialog(
+    BuildContext context,
+    TravelProvider provider, [
+    TravelDocument? doc,
+  ]) {
     final isEditing = doc != null;
     final titleController = TextEditingController(text: doc?.title ?? '');
-    final bookingCodeController = TextEditingController(text: doc?.bookingCode ?? '');
+    final bookingCodeController = TextEditingController(
+      text: doc?.bookingCode ?? '',
+    );
     final seatController = TextEditingController(text: doc?.seat ?? '');
     final gateController = TextEditingController(text: doc?.gate ?? '');
     final notesController = TextEditingController(text: doc?.notes ?? '');
-    
+
     String selectedDocType = doc?.documentType ?? 'Volo';
     DateTime? selectedDateTime = doc?.dateTime;
 
@@ -3293,7 +4058,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              title: Text(isEditing ? "Modifica Biglietto" : "Aggiungi Biglietto"),
+              title: Text(
+                isEditing ? "Modifica Biglietto" : "Aggiungi Biglietto",
+              ),
               content: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -3306,12 +4073,22 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      items: ['Volo', 'Treno', 'Pullman', 'Hotel', 'Attrazione', 'Altro']
-                          .map((type) => DropdownMenuItem<String>(
-                                value: type,
-                                child: Text(type),
-                              ))
-                          .toList(),
+                      items:
+                          [
+                                'Volo',
+                                'Treno',
+                                'Pullman',
+                                'Hotel',
+                                'Attrazione',
+                                'Altro',
+                              ]
+                              .map(
+                                (type) => DropdownMenuItem<String>(
+                                  value: type,
+                                  child: Text(type),
+                                ),
+                              )
+                              .toList(),
                       onChanged: (val) {
                         if (val != null) {
                           setDialogState(() {
@@ -3341,7 +4118,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                       ),
                     ),
                     const SizedBox(height: 16),
-                    if (selectedDocType == 'Hotel' || selectedDocType == 'Attrazione' || selectedDocType == 'Altro')
+                    if (selectedDocType == 'Hotel' ||
+                        selectedDocType == 'Attrazione' ||
+                        selectedDocType == 'Altro')
                       TextField(
                         controller: gateController,
                         decoration: InputDecoration(
@@ -3373,8 +4152,8 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                 labelText: selectedDocType == 'Treno'
                                     ? "Carrozza"
                                     : selectedDocType == 'Pullman'
-                                        ? "Fila"
-                                        : "Gate",
+                                    ? "Fila"
+                                    : "Gate",
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
@@ -3386,10 +4165,16 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                     const SizedBox(height: 16),
                     InkWell(
                       onTap: () async {
-                        DateTime initDate = selectedDateTime ?? provider.selectedTrip!.startDate;
-                        if (initDate.isBefore(provider.selectedTrip!.startDate)) {
+                        DateTime initDate =
+                            selectedDateTime ??
+                            provider.selectedTrip!.startDate;
+                        if (initDate.isBefore(
+                          provider.selectedTrip!.startDate,
+                        )) {
                           initDate = provider.selectedTrip!.startDate;
-                        } else if (initDate.isAfter(provider.selectedTrip!.endDate)) {
+                        } else if (initDate.isAfter(
+                          provider.selectedTrip!.endDate,
+                        )) {
                           initDate = provider.selectedTrip!.endDate;
                         }
                         final datePicked = await showDatePicker(
@@ -3401,7 +4186,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                         if (datePicked != null) {
                           final timePicked = await showTimePicker(
                             context: context,
-                            initialTime: TimeOfDay.fromDateTime(selectedDateTime ?? DateTime.now()),
+                            initialTime: TimeOfDay.fromDateTime(
+                              selectedDateTime ?? DateTime.now(),
+                            ),
                           );
                           if (timePicked != null) {
                             setDialogState(() {
@@ -3417,9 +4204,16 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                         }
                       },
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 16,
+                        ),
                         decoration: BoxDecoration(
-                          border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.5)),
+                          border: Border.all(
+                            color: Theme.of(
+                              context,
+                            ).dividerColor.withOpacity(0.5),
+                          ),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
@@ -3430,7 +4224,11 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                   ? "Seleziona Data e Ora"
                                   : "${_formatDate(selectedDateTime!)} alle ${selectedDateTime!.hour.toString().padLeft(2, '0')}:${selectedDateTime!.minute.toString().padLeft(2, '0')}",
                               style: TextStyle(
-                                color: selectedDateTime == null ? Theme.of(context).hintColor : Theme.of(context).textTheme.bodyLarge?.color,
+                                color: selectedDateTime == null
+                                    ? Theme.of(context).hintColor
+                                    : Theme.of(
+                                        context,
+                                      ).textTheme.bodyLarge?.color,
                               ),
                             ),
                             const Icon(Icons.calendar_today, size: 18),
@@ -3471,7 +4269,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                         seat.startsWith(' ') ||
                         gate.startsWith(' ') ||
                         notes.startsWith(' ')) {
-                      _showValidationError("Il testo non può iniziare con uno spazio");
+                      _showValidationError(
+                        "Il testo non può iniziare con uno spazio",
+                      );
                       return;
                     }
 
@@ -3480,14 +4280,21 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                       return;
                     }
 
-                    final isSingleField = selectedDocType == 'Hotel' || selectedDocType == 'Attrazione' || selectedDocType == 'Altro';
+                    final isSingleField =
+                        selectedDocType == 'Hotel' ||
+                        selectedDocType == 'Attrazione' ||
+                        selectedDocType == 'Altro';
                     final newDoc = TravelDocument(
                       id: doc?.id,
                       tripId: provider.selectedTrip!.id!,
                       title: title.trim(),
                       documentType: selectedDocType,
-                      bookingCode: bookingCode.trim().isEmpty ? null : bookingCode.trim(),
-                      seat: isSingleField ? null : (seat.trim().isEmpty ? null : seat.trim()),
+                      bookingCode: bookingCode.trim().isEmpty
+                          ? null
+                          : bookingCode.trim(),
+                      seat: isSingleField
+                          ? null
+                          : (seat.trim().isEmpty ? null : seat.trim()),
                       gate: gate.trim().isEmpty ? null : gate.trim(),
                       dateTime: selectedDateTime,
                       notes: notes.trim(),
@@ -3510,7 +4317,11 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
     );
   }
 
-  void _showTravelDocumentDetailBottomSheet(BuildContext context, TravelDocument doc, TravelProvider provider) {
+  void _showTravelDocumentDetailBottomSheet(
+    BuildContext context,
+    TravelDocument doc,
+    TravelProvider provider,
+  ) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -3530,18 +4341,25 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                 return Container(
                   decoration: BoxDecoration(
                     color: Theme.of(context).canvasColor,
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(24),
+                    ),
                   ),
                   child: ListView(
                     controller: scrollController,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 24,
+                    ),
                     children: [
                       Center(
                         child: Container(
                           width: 40,
                           height: 4,
                           decoration: BoxDecoration(
-                            color: Theme.of(context).dividerColor.withOpacity(0.3),
+                            color: Theme.of(
+                              context,
+                            ).dividerColor.withOpacity(0.3),
                             borderRadius: BorderRadius.circular(2),
                           ),
                         ),
@@ -3564,25 +4382,38 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                 icon: const Icon(Icons.edit_outlined),
                                 onPressed: () {
                                   Navigator.pop(context);
-                                  _showAddEditTravelDocumentDialog(context, provider, doc);
+                                  _showAddEditTravelDocumentDialog(
+                                    context,
+                                    provider,
+                                    doc,
+                                  );
                                 },
                               ),
                               IconButton(
-                                icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
+                                icon: const Icon(
+                                  Icons.delete_outline,
+                                  color: Colors.redAccent,
+                                ),
                                 onPressed: () async {
                                   final confirm = await showDialog<bool>(
                                     context: context,
                                     builder: (context) => AlertDialog(
                                       title: const Text("Elimina Biglietto"),
-                                      content: const Text("Sei sicuro di voler eliminare questo biglietto dal tuo Wallet?"),
+                                      content: const Text(
+                                        "Sei sicuro di voler eliminare questo biglietto dal tuo Wallet?",
+                                      ),
                                       actions: [
                                         TextButton(
-                                          onPressed: () => Navigator.pop(context, false),
+                                          onPressed: () =>
+                                              Navigator.pop(context, false),
                                           child: const Text("Annulla"),
                                         ),
                                         ElevatedButton(
-                                          style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
-                                          onPressed: () => Navigator.pop(context, true),
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.redAccent,
+                                          ),
+                                          onPressed: () =>
+                                              Navigator.pop(context, true),
                                           child: const Text("Elimina"),
                                         ),
                                       ],
@@ -3629,12 +4460,17 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                       color: Colors.white.withOpacity(0.2),
                                       shape: BoxShape.circle,
                                     ),
-                                    child: Icon(typeIcon, color: Colors.white, size: 24),
+                                    child: Icon(
+                                      typeIcon,
+                                      color: Colors.white,
+                                      size: 24,
+                                    ),
                                   ),
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           doc.documentType.toUpperCase(),
@@ -3642,7 +4478,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                             fontFamily: 'Outfit',
                                             fontSize: 12,
                                             fontWeight: FontWeight.bold,
-                                            color: Colors.white.withOpacity(0.7),
+                                            color: Colors.white.withOpacity(
+                                              0.7,
+                                            ),
                                             letterSpacing: 1.2,
                                           ),
                                         ),
@@ -3662,20 +4500,27 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 8,
+                              ),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   if (doc.dateTime != null)
                                     Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           "DATA & ORA",
                                           style: TextStyle(
                                             fontFamily: 'Outfit',
                                             fontSize: 10,
-                                            color: Colors.white.withOpacity(0.7),
+                                            color: Colors.white.withOpacity(
+                                              0.7,
+                                            ),
                                           ),
                                         ),
                                         const SizedBox(height: 4),
@@ -3690,17 +4535,23 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                         ),
                                       ],
                                     ),
-                                  if (doc.documentType == 'Hotel' || doc.documentType == 'Attrazione' || doc.documentType == 'Altro') ...[
-                                    if (doc.gate != null && doc.gate!.isNotEmpty)
+                                  if (doc.documentType == 'Hotel' ||
+                                      doc.documentType == 'Attrazione' ||
+                                      doc.documentType == 'Altro') ...[
+                                    if (doc.gate != null &&
+                                        doc.gate!.isNotEmpty)
                                       Column(
-                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
                                         children: [
                                           Text(
                                             "LUOGO",
                                             style: TextStyle(
                                               fontFamily: 'Outfit',
                                               fontSize: 10,
-                                              color: Colors.white.withOpacity(0.7),
+                                              color: Colors.white.withOpacity(
+                                                0.7,
+                                              ),
                                             ),
                                           ),
                                           const SizedBox(height: 4),
@@ -3716,16 +4567,20 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                         ],
                                       ),
                                   ] else ...[
-                                    if (doc.seat != null && doc.seat!.isNotEmpty)
+                                    if (doc.seat != null &&
+                                        doc.seat!.isNotEmpty)
                                       Column(
-                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
                                         children: [
                                           Text(
                                             "POSTO",
                                             style: TextStyle(
                                               fontFamily: 'Outfit',
                                               fontSize: 10,
-                                              color: Colors.white.withOpacity(0.7),
+                                              color: Colors.white.withOpacity(
+                                                0.7,
+                                              ),
                                             ),
                                           ),
                                           const SizedBox(height: 4),
@@ -3740,20 +4595,24 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                           ),
                                         ],
                                       ),
-                                    if (doc.gate != null && doc.gate!.isNotEmpty)
+                                    if (doc.gate != null &&
+                                        doc.gate!.isNotEmpty)
                                       Column(
-                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
                                         children: [
                                           Text(
                                             doc.documentType == 'Treno'
                                                 ? "CARROZZA"
                                                 : doc.documentType == 'Pullman'
-                                                    ? "FILA"
-                                                    : "GATE",
+                                                ? "FILA"
+                                                : "GATE",
                                             style: TextStyle(
                                               fontFamily: 'Outfit',
                                               fontSize: 10,
-                                              color: Colors.white.withOpacity(0.7),
+                                              color: Colors.white.withOpacity(
+                                                0.7,
+                                              ),
                                             ),
                                           ),
                                           const SizedBox(height: 4),
@@ -3774,7 +4633,12 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                             ),
                             if (doc.notes != null && doc.notes!.isNotEmpty)
                               Padding(
-                                padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+                                padding: const EdgeInsets.fromLTRB(
+                                  20,
+                                  12,
+                                  20,
+                                  16,
+                                ),
                                 child: Container(
                                   padding: const EdgeInsets.all(12),
                                   decoration: BoxDecoration(
@@ -3809,19 +4673,26 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                 Expanded(
                                   child: LayoutBuilder(
                                     builder: (context, constraints) {
-                                      final boxWidth = constraints.constrainWidth();
+                                      final boxWidth = constraints
+                                          .constrainWidth();
                                       const dashWidth = 6.0;
                                       const dashHeight = 1.5;
-                                      final dashCount = (boxWidth / (2 * dashWidth)).floor();
+                                      final dashCount =
+                                          (boxWidth / (2 * dashWidth)).floor();
                                       return Flex(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         direction: Axis.horizontal,
                                         children: List.generate(dashCount, (_) {
                                           return SizedBox(
                                             width: dashWidth,
                                             height: dashHeight,
                                             child: DecoratedBox(
-                                              decoration: BoxDecoration(color: Colors.white.withOpacity(0.4)),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white.withOpacity(
+                                                  0.4,
+                                                ),
+                                              ),
                                             ),
                                           );
                                         }),
@@ -3843,7 +4714,12 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                               ],
                             ),
                             Padding(
-                              padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+                              padding: const EdgeInsets.fromLTRB(
+                                20,
+                                16,
+                                20,
+                                24,
+                              ),
                               child: Container(
                                 padding: const EdgeInsets.all(16),
                                 decoration: BoxDecoration(
@@ -3853,7 +4729,8 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                 child: Column(
                                   children: [
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         ChoiceChip(
                                           label: const Text("Codice QR"),
@@ -3864,7 +4741,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                             fontFamily: 'Outfit',
                                             fontSize: 12,
                                             fontWeight: FontWeight.bold,
-                                            color: activeCodeType == 'QR' ? Colors.black : Colors.grey,
+                                            color: activeCodeType == 'QR'
+                                                ? Colors.black
+                                                : Colors.grey,
                                           ),
                                           onSelected: (selected) {
                                             if (selected) {
@@ -3884,7 +4763,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                             fontFamily: 'Outfit',
                                             fontSize: 12,
                                             fontWeight: FontWeight.bold,
-                                            color: activeCodeType == 'BAR' ? Colors.black : Colors.grey,
+                                            color: activeCodeType == 'BAR'
+                                                ? Colors.black
+                                                : Colors.grey,
                                           ),
                                           onSelected: (selected) {
                                             if (selected) {
@@ -3900,7 +4781,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                     if (activeCodeType == 'QR')
                                       CustomPaint(
                                         painter: QrCodePainter(
-                                          code: doc.bookingCode ?? "SAY-MY-TRAVEL-PASS",
+                                          code:
+                                              doc.bookingCode ??
+                                              "SAY-MY-TRAVEL-PASS",
                                           qrColor: Colors.black,
                                         ),
                                         size: const Size(140, 140),
@@ -3908,14 +4791,18 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                     else
                                       CustomPaint(
                                         painter: BarcodePainter(
-                                          code: doc.bookingCode ?? "SAY-MY-TRAVEL-PASS",
+                                          code:
+                                              doc.bookingCode ??
+                                              "SAY-MY-TRAVEL-PASS",
                                           barColor: Colors.black,
                                         ),
                                         size: const Size(220, 60),
                                       ),
                                     const SizedBox(height: 16),
                                     Text(
-                                      doc.bookingCode != null ? "PNR: ${doc.bookingCode!.toUpperCase()}" : "BIGLIETTO DIGITALE",
+                                      doc.bookingCode != null
+                                          ? "PNR: ${doc.bookingCode!.toUpperCase()}"
+                                          : "BIGLIETTO DIGITALE",
                                       style: const TextStyle(
                                         fontFamily: 'Outfit',
                                         fontSize: 14,
@@ -4002,7 +4889,10 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
     }
   }
 
-  void _showDeleteUsefulInfoConfirmation(TravelProvider provider, UsefulInfo info) {
+  void _showDeleteUsefulInfoConfirmation(
+    TravelProvider provider,
+    UsefulInfo info,
+  ) {
     showDialog(
       context: context,
       builder: (context) {
@@ -4061,11 +4951,18 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.info_outline, color: Theme.of(context).colorScheme.primary, size: 20),
+                        Icon(
+                          Icons.info_outline,
+                          color: Theme.of(context).colorScheme.primary,
+                          size: 20,
+                        ),
                         const SizedBox(width: 8),
                         Text(
                           "Informazioni di Viaggio",
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
                         ),
                       ],
                     ),
@@ -4090,15 +4987,29 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(Icons.people_outline, size: 16, color: Colors.grey),
+                        const Icon(
+                          Icons.people_outline,
+                          size: 16,
+                          color: Colors.grey,
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text("Partecipanti:", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey)),
+                              const Text(
+                                "Partecipanti:",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
+                              ),
                               const SizedBox(height: 2),
-                              Text(trip.participants, style: const TextStyle(fontSize: 14)),
+                              Text(
+                                trip.participants,
+                                style: const TextStyle(fontSize: 14),
+                              ),
                             ],
                           ),
                         ),
@@ -4116,9 +5027,19 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text("Info Utili Generali:", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey)),
+                              const Text(
+                                "Info Utili Generali:",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
+                              ),
                               const SizedBox(height: 2),
-                              Text(trip.generalInfo, style: const TextStyle(fontSize: 14)),
+                              Text(
+                                trip.generalInfo,
+                                style: const TextStyle(fontSize: 14),
+                              ),
                             ],
                           ),
                         ),
@@ -4129,12 +5050,19 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                   if (hasCoords) ...[
                     Row(
                       children: [
-                        const Icon(Icons.map_outlined, size: 16, color: Colors.grey),
+                        const Icon(
+                          Icons.map_outlined,
+                          size: 16,
+                          color: Colors.grey,
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             "Posizione: ${trip.latitude!.toStringAsFixed(3)}°, ${trip.longitude!.toStringAsFixed(3)}°",
-                            style: const TextStyle(fontSize: 13, color: Colors.grey),
+                            style: const TextStyle(
+                              fontSize: 13,
+                              color: Colors.grey,
+                            ),
                           ),
                         ),
                         TextButton.icon(
@@ -4143,17 +5071,27 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                               'https://www.google.com/maps/search/?api=1&query=${trip.latitude},${trip.longitude}',
                             );
                             if (await canLaunchUrl(url)) {
-                              await launchUrl(url, mode: LaunchMode.externalApplication);
+                              await launchUrl(
+                                url,
+                                mode: LaunchMode.externalApplication,
+                              );
                             } else {
                               if (context.mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text("Impossibile aprire la mappa")),
+                                  const SnackBar(
+                                    content: Text(
+                                      "Impossibile aprire la mappa",
+                                    ),
+                                  ),
                                 );
                               }
                             }
                           },
                           icon: const Icon(Icons.map, size: 16),
-                          label: const Text("Vedi Mappa", style: TextStyle(fontSize: 12)),
+                          label: const Text(
+                            "Vedi Mappa",
+                            style: TextStyle(fontSize: 12),
+                          ),
                         ),
                       ],
                     ),
@@ -4208,7 +5146,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
         final entry = entries[index];
         return Card(
           clipBehavior: Clip.antiAlias,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           child: InkWell(
             onTap: () => _showDiaryEntryDetailsDialog(provider, entry),
             child: Column(
@@ -4226,14 +5166,21 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                         top: 8,
                         left: 8,
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.black.withOpacity(0.6),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
                             _formatDate(entry.date),
-                            style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
@@ -4249,14 +5196,19 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                         entry.title,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         entry.content,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 11),
+                        style: Theme.of(
+                          context,
+                        ).textTheme.bodySmall?.copyWith(fontSize: 11),
                       ),
                     ],
                   ),
@@ -4283,7 +5235,10 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
         errorBuilder: (context, error, stackTrace) {
           return Container(
             color: Colors.red.shade50,
-            child: const Icon(Icons.broken_image_outlined, color: Colors.redAccent),
+            child: const Icon(
+              Icons.broken_image_outlined,
+              color: Colors.redAccent,
+            ),
           );
         },
       );
@@ -4331,7 +5286,11 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                   AspectRatio(
                     aspectRatio: 1.33,
                     child: GestureDetector(
-                      onTap: () => _showFullScreenImage(context, entry.imagePath, entry.id),
+                      onTap: () => _showFullScreenImage(
+                        context,
+                        entry.imagePath,
+                        entry.id,
+                      ),
                       child: Hero(
                         tag: 'diary_image_${entry.id}',
                         child: _buildDiaryImage(entry.imagePath),
@@ -4361,9 +5320,14 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.primary.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
@@ -4385,13 +5349,19 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                               },
                             ),
                             IconButton(
-                              icon: const Icon(Icons.delete_outline, color: Colors.redAccent, size: 20),
+                              icon: const Icon(
+                                Icons.delete_outline,
+                                color: Colors.redAccent,
+                                size: 20,
+                              ),
                               onPressed: () {
                                 showDialog(
                                   context: context,
                                   builder: (subCtx) => AlertDialog(
                                     title: const Text("Elimina Ricordo"),
-                                    content: const Text("Sei sicuro di voler eliminare questo ricordo permanentemente?"),
+                                    content: const Text(
+                                      "Sei sicuro di voler eliminare questo ricordo permanentemente?",
+                                    ),
                                     actions: [
                                       TextButton(
                                         onPressed: () => Navigator.pop(subCtx),
@@ -4402,11 +5372,22 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                           provider.deleteDiaryEntry(entry.id!);
                                           Navigator.pop(subCtx);
                                           Navigator.pop(ctx);
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            const SnackBar(content: Text("Ricordo eliminato con successo!")),
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                "Ricordo eliminato con successo!",
+                                              ),
+                                            ),
                                           );
                                         },
-                                        child: const Text("Elimina", style: TextStyle(color: Colors.redAccent)),
+                                        child: const Text(
+                                          "Elimina",
+                                          style: TextStyle(
+                                            color: Colors.redAccent,
+                                          ),
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -4432,10 +5413,15 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                       child: SingleChildScrollView(
                         child: Text(
                           entry.content,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            height: 1.5,
-                            color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.85),
-                          ),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                height: 1.5,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.color
+                                    ?.withOpacity(0.85),
+                              ),
                         ),
                       ),
                     ),
@@ -4461,7 +5447,6 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (context, setDialogState) {
-          
           Future<void> pickImage(ImageSource source) async {
             try {
               final picker = ImagePicker();
@@ -4514,11 +5499,15 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
           }
 
           return AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+            ),
             title: Row(
               children: [
                 Icon(
-                  isEdit ? Icons.edit_note_outlined : Icons.add_photo_alternate_outlined,
+                  isEdit
+                      ? Icons.edit_note_outlined
+                      : Icons.add_photo_alternate_outlined,
                   color: Theme.of(context).colorScheme.primary,
                 ),
                 const SizedBox(width: 8),
@@ -4540,7 +5529,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                           color: Theme.of(context).cardColor,
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: Theme.of(context).dividerColor.withOpacity(0.3),
+                            color: Theme.of(
+                              context,
+                            ).dividerColor.withOpacity(0.3),
                           ),
                         ),
                         child: selectedImagePath == null
@@ -4550,19 +5541,26 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                   Icon(
                                     Icons.add_a_photo_outlined,
                                     size: 36,
-                                    color: Theme.of(context).colorScheme.primary.withOpacity(0.7),
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary.withOpacity(0.7),
                                   ),
                                   const SizedBox(height: 8),
                                   const Text(
                                     "Seleziona Foto",
-                                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
                                     "Tocca per scegliere o scattare",
                                     style: TextStyle(
                                       fontSize: 11,
-                                      color: Theme.of(context).textTheme.bodySmall?.color,
+                                      color: Theme.of(
+                                        context,
+                                      ).textTheme.bodySmall?.color,
                                     ),
                                   ),
                                 ],
@@ -4582,7 +5580,11 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                           color: Colors.black.withOpacity(0.6),
                                           shape: BoxShape.circle,
                                         ),
-                                        child: const Icon(Icons.edit, color: Colors.white, size: 16),
+                                        child: const Icon(
+                                          Icons.edit,
+                                          color: Colors.white,
+                                          size: 16,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -4653,27 +5655,39 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
 
                   if (title.isEmpty || title.startsWith(' ')) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Il titolo non può essere vuoto o iniziare con uno spazio.")),
+                      const SnackBar(
+                        content: Text(
+                          "Il titolo non può essere vuoto o iniziare con uno spazio.",
+                        ),
+                      ),
                     );
                     return;
                   }
                   if (content.isEmpty || content.startsWith(' ')) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("La descrizione non può essere vuota o iniziare con uno spazio.")),
+                      const SnackBar(
+                        content: Text(
+                          "La descrizione non può essere vuota o iniziare con uno spazio.",
+                        ),
+                      ),
                     );
                     return;
                   }
 
                   String? finalPath = selectedImagePath;
                   if (selectedImagePath != null &&
-                      (selectedImagePath!.startsWith('/') || selectedImagePath!.contains(':/')) &&
+                      (selectedImagePath!.startsWith('/') ||
+                          selectedImagePath!.contains(':/')) &&
                       (entry == null || entry.imagePath != selectedImagePath)) {
-                    
                     try {
-                      final appDocDir = await getApplicationDocumentsDirectory();
+                      final appDocDir =
+                          await getApplicationDocumentsDirectory();
                       final extension = path.extension(selectedImagePath!);
-                      final fileName = "diary_${DateTime.now().millisecondsSinceEpoch}$extension";
-                      final savedFile = await File(selectedImagePath!).copy("${appDocDir.path}/$fileName");
+                      final fileName =
+                          "diary_${DateTime.now().millisecondsSinceEpoch}$extension";
+                      final savedFile = await File(
+                        selectedImagePath!,
+                      ).copy("${appDocDir.path}/$fileName");
                       finalPath = savedFile.path;
                     } catch (e) {
                       debugPrint("Error copying file to persistent folder: $e");
@@ -4702,14 +5716,20 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                   Navigator.pop(ctx);
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(isEdit ? "Ricordo modificato!" : "Ricordo aggiunto!")),
+                      SnackBar(
+                        content: Text(
+                          isEdit ? "Ricordo modificato!" : "Ricordo aggiunto!",
+                        ),
+                      ),
                     );
                   }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.primary,
                   foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
                 child: Text(isEdit ? "Salva" : "Aggiungi"),
               ),
@@ -4728,7 +5748,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
 
     final buffer = StringBuffer();
     buffer.writeln("# Viaggio a ${trip.destination}: ${trip.title}");
-    buffer.writeln("**Periodo:** ${_formatDate(trip.startDate)} - ${_formatDate(trip.endDate)}");
+    buffer.writeln(
+      "**Periodo:** ${_formatDate(trip.startDate)} - ${_formatDate(trip.endDate)}",
+    );
     if (trip.participants.isNotEmpty) {
       buffer.writeln("**Partecipanti:** ${trip.participants}");
     }
@@ -4742,7 +5764,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
     } else {
       for (var stop in stops) {
         buffer.writeln("\n### Giorno ${stop.itineraryOrder}: ${stop.name}");
-        buffer.writeln("**Data/Ora:** ${_formatDate(stop.dateTime)} alle ${_formatTime(stop.dateTime.hour.toString().padLeft(2, '0'))}:${stop.dateTime.minute.toString().padLeft(2, '0')}");
+        buffer.writeln(
+          "**Data/Ora:** ${_formatDate(stop.dateTime)} alle ${_formatTime(stop.dateTime.hour.toString().padLeft(2, '0'))}:${stop.dateTime.minute.toString().padLeft(2, '0')}",
+        );
         if (stop.location.isNotEmpty) {
           buffer.writeln("**Località:** ${stop.location}");
         }
@@ -4752,13 +5776,17 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
         if (stop.notes.isNotEmpty) {
           buffer.writeln("**Note:** ${stop.notes}");
         }
-        
+
         final activities = provider.getActivitiesForStop(stop.id!);
         if (activities.isNotEmpty) {
           buffer.writeln("\n**Attività pianificate:**");
           for (var act in activities) {
-            final costStr = act.cost > 0 ? " (Costo: ${act.cost.toStringAsFixed(2)}€)" : "";
-            buffer.writeln("- [${act.status}] ${act.time} - **${act.name}** [${act.type}]$costStr");
+            final costStr = act.cost > 0
+                ? " (Costo: ${act.cost.toStringAsFixed(2)}€)"
+                : "";
+            buffer.writeln(
+              "- [${act.status}] ${act.time} - **${act.name}** [${act.type}]$costStr",
+            );
             if (act.description.isNotEmpty) {
               buffer.writeln("  *${act.description}*");
             }
@@ -4772,10 +5800,14 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
       buffer.writeln("*Nessun elemento in checklist.*");
     } else {
       final completedCount = checklist.where((item) => item.isChecked).length;
-      buffer.writeln("**Progresso:** $completedCount/${checklist.length} completate\n");
+      buffer.writeln(
+        "**Progresso:** $completedCount/${checklist.length} completate\n",
+      );
       for (var item in checklist) {
         final checkSymbol = item.isChecked ? "[x]" : "[ ]";
-        buffer.writeln("- $checkSymbol ${item.itemText} (${item.category} - Priorità: ${item.priority})");
+        buffer.writeln(
+          "- $checkSymbol ${item.itemText} (${item.category} - Priorità: ${item.priority})",
+        );
       }
     }
 
@@ -4783,7 +5815,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
     final double totalBudget = trip.budget;
     double actualExpenses = 0.0;
     double plannedExpenses = 0.0;
-    
+
     for (var exp in expenses) {
       if (exp.status == 'Sostenuta') {
         actualExpenses += exp.amount;
@@ -4791,17 +5823,23 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
         plannedExpenses += exp.amount;
       }
     }
-    
+
     buffer.writeln("- **Budget Totale:** ${totalBudget.toStringAsFixed(2)}€");
-    buffer.writeln("- **Spese Sostenute:** ${actualExpenses.toStringAsFixed(2)}€");
-    buffer.writeln("- **Spese Previste:** ${plannedExpenses.toStringAsFixed(2)}€");
+    buffer.writeln(
+      "- **Spese Sostenute:** ${actualExpenses.toStringAsFixed(2)}€",
+    );
+    buffer.writeln(
+      "- **Spese Previste:** ${plannedExpenses.toStringAsFixed(2)}€",
+    );
     final double remaining = totalBudget - actualExpenses;
     buffer.writeln("- **Budget Rimanente:** ${remaining.toStringAsFixed(2)}€");
 
     if (expenses.isNotEmpty) {
       buffer.writeln("\n**Storico Spese:**");
       for (var exp in expenses) {
-        buffer.writeln("- ${exp.date} - **${exp.title}**: ${exp.amount.toStringAsFixed(2)}€ [${exp.category}] (${exp.status})");
+        buffer.writeln(
+          "- ${exp.date} - **${exp.title}**: ${exp.amount.toStringAsFixed(2)}€ [${exp.category}] (${exp.status})",
+        );
       }
     }
 
@@ -4835,14 +5873,19 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                 decoration: BoxDecoration(
                   color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.2)),
+                  border: Border.all(
+                    color: Theme.of(context).dividerColor.withOpacity(0.2),
+                  ),
                 ),
                 child: Scrollbar(
                   thumbVisibility: true,
                   child: SingleChildScrollView(
                     child: SelectableText(
                       formattedText,
-                      style: const TextStyle(fontFamily: 'monospace', fontSize: 11),
+                      style: const TextStyle(
+                        fontFamily: 'monospace',
+                        fontSize: 11,
+                      ),
                     ),
                   ),
                 ),
@@ -4857,7 +5900,11 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
               Clipboard.setData(ClipboardData(text: formattedText));
               Navigator.pop(ctx);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Riepilogo copiato negli appunti con successo!")),
+                const SnackBar(
+                  content: Text(
+                    "Riepilogo copiato negli appunti con successo!",
+                  ),
+                ),
               );
             },
             icon: const Icon(Icons.copy),
@@ -4871,7 +5918,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.primary,
               foregroundColor: Theme.of(context).colorScheme.onPrimary,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
             icon: const Icon(Icons.picture_as_pdf),
             label: const Text("Genera PDF"),
@@ -4885,7 +5934,10 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
     );
   }
 
-  Future<void> _exportTripToPdf(BuildContext context, TravelProvider provider) async {
+  Future<void> _exportTripToPdf(
+    BuildContext context,
+    TravelProvider provider,
+  ) async {
     final trip = provider.selectedTrip!;
     final stops = provider.currentStops;
     final checklist = provider.currentChecklist;
@@ -4949,7 +6001,11 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
             if (trip.generalInfo.isNotEmpty) ...[
               pw.Text(
                 "Informazioni Generali",
-                style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, color: PdfColors.blue800),
+                style: pw.TextStyle(
+                  fontSize: 16,
+                  fontWeight: pw.FontWeight.bold,
+                  color: PdfColors.blue800,
+                ),
               ),
               pw.SizedBox(height: 4),
               pw.Paragraph(
@@ -4962,13 +6018,23 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
             // Scheda dell'Itinerario
             pw.Text(
               "Itinerario delle Tappe",
-              style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, color: PdfColors.blue800),
+              style: pw.TextStyle(
+                fontSize: 16,
+                fontWeight: pw.FontWeight.bold,
+                color: PdfColors.blue800,
+              ),
             ),
             pw.Divider(thickness: 1, color: PdfColors.blue200),
             pw.SizedBox(height: 8),
 
             if (stops.isEmpty)
-              pw.Paragraph(text: "Nessuna tappa programmata.", style: const pw.TextStyle(fontSize: 11, fontStyle: pw.FontStyle.italic))
+              pw.Paragraph(
+                text: "Nessuna tappa programmata.",
+                style: const pw.TextStyle(
+                  fontSize: 11,
+                  fontStyle: pw.FontStyle.italic,
+                ),
+              )
             else
               ...stops.map((stop) {
                 final activities = provider.getActivitiesForStop(stop.id!);
@@ -4977,7 +6043,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                   padding: const pw.EdgeInsets.all(8),
                   decoration: pw.BoxDecoration(
                     border: pw.Border.all(color: PdfColors.grey300),
-                    borderRadius: const pw.BorderRadius.all(pw.Radius.circular(6)),
+                    borderRadius: const pw.BorderRadius.all(
+                      pw.Radius.circular(6),
+                    ),
                   ),
                   child: pw.Column(
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -4987,33 +6055,63 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                         children: [
                           pw.Text(
                             "Giorno ${stop.itineraryOrder}: ${stop.name}",
-                            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12),
+                            style: pw.TextStyle(
+                              fontWeight: pw.FontWeight.bold,
+                              fontSize: 12,
+                            ),
                           ),
                           pw.Text(
                             "${_formatDate(stop.dateTime)} alle ${stop.dateTime.hour.toString().padLeft(2, '0')}:${stop.dateTime.minute.toString().padLeft(2, '0')}",
-                            style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey700),
+                            style: const pw.TextStyle(
+                              fontSize: 10,
+                              color: PdfColors.grey700,
+                            ),
                           ),
                         ],
                       ),
                       if (stop.location.isNotEmpty)
-                        pw.Text("Località: ${stop.location}", style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey700)),
+                        pw.Text(
+                          "Località: ${stop.location}",
+                          style: const pw.TextStyle(
+                            fontSize: 10,
+                            color: PdfColors.grey700,
+                          ),
+                        ),
                       if (stop.description.isNotEmpty)
                         pw.Padding(
                           padding: const pw.EdgeInsets.only(top: 4),
-                          child: pw.Text(stop.description, style: const pw.TextStyle(fontSize: 10)),
+                          child: pw.Text(
+                            stop.description,
+                            style: const pw.TextStyle(fontSize: 10),
+                          ),
                         ),
                       if (stop.notes.isNotEmpty)
                         pw.Padding(
                           padding: const pw.EdgeInsets.only(top: 4),
-                          child: pw.Text("Note: ${stop.notes}", style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey600)),
+                          child: pw.Text(
+                            "Note: ${stop.notes}",
+                            style: const pw.TextStyle(
+                              fontSize: 9,
+                              color: PdfColors.grey600,
+                            ),
+                          ),
                         ),
                       if (activities.isNotEmpty) ...[
                         pw.SizedBox(height: 6),
-                        pw.Text("Attività:", style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
+                        pw.Text(
+                          "Attività:",
+                          style: pw.TextStyle(
+                            fontSize: 10,
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                        ),
                         ...activities.map((act) {
-                          final costStr = act.cost > 0 ? " (${act.cost.toStringAsFixed(2)} EUR)" : "";
+                          final costStr = act.cost > 0
+                              ? " (${act.cost.toStringAsFixed(2)} EUR)"
+                              : "";
                           return pw.Bullet(
-                            text: "[${act.status}] ${act.time} - ${act.name} [${act.type}]$costStr",
+                            text:
+                                "[${act.status}] ${act.time} - ${act.name} [${act.type}]$costStr",
                             style: const pw.TextStyle(fontSize: 9),
                           );
                         }),
@@ -5028,29 +6126,80 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
             // Tabella degli elementi della checklist
             pw.Text(
               "Checklist",
-              style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, color: PdfColors.blue800),
+              style: pw.TextStyle(
+                fontSize: 16,
+                fontWeight: pw.FontWeight.bold,
+                color: PdfColors.blue800,
+              ),
             ),
             pw.Divider(thickness: 1, color: PdfColors.blue200),
             pw.SizedBox(height: 8),
 
             if (checklist.isEmpty)
-              pw.Paragraph(text: "Nessun elemento in checklist.", style: const pw.TextStyle(fontSize: 11, fontStyle: pw.FontStyle.italic))
+              pw.Paragraph(
+                text: "Nessun elemento in checklist.",
+                style: const pw.TextStyle(
+                  fontSize: 11,
+                  fontStyle: pw.FontStyle.italic,
+                ),
+              )
             else ...[
               pw.Text(
                 "Progresso: ${checklist.where((item) => item.isChecked).length}/${checklist.length} completate",
-                style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey700),
+                style: const pw.TextStyle(
+                  fontSize: 10,
+                  color: PdfColors.grey700,
+                ),
               ),
               pw.SizedBox(height: 6),
               pw.Table(
                 border: pw.TableBorder.all(color: PdfColors.grey300),
                 children: [
                   pw.TableRow(
-                    decoration: const pw.BoxDecoration(color: PdfColors.grey100),
+                    decoration: const pw.BoxDecoration(
+                      color: PdfColors.grey100,
+                    ),
                     children: [
-                      pw.Padding(padding: const pw.EdgeInsets.all(4), child: pw.Text("Stato", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9))),
-                      pw.Padding(padding: const pw.EdgeInsets.all(4), child: pw.Text("Elemento", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9))),
-                      pw.Padding(padding: const pw.EdgeInsets.all(4), child: pw.Text("Categoria", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9))),
-                      pw.Padding(padding: const pw.EdgeInsets.all(4), child: pw.Text("Priorità", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9))),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(4),
+                        child: pw.Text(
+                          "Stato",
+                          style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: 9,
+                          ),
+                        ),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(4),
+                        child: pw.Text(
+                          "Elemento",
+                          style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: 9,
+                          ),
+                        ),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(4),
+                        child: pw.Text(
+                          "Categoria",
+                          style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: 9,
+                          ),
+                        ),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(4),
+                        child: pw.Text(
+                          "Priorità",
+                          style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: 9,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                   ...checklist.map((item) {
@@ -5058,19 +6207,36 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                       children: [
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(4),
-                          child: pw.Text(item.isChecked ? "SI" : "NO", style: pw.TextStyle(fontSize: 9, color: item.isChecked ? PdfColors.green : PdfColors.red)),
+                          child: pw.Text(
+                            item.isChecked ? "SI" : "NO",
+                            style: pw.TextStyle(
+                              fontSize: 9,
+                              color: item.isChecked
+                                  ? PdfColors.green
+                                  : PdfColors.red,
+                            ),
+                          ),
                         ),
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(4),
-                          child: pw.Text(item.itemText, style: const pw.TextStyle(fontSize: 9)),
+                          child: pw.Text(
+                            item.itemText,
+                            style: const pw.TextStyle(fontSize: 9),
+                          ),
                         ),
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(4),
-                          child: pw.Text(item.category, style: const pw.TextStyle(fontSize: 9)),
+                          child: pw.Text(
+                            item.category,
+                            style: const pw.TextStyle(fontSize: 9),
+                          ),
                         ),
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(4),
-                          child: pw.Text(item.priority, style: const pw.TextStyle(fontSize: 9)),
+                          child: pw.Text(
+                            item.priority,
+                            style: const pw.TextStyle(fontSize: 9),
+                          ),
                         ),
                       ],
                     );
@@ -5084,7 +6250,11 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
             // Elenco delle transazioni registrate
             pw.Text(
               "Riepilogo Spese",
-              style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, color: PdfColors.blue800),
+              style: pw.TextStyle(
+                fontSize: 16,
+                fontWeight: pw.FontWeight.bold,
+                color: PdfColors.blue800,
+              ),
             ),
             pw.Divider(thickness: 1, color: PdfColors.blue200),
             pw.SizedBox(height: 8),
@@ -5098,14 +6268,29 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                   pw.Row(
                     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                     children: [
-                      pw.Text("Budget Totale:", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
-                      pw.Text("${trip.budget.toStringAsFixed(2)} EUR", style: const pw.TextStyle(fontSize: 10)),
+                      pw.Text(
+                        "Budget Totale:",
+                        style: pw.TextStyle(
+                          fontWeight: pw.FontWeight.bold,
+                          fontSize: 10,
+                        ),
+                      ),
+                      pw.Text(
+                        "${trip.budget.toStringAsFixed(2)} EUR",
+                        style: const pw.TextStyle(fontSize: 10),
+                      ),
                     ],
                   ),
                   pw.Row(
                     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                     children: [
-                      pw.Text("Spese Sostenute:", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+                      pw.Text(
+                        "Spese Sostenute:",
+                        style: pw.TextStyle(
+                          fontWeight: pw.FontWeight.bold,
+                          fontSize: 10,
+                        ),
+                      ),
                       pw.Text(
                         "${expenses.where((e) => e.status == 'Sostenuta').fold(0.0, (sum, e) => sum + e.amount).toStringAsFixed(2)} EUR",
                         style: const pw.TextStyle(fontSize: 10),
@@ -5115,7 +6300,13 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                   pw.Row(
                     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                     children: [
-                      pw.Text("Spese Previste:", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+                      pw.Text(
+                        "Spese Previste:",
+                        style: pw.TextStyle(
+                          fontWeight: pw.FontWeight.bold,
+                          fontSize: 10,
+                        ),
+                      ),
                       pw.Text(
                         "${expenses.where((e) => e.status == 'Prevista').fold(0.0, (sum, e) => sum + e.amount).toStringAsFixed(2)} EUR",
                         style: const pw.TextStyle(fontSize: 10),
@@ -5126,13 +6317,29 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                   pw.Row(
                     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                     children: [
-                      pw.Text("Budget Rimanente:", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+                      pw.Text(
+                        "Budget Rimanente:",
+                        style: pw.TextStyle(
+                          fontWeight: pw.FontWeight.bold,
+                          fontSize: 10,
+                        ),
+                      ),
                       pw.Text(
                         "${(trip.budget - expenses.where((e) => e.status == 'Sostenuta').fold(0.0, (sum, e) => sum + e.amount)).toStringAsFixed(2)} EUR",
                         style: pw.TextStyle(
                           fontWeight: pw.FontWeight.bold,
                           fontSize: 10,
-                          color: (trip.budget - expenses.where((e) => e.status == 'Sostenuta').fold(0.0, (sum, e) => sum + e.amount)) >= 0 ? PdfColors.green800 : PdfColors.red800,
+                          color:
+                              (trip.budget -
+                                      expenses
+                                          .where((e) => e.status == 'Sostenuta')
+                                          .fold(
+                                            0.0,
+                                            (sum, e) => sum + e.amount,
+                                          )) >=
+                                  0
+                              ? PdfColors.green800
+                              : PdfColors.red800,
                         ),
                       ),
                     ],
@@ -5142,29 +6349,112 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
             ),
             pw.SizedBox(height: 10),
             if (expenses.isNotEmpty) ...[
-              pw.Text("Storico Spese:", style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
+              pw.Text(
+                "Storico Spese:",
+                style: pw.TextStyle(
+                  fontSize: 10,
+                  fontWeight: pw.FontWeight.bold,
+                ),
+              ),
               pw.SizedBox(height: 4),
               pw.Table(
                 border: pw.TableBorder.all(color: PdfColors.grey300),
                 children: [
                   pw.TableRow(
-                    decoration: const pw.BoxDecoration(color: PdfColors.grey100),
+                    decoration: const pw.BoxDecoration(
+                      color: PdfColors.grey100,
+                    ),
                     children: [
-                      pw.Padding(padding: const pw.EdgeInsets.all(4), child: pw.Text("Data", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8))),
-                      pw.Padding(padding: const pw.EdgeInsets.all(4), child: pw.Text("Titolo", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8))),
-                      pw.Padding(padding: const pw.EdgeInsets.all(4), child: pw.Text("Categoria", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8))),
-                      pw.Padding(padding: const pw.EdgeInsets.all(4), child: pw.Text("Tipo", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8))),
-                      pw.Padding(padding: const pw.EdgeInsets.all(4), child: pw.Text("Importo", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8))),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(4),
+                        child: pw.Text(
+                          "Data",
+                          style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: 8,
+                          ),
+                        ),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(4),
+                        child: pw.Text(
+                          "Titolo",
+                          style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: 8,
+                          ),
+                        ),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(4),
+                        child: pw.Text(
+                          "Categoria",
+                          style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: 8,
+                          ),
+                        ),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(4),
+                        child: pw.Text(
+                          "Tipo",
+                          style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: 8,
+                          ),
+                        ),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(4),
+                        child: pw.Text(
+                          "Importo",
+                          style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: 8,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                   ...expenses.map((exp) {
                     return pw.TableRow(
                       children: [
-                        pw.Padding(padding: const pw.EdgeInsets.all(4), child: pw.Text(_formatDate(exp.date), style: const pw.TextStyle(fontSize: 8))),
-                        pw.Padding(padding: const pw.EdgeInsets.all(4), child: pw.Text(exp.title, style: const pw.TextStyle(fontSize: 8))),
-                        pw.Padding(padding: const pw.EdgeInsets.all(4), child: pw.Text(exp.category, style: const pw.TextStyle(fontSize: 8))),
-                        pw.Padding(padding: const pw.EdgeInsets.all(4), child: pw.Text(exp.status, style: const pw.TextStyle(fontSize: 8))),
-                        pw.Padding(padding: const pw.EdgeInsets.all(4), child: pw.Text("${exp.amount.toStringAsFixed(2)} EUR", style: const pw.TextStyle(fontSize: 8))),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(4),
+                          child: pw.Text(
+                            _formatDate(exp.date),
+                            style: const pw.TextStyle(fontSize: 8),
+                          ),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(4),
+                          child: pw.Text(
+                            exp.title,
+                            style: const pw.TextStyle(fontSize: 8),
+                          ),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(4),
+                          child: pw.Text(
+                            exp.category,
+                            style: const pw.TextStyle(fontSize: 8),
+                          ),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(4),
+                          child: pw.Text(
+                            exp.status,
+                            style: const pw.TextStyle(fontSize: 8),
+                          ),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(4),
+                          child: pw.Text(
+                            "${exp.amount.toStringAsFixed(2)} EUR",
+                            style: const pw.TextStyle(fontSize: 8),
+                          ),
+                        ),
                       ],
                     );
                   }),
@@ -5177,13 +6467,23 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
             // Sezione Biglietti e Documenti (Wallet)
             pw.Text(
               "Wallet Biglietti e Documenti",
-              style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, color: PdfColors.blue800),
+              style: pw.TextStyle(
+                fontSize: 16,
+                fontWeight: pw.FontWeight.bold,
+                color: PdfColors.blue800,
+              ),
             ),
             pw.Divider(thickness: 1, color: PdfColors.blue200),
             pw.SizedBox(height: 8),
 
             if (documents.isEmpty)
-              pw.Paragraph(text: "Nessun biglietto o documento salvato nel Wallet.", style: const pw.TextStyle(fontSize: 11, fontStyle: pw.FontStyle.italic))
+              pw.Paragraph(
+                text: "Nessun biglietto o documento salvato nel Wallet.",
+                style: const pw.TextStyle(
+                  fontSize: 11,
+                  fontStyle: pw.FontStyle.italic,
+                ),
+              )
             else
               ...documents.map((doc) {
                 // Determina il testo dell'etichetta in base al tipo di documento
@@ -5192,32 +6492,47 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                   labelGate = "Carrozza";
                 } else if (doc.documentType == 'Pullman') {
                   labelGate = "Fila";
-                } else if (doc.documentType == 'Hotel' || doc.documentType == 'Attrazione' || doc.documentType == 'Altro') {
+                } else if (doc.documentType == 'Hotel' ||
+                    doc.documentType == 'Attrazione' ||
+                    doc.documentType == 'Altro') {
                   labelGate = "Luogo";
                 }
 
                 // Nasconde o mostra il posto a sedere in base al mezzo di trasporto
-                final bool showSeat = !(doc.documentType == 'Hotel' || doc.documentType == 'Attrazione' || doc.documentType == 'Altro');
+                final bool showSeat =
+                    !(doc.documentType == 'Hotel' ||
+                        doc.documentType == 'Attrazione' ||
+                        doc.documentType == 'Altro');
 
                 // Intestazione colorata del biglietto in base alla categoria
                 PdfColor headerColor = PdfColors.blue700;
                 if (doc.documentType == 'Volo') headerColor = PdfColors.teal700;
-                if (doc.documentType == 'Treno') headerColor = PdfColors.indigo700;
-                if (doc.documentType == 'Pullman') headerColor = PdfColors.deepOrange700;
-                if (doc.documentType == 'Hotel') headerColor = PdfColors.purple700;
-                if (doc.documentType == 'Attrazione') headerColor = PdfColors.green700;
+                if (doc.documentType == 'Treno')
+                  headerColor = PdfColors.indigo700;
+                if (doc.documentType == 'Pullman')
+                  headerColor = PdfColors.deepOrange700;
+                if (doc.documentType == 'Hotel')
+                  headerColor = PdfColors.purple700;
+                if (doc.documentType == 'Attrazione')
+                  headerColor = PdfColors.green700;
 
                 // Codice a barre e data del documento
                 final String codeStr = doc.bookingCode ?? "SAY-MY-TRAVEL-PASS";
                 final bool isQrCode = codeStr.length <= 8;
-                final String docDateStr = doc.dateTime != null ? _formatDate(doc.dateTime!) : "N/D";
-                final String docTimeStr = doc.dateTime != null ? "${doc.dateTime!.hour.toString().padLeft(2, '0')}:${doc.dateTime!.minute.toString().padLeft(2, '0')}" : "N/D";
+                final String docDateStr = doc.dateTime != null
+                    ? _formatDate(doc.dateTime!)
+                    : "N/D";
+                final String docTimeStr = doc.dateTime != null
+                    ? "${doc.dateTime!.hour.toString().padLeft(2, '0')}:${doc.dateTime!.minute.toString().padLeft(2, '0')}"
+                    : "N/D";
 
                 return pw.Container(
                   margin: const pw.EdgeInsets.only(bottom: 16),
                   decoration: pw.BoxDecoration(
                     border: pw.Border.all(color: PdfColors.grey400, width: 1),
-                    borderRadius: const pw.BorderRadius.all(pw.Radius.circular(8)),
+                    borderRadius: const pw.BorderRadius.all(
+                      pw.Radius.circular(8),
+                    ),
                   ),
                   child: pw.Column(
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -5225,7 +6540,10 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                       // Scheda intestazione
                       pw.Container(
                         width: double.infinity,
-                        padding: const pw.EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: const pw.EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
                         decoration: pw.BoxDecoration(
                           color: headerColor,
                           borderRadius: const pw.BorderRadius.only(
@@ -5238,16 +6556,23 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                           children: [
                             pw.Text(
                               doc.documentType.toUpperCase(),
-                              style: pw.TextStyle(color: PdfColors.white, fontWeight: pw.FontWeight.bold, fontSize: 11),
+                              style: pw.TextStyle(
+                                color: PdfColors.white,
+                                fontWeight: pw.FontWeight.bold,
+                                fontSize: 11,
+                              ),
                             ),
                             pw.Text(
                               doc.title,
-                              style: pw.TextStyle(color: PdfColors.white, fontSize: 11),
+                              style: pw.TextStyle(
+                                color: PdfColors.white,
+                                fontSize: 11,
+                              ),
                             ),
                           ],
                         ),
                       ),
-                      
+
                       // Scheda principale del contenuto
                       pw.Padding(
                         padding: const pw.EdgeInsets.all(12),
@@ -5261,7 +6586,10 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                 children: [
                                   pw.Text(
                                     "Codice (PNR): $codeStr",
-                                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
+                                    style: pw.TextStyle(
+                                      fontWeight: pw.FontWeight.bold,
+                                      fontSize: 10,
+                                    ),
                                   ),
                                   pw.SizedBox(height: 4),
                                   pw.Text(
@@ -5270,25 +6598,43 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                   ),
                                   pw.SizedBox(height: 4),
                                   if (showSeat) ...[
-                                    pw.Text("Posto/Sedile: ${doc.seat ?? 'N/D'}", style: const pw.TextStyle(fontSize: 9)),
-                                    pw.Text("$labelGate: ${doc.gate ?? 'N/D'}", style: const pw.TextStyle(fontSize: 9)),
+                                    pw.Text(
+                                      "Posto/Sedile: ${doc.seat ?? 'N/D'}",
+                                      style: const pw.TextStyle(fontSize: 9),
+                                    ),
+                                    pw.Text(
+                                      "$labelGate: ${doc.gate ?? 'N/D'}",
+                                      style: const pw.TextStyle(fontSize: 9),
+                                    ),
                                   ] else ...[
-                                    pw.Text("$labelGate: ${doc.gate ?? 'N/D'}", style: const pw.TextStyle(fontSize: 9)),
+                                    pw.Text(
+                                      "$labelGate: ${doc.gate ?? 'N/D'}",
+                                      style: const pw.TextStyle(fontSize: 9),
+                                    ),
                                   ],
-                                  if (doc.notes != null && doc.notes!.isNotEmpty) ...[
+                                  if (doc.notes != null &&
+                                      doc.notes!.isNotEmpty) ...[
                                     pw.SizedBox(height: 4),
-                                    pw.Text("Note: ${doc.notes}", style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey600)),
+                                    pw.Text(
+                                      "Note: ${doc.notes}",
+                                      style: const pw.TextStyle(
+                                        fontSize: 8,
+                                        color: PdfColors.grey600,
+                                      ),
+                                    ),
                                   ],
                                 ],
                               ),
                             ),
-                            
+
                             // Linea tratteggiata decorativa per simulare uno strappo del biglietto
                             pw.Container(
                               height: 60,
                               width: 1,
                               color: PdfColors.grey300,
-                              margin: const pw.EdgeInsets.symmetric(horizontal: 12),
+                              margin: const pw.EdgeInsets.symmetric(
+                                horizontal: 12,
+                              ),
                             ),
 
                             // Colonna Destra: Generazione del Codice a Barre / QR Code
@@ -5296,7 +6642,8 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                               flex: 1,
                               child: pw.Center(
                                 child: pw.Column(
-                                  mainAxisAlignment: pw.MainAxisAlignment.center,
+                                  mainAxisAlignment:
+                                      pw.MainAxisAlignment.center,
                                   children: [
                                     if (isQrCode)
                                       pw.BarcodeWidget(
@@ -5315,7 +6662,10 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
                                     pw.SizedBox(height: 3),
                                     pw.Text(
                                       codeStr,
-                                      style: const pw.TextStyle(fontSize: 7, color: PdfColors.grey600),
+                                      style: const pw.TextStyle(
+                                        fontSize: 7,
+                                        color: PdfColors.grey600,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -5343,7 +6693,11 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
     }
   }
 
-  void _showFullScreenImage(BuildContext context, String? imagePath, int? entryId) {
+  void _showFullScreenImage(
+    BuildContext context,
+    String? imagePath,
+    int? entryId,
+  ) {
     showDialog(
       context: context,
       barrierColor: Colors.black,
@@ -5367,8 +6721,8 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> with SingleTicker
               child: imagePath == null || imagePath.isEmpty
                   ? const Icon(Icons.photo, color: Colors.white, size: 100)
                   : (imagePath.startsWith('/') || imagePath.contains(':/')
-                      ? Image.file(File(imagePath))
-                      : Image.network(imagePath)),
+                        ? Image.file(File(imagePath))
+                        : Image.network(imagePath)),
             ),
           ),
         ),
@@ -5388,7 +6742,11 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   double get maxExtent => tabBar.preferredSize.height;
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overridesParent) {
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overridesParent,
+  ) {
     return Container(
       color: Theme.of(context).scaffoldBackgroundColor,
       child: tabBar,
@@ -5400,4 +6758,3 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
     return tabBar != oldDelegate.tabBar;
   }
 }
-
