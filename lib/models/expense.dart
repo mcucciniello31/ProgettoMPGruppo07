@@ -3,13 +3,13 @@ class Expense {
   final int tripId;
   final String title;
   final double amount;
-  final String category; // e.g. Trasporto, Alloggio, Cibo, Attività, Shopping, Altro
+  final String category; // es: Trasporto, Alloggio, Cibo, Attività, Shopping, Altro
   final DateTime date;
-  final String associatedType; // 'Tappa', 'Attivita', 'Generale'
+  final String associatedType; // Tipo di associazione: 'Tappa', 'Attivita', 'Generale'
   final int? associatedId;
-  final String associatedName; // e.g. stop name, activity name, or 'Generale'
-  final String paymentMethod; // e.g. Contanti, Carta di Credito, Carta di Debito, Apple Pay, Google Pay, Altro
-  final String status; // 'Prevista', 'Sostenuta'
+  final String associatedName; // es: nome della tappa, nome dell'attività, o 'Generale'
+  final String paymentMethod; // es: Contanti, Carta di Credito, Carta di Debito, Apple Pay, Google Pay, Altro
+  final String status; // Stato della spesa: 'Prevista', 'Sostenuta'
   final String notes;
   final String currency;
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import '../services/database_helper.dart';
 import '../services/currency_service.dart';
 import '../models/trip.dart';
@@ -24,7 +24,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   List<ChecklistItem> _allChecklistItems = [];
   List<Expense> _allExpenses = [];
 
-  // Filter option: null means "All Trips" (Global)
+  // Opzione filtro: null significa "Tutti i viaggi" (Vista Globale)
   int? _selectedFilterTripId;
 
   @override
@@ -63,7 +63,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         ? null
         : _allTrips.firstWhere((t) => t.id == _selectedFilterTripId, orElse: () => _allTrips.first);
 
-    // Filter data based on selected trip
+    // Filtra i dati in base al viaggio selezionato
     final activeTrips = selectedTrip == null
         ? _allTrips
         : [selectedTrip];
@@ -86,14 +86,14 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         ? _allExpenses
         : _allExpenses.where((e) => e.tripId == selectedTrip.id).toList();
 
-    // 1. Calculations - Trips (Relevant for Global view)
+    // 1. Calcoli - Viaggi (Rilevante per la vista globale)
     final totalTrips = _allTrips.length;
     final futureTripsCount = _allTrips.where((t) => t.status == 'futuro').length;
     final ongoingTripsCount = _allTrips.where((t) => t.status == 'in_corso').length;
     final completedTripsCount = _allTrips.where((t) => t.status == 'completato').length;
     final archivedTripsCount = _allTrips.where((t) => t.status == 'archiviato').length;
 
-    // 2. Calculations - Expenses (Converted to EUR)
+    // 2. Calcoli - Spese (Convertite in EUR)
     final totalBudget = activeTrips.fold(0.0, (sum, t) => sum + t.budget);
     final totalSpentActual = activeExpenses
         .where((e) => e.status == 'Sostenuta')
@@ -102,29 +102,29 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         .where((e) => e.status == 'Prevista')
         .fold(0.0, (sum, e) => sum + CurrencyService.convert(e.amount, e.currency, 'EUR'));
 
-    // Category Distribution (Actual spent only)
+    // Distribuzione per Categoria (Solo spese effettivamente sostenute)
     Map<String, double> categoryDistribution = {};
     for (var e in activeExpenses.where((e) => e.status == 'Sostenuta')) {
       final eurAmount = CurrencyService.convert(e.amount, e.currency, 'EUR');
       categoryDistribution[e.category] = (categoryDistribution[e.category] ?? 0.0) + eurAmount;
     }
     
-    // Sort category distribution by spent amount descending
+    // Ordina la distribuzione per importo speso in ordine decrescente
     final sortedCategories = categoryDistribution.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
 
-    // 3. Calculations - Activities
+    // 3. Calcoli - Attività pianificate
     final totalActivities = activeActivities.length;
     final completedActivities = activeActivities.where((a) => a.status == 'Completata').length;
     final pendingActivities = activeActivities.where((a) => a.status == 'Da svolgere').length;
     final cancelledActivities = activeActivities.where((a) => a.status == 'Annullata').length;
 
-    // 4. Calculations - Checklists
+    // 4. Calcoli - Elementi della Checklist
     final totalChecklistItems = activeChecklistItems.length;
     final completedChecklistItems = activeChecklistItems.where((i) => i.isChecked).length;
     final openChecklistItems = activeChecklistItems.where((i) => !i.isChecked).length;
 
-    // 5. Calculations - Top Active Days (Stops with most activities)
+    // 5. Calcoli - Giorni più attivi (Tappe con più attività)
     Map<int, int> stopActivityCounts = {};
     for (var a in activeActivities) {
       stopActivityCounts[a.stopId] = (stopActivityCounts[a.stopId] ?? 0) + 1;
@@ -150,7 +150,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       appBar: AppBar(
         title: Text(
           "Analisi e Statistiche",
-          style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         actions: [
           IconButton(
@@ -169,11 +169,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // Trip Selector Filter Dropdown
+                      // Menu a discesa per il filtraggio del Selettore dei Viaggi
                       _buildTripFilterSelector(),
                       const SizedBox(height: 20),
 
-                      // Global Trips Status (Only visible when filter is Global)
+                      // Stato Globale dei Viaggi (Visibile solo quando la selezione è Globale)
                       if (_selectedFilterTripId == null) ...[
                         _buildTripsStatusCard(
                           totalTrips,
@@ -185,7 +185,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                         const SizedBox(height: 16),
                       ],
 
-                      // Budget & Expenses Overview Panel
+                      // Pannello di Panoramica del Budget e delle Spese
                       _buildBudgetExpensesCard(
                         totalBudget,
                         totalSpentActual,
@@ -193,14 +193,14 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                       ),
                       const SizedBox(height: 16),
 
-                      // Expense Category Distribution Card
+                      // Scheda della Distribuzione delle Spese per Categoria
                       _buildCategoryDistributionCard(
                         totalSpentActual,
                         sortedCategories,
                       ),
                       const SizedBox(height: 16),
 
-                      // Activities & Checklists Performance
+                      // Statistiche di Completamento di Attività e Checklist
                       _buildActivitiesChecklistCard(
                         totalActivities,
                         completedActivities,
@@ -265,7 +265,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                 child: DropdownButton<int?>(
                   value: _selectedFilterTripId,
                   isExpanded: true,
-                  style: GoogleFonts.outfit(
+                  style: TextStyle(
                     color: Theme.of(context).colorScheme.onSurface,
                     fontWeight: FontWeight.w600,
                     fontSize: 15,
@@ -276,7 +276,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                       value: null,
                       child: Text(
                         "Tutti i Viaggi (Panoramica Globale)",
-                        style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
                     ..._allTrips.map((t) => DropdownMenuItem<int?>(
@@ -324,7 +324,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             ),
             const Divider(height: 24),
             
-            // Visual Segmented Bar Chart
+            // Grafico a barre segmentato della ripartizione del budget
             if (hasActiveTrips) ...[
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
@@ -361,7 +361,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               const SizedBox(height: 16),
             ],
 
-            // Legend Grid
+            // Griglia della legenda dei colori per categoria
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -401,7 +401,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         const SizedBox(height: 2),
         Text(
           "$count",
-          style: GoogleFonts.outfit(
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 16,
           ),
@@ -440,11 +440,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             ),
             const SizedBox(height: 16),
             
-            // Stats Row
+            // Riga dei KPI e delle statistiche principali
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Spend Rate Ring
+                // Grafico ad anello della percentuale di budget speso
                 SizedBox(
                   width: 90,
                   height: 90,
@@ -461,7 +461,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                       ),
                       Text(
                         "${(spendRate * 100).toStringAsFixed(0)}%",
-                        style: GoogleFonts.outfit(
+                        style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: isOverBudget ? Colors.redAccent : Theme.of(context).colorScheme.primary,
@@ -471,7 +471,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   ),
                 ),
                 const SizedBox(width: 20),
-                // Detailed text stats
+                // Dettagli delle statistiche testuali
                 Expanded(
                   child: Column(
                     children: [
@@ -487,7 +487,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             ),
             const Divider(height: 24),
             
-            // Linear indicator comparison
+            // Confronto visivo con indicatore lineare di progresso
             const Text(
               "Andamento Spesa Stimata vs Speso Effettivo",
               style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.grey),
@@ -535,7 +535,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         ),
         Text(
           _formatCurrency(amount),
-          style: GoogleFonts.outfit(
+          style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 14,
             color: amountColor,
@@ -620,7 +620,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                             ),
                             Text(
                               "${_formatCurrency(amount)} (${(rate * 100).toStringAsFixed(1)}%)",
-                              style: GoogleFonts.outfit(
+                              style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -662,7 +662,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
     return Row(
       children: [
-        // Activities Widget
+        // Grafico ad anello per lo stato di avanzamento delle Attività
         Expanded(
           child: Card(
             child: Padding(
@@ -672,7 +672,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                 children: [
                   Text(
                     "Attività",
-                    style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   const SizedBox(height: 12),
                   Center(
@@ -690,7 +690,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                           ),
                           Text(
                             "${(actCompletionRate * 100).toStringAsFixed(0)}%",
-                            style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 14),
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                           ),
                         ],
                       ),
@@ -707,7 +707,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           ),
         ),
         const SizedBox(width: 12),
-        // Checklist Widget
+        // Grafico ad anello per lo stato di avanzamento della Checklist
         Expanded(
           child: Card(
             child: Padding(
@@ -717,7 +717,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                 children: [
                   Text(
                     "Checklist",
-                    style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   const SizedBox(height: 12),
                   Center(
@@ -735,7 +735,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                           ),
                           Text(
                             "${(checklistCompletionRate * 100).toStringAsFixed(0)}%",
-                            style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 14),
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                           ),
                         ],
                       ),
@@ -745,7 +745,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   _buildAnalysisMiniLabel("Totali", totalChecklist),
                   _buildAnalysisMiniLabel("Spuntate", completedChecklist),
                   _buildAnalysisMiniLabel("Aperte", openChecklist),
-                  // Spacer to align heights
+                  // Spaziatore per allineare le altezze delle schede
                   const SizedBox(height: 18),
                 ],
               ),
@@ -763,7 +763,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label, style: const TextStyle(fontSize: 11, color: Colors.grey)),
-          Text("$val", style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 12)),
+          Text("$val", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
         ],
       ),
     );

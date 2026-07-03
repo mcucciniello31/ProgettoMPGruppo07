@@ -2,7 +2,7 @@ class CurrencyInfo {
   final String code;
   final String name;
   final String symbol;
-  final double rateToEur; // 1 EUR = rateToEur of this currency
+  final double rateToEur; // Rapporto di conversione: 1 EUR = valore in questa valuta
 
   const CurrencyInfo({
     required this.code,
@@ -49,9 +49,9 @@ class CurrencyService {
     final from = currencies.firstWhere((c) => c.code == fromCode, orElse: () => currencies[0]);
     final to = currencies.firstWhere((c) => c.code == toCode, orElse: () => currencies[0]);
 
-    // First convert to EUR
+    // Converte prima l'importo originale in Euro
     final amountInEur = amount / from.rateToEur;
-    // Then convert to target currency
+    // Poi converte nella valuta di destinazione
     return amountInEur * to.rateToEur;
   }
 

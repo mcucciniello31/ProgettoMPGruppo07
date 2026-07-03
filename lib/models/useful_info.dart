@@ -3,7 +3,7 @@ class UsefulInfo {
   final int tripId;
   final String title;
   final String content;
-  final String category; // 'Nota', 'Promemoria', 'Prenotazione', 'Indirizzo', 'Altro'
+  final String category; // Categoria delle info utili: 'Nota', 'Promemoria', 'Prenotazione', 'Indirizzo', 'Altro'
 
   UsefulInfo({
     this.id,

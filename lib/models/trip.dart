@@ -6,11 +6,11 @@ class Trip {
   final DateTime endDate;
   final String? coverImagePath;
   final double budget;
-  final String status; // 'futuro', 'in_corso', 'completato', 'archiviato'
-  final String participants; // list of names separated by comma
-  final String generalInfo; // general notes
-  final double? latitude; // main destination latitude
-  final double? longitude; // main destination longitude
+  final String status; // Stato del viaggio: 'futuro', 'in_corso', 'completato', 'archiviato'
+  final String participants; // Lista dei nomi dei partecipanti separati da virgole
+  final String generalInfo; // Note generali e appunti del viaggio
+  final double? latitude; // Latitudine della destinazione principale
+  final double? longitude; // Longitudine della destinazione principale
 
   Trip({
     this.id,

@@ -3,8 +3,8 @@ class ChecklistItem {
   final int tripId;
   final String itemText;
   final bool isChecked;
-  final String category; // 'Bagaglio', 'Documenti', 'Pre-partenza', 'Prenotazioni', 'Acquisti', 'Altro'
-  final String priority; // 'Bassa', 'Media', 'Alta'
+  final String category; // Categoria: 'Bagaglio', 'Documenti', 'Pre-partenza', 'Prenotazioni', 'Acquisti', 'Altro'
+  final String priority; // Priorità dell'elemento: 'Bassa', 'Media', 'Alta'
 
   ChecklistItem({
     this.id,

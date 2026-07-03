@@ -1,34 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  // Theme Color Palettes
-  static const Color primaryLight = Color(0xFF6366F1); // Modern Indigo
-  static const Color secondaryLight = Color(0xFF14B8A6); // Teal
-  static const Color backgroundLight = Color(0xFFF8FAFC); // Very light grey/blue
+  // Palette di colori del tema
+  static const Color primaryLight = Color.fromARGB(255, 43, 156, 237); // Indaco moderno
+  static const Color secondaryLight = Color(0xFF14B8A6); // Verde acqua / Teal
+  static const Color backgroundLight = Color(0xFFF8FAFC); // Grigio/azzurro molto chiaro
   static const Color cardLight = Color(0xFFFFFFFF);
-  static const Color textPrimaryLight = Color(0xFF0F172A); // Dark Slate
-  static const Color textSecondaryLight = Color(0xFF64748B); // Cool Grey
+  static const Color textPrimaryLight = Color(0xFF0F172A); // Ardesia scura
+  static const Color textSecondaryLight = Color(0xFF64748B); // Grigio freddo
 
-  static const Color primaryDark = Color(0xFF818CF8); // Indigo Light
-  static const Color secondaryDark = Color(0xFF2DD4BF); // Teal Light
-  static const Color backgroundDark = Color(0xFF0F172A); // Midnight Slate
-  static const Color cardDark = Color(0xFF1E293B); // Dark Slate Card
+  static const Color primaryDark = Color.fromARGB(255, 43, 156, 237); // Indaco chiaro
+  static const Color secondaryDark = Color(0xFF2DD4BF); // Verde acqua chiaro / Teal Light
+  static const Color backgroundDark = Color(0xFF0F172A); // Ardesia notte scura
+  static const Color cardDark = Color(0xFF1E293B); // Scheda ardesia scura
   static const Color textPrimaryDark = Color(0xFFF8FAFC);
   static const Color textSecondaryDark = Color(0xFF94A3B8);
 
-  // Expense Category Colors
+  // Colori associati alle categorie di spesa
   static const Map<String, Color> categoryColors = {
-    'Trasporto': Color(0xFF38BDF8), // Sky Blue
-    'Alloggio': Color(0xFF34D399), // Emerald
-    'Cibo': Color(0xFFF87171), // Coral Red
-    'Attività': Color(0xFFC084FC), // Lavender
-    'Shopping': Color(0xFFF472B6), // Pink
-    'Spese Mediche': Color(0xFFE11D48), // Rose Crimson
-    'Altro': Color(0xFF94A3B8), // Cool Slate
+    'Trasporto': Color(0xFF38BDF8), // Celeste
+    'Alloggio': Color(0xFF34D399), // Smeraldo
+    'Cibo': Color(0xFFF87171), // Rosso corallo
+    'Attività': Color(0xFFC084FC), // Lavanda
+    'Shopping': Color(0xFFF472B6), // Rosa
+    'Spese Mediche': Color(0xFFE11D48), // Rosa cremisi
+    'Altro': Color(0xFF94A3B8), // Ardesia fredda
   };
 
-  // Activity Type Icons
+  // Icone associate alle categorie di attività
   static const Map<String, IconData> activityIcons = {
     'Visita': Icons.explore,
     'Escursione': Icons.hiking,
@@ -63,31 +62,31 @@ class AppTheme {
           side: const BorderSide(color: Color(0xFFE2E8F0), width: 1),
         ),
       ),
-      textTheme: GoogleFonts.outfitTextTheme(ThemeData.light().textTheme).copyWith(
-        titleLarge: GoogleFonts.outfit(
+      textTheme: const TextTheme(
+        titleLarge: TextStyle(
           fontSize: 22,
           fontWeight: FontWeight.bold,
           color: textPrimaryLight,
         ),
-        titleMedium: GoogleFonts.outfit(
+        titleMedium: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w600,
           color: textPrimaryLight,
         ),
-        bodyLarge: GoogleFonts.outfit(
+        bodyLarge: TextStyle(
           fontSize: 16,
           color: textPrimaryLight,
         ),
-        bodyMedium: GoogleFonts.outfit(
+        bodyMedium: TextStyle(
           fontSize: 14,
           color: textSecondaryLight,
         ),
       ),
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        iconTheme: const IconThemeData(color: textPrimaryLight),
-        titleTextStyle: GoogleFonts.outfit(
+        iconTheme: IconThemeData(color: textPrimaryLight),
+        titleTextStyle: TextStyle(
           fontSize: 24,
           fontWeight: FontWeight.bold,
           color: textPrimaryLight,
@@ -125,31 +124,31 @@ class AppTheme {
           side: const BorderSide(color: Color(0xFF334155), width: 1),
         ),
       ),
-      textTheme: GoogleFonts.outfitTextTheme(ThemeData.dark().textTheme).copyWith(
-        titleLarge: GoogleFonts.outfit(
+      textTheme: const TextTheme(
+        titleLarge: TextStyle(
           fontSize: 22,
           fontWeight: FontWeight.bold,
           color: textPrimaryDark,
         ),
-        titleMedium: GoogleFonts.outfit(
+        titleMedium: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w600,
           color: textPrimaryDark,
         ),
-        bodyLarge: GoogleFonts.outfit(
+        bodyLarge: TextStyle(
           fontSize: 16,
           color: textPrimaryDark,
         ),
-        bodyMedium: GoogleFonts.outfit(
+        bodyMedium: TextStyle(
           fontSize: 14,
           color: textSecondaryDark,
         ),
       ),
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        iconTheme: const IconThemeData(color: textPrimaryDark),
-        titleTextStyle: GoogleFonts.outfit(
+        iconTheme: IconThemeData(color: textPrimaryDark),
+        titleTextStyle: TextStyle(
           fontSize: 24,
           fontWeight: FontWeight.bold,
           color: textPrimaryDark,

@@ -1,6 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import '../providers/travel_provider.dart';
 import '../models/trip.dart';
 import 'add_trip_screen.dart';
@@ -17,9 +18,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  // Trip search & filter states
+  // Variabili per la ricerca e il filtraggio dei viaggi
   String _searchDestination = "";
-  String _selectedStatusFilter = "Tutti"; // Tutti, futuro, in_corso, completato
+  String _selectedStatusFilter = "Tutti"; // Stati dei filtri di ricerca: Tutti, Futuro, In Corso, Completato
   DateTimeRange? _selectedDateRange;
   bool _showFilterPanel = false;
 
@@ -27,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    // Load trips on startup
+    // Carica tutti i viaggi memorizzati all'avvio dell'app
     Future.microtask(() =>
       Provider.of<TravelProvider>(context, listen: false).loadTrips()
     );
@@ -48,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     final travelProvider = Provider.of<TravelProvider>(context);
     final trips = travelProvider.trips;
 
-    // Filter trips by destination/title, status, and date range
+    // Filtra l'elenco dei viaggi in base a testo inserito, stato e periodo selezionato
     final filteredTrips = trips.where((t) {
       if (_searchDestination.isNotEmpty &&
           !t.destination.toLowerCase().contains(_searchDestination.toLowerCase()) &&
@@ -78,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // 1. Sleek Header with Title and Dashboard Info
+            // 1. Intestazione dell'app con titolo e statistiche veloci
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
               child: Row(
@@ -90,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       children: [
                         Text(
                           "Say My Travel",
-                          style: GoogleFonts.outfit(
+                          style: TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.bold,
                             color: Theme.of(context).colorScheme.primary,
@@ -125,7 +126,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               ),
             ),
 
-            // Search and Filter Bar for Trips
+            // Pannello per cercare e filtrare i viaggi
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
               child: Column(
@@ -290,7 +291,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               ),
             ),
 
-            // 2. Tab Bar for Active vs Archived
+            // 2. Selettore per passare dai viaggi attivi a quelli archiviati
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: TabBar(
@@ -303,7 +304,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 dividerColor: Colors.transparent,
                 labelColor: Theme.of(context).colorScheme.primary,
                 unselectedLabelColor: Colors.grey,
-                labelStyle: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 15),
+                labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                 tabs: [
                   Tab(
                     child: Row(
@@ -329,7 +330,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               ),
             ),
 
-            // 3. Tab Bar View for Trips
+            // 3. Schermata contenente le liste dei viaggi divisi per scheda
             Expanded(
               child: travelProvider.isLoading
                   ? const Center(child: CircularProgressIndicator())
@@ -429,12 +430,12 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             ),
             confirmDismiss: (direction) async {
               if (direction == DismissDirection.startToEnd) {
-                // Swipe Left-to-Right: Delete
+                // Scorrimento da Sinistra a Destra: Elimina viaggio definitivamente
                 return await _confirmDelete(context, trip, provider);
               } else {
-                // Swipe Right-to-Left: Archive/Restore
+                // Scorrimento da Destra a Sinistra: Archivia/Ripristina viaggio
                 if (isArchivedList) {
-                  // Restore to appropriate computed status based on dates
+                  // Ripristina lo stato del viaggio ricalcolandolo in base alle date odierne
                   String targetStatus = 'futuro';
                   final now = DateTime.now();
                   final today = DateTime(now.year, now.month, now.day);
@@ -456,7 +457,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     );
                   }
                 } else {
-                  // Archive
+                  // Archiviazione
                   await provider.updateTrip(trip.copyWith(status: 'archiviato'));
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -464,7 +465,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     );
                   }
                 }
-                return false; // Handled manually by state update, don't dismiss card natively
+                return false; // Gestito tramite aggiornamento dello stato dell'app, non rimuovere la scheda visivamente
               }
             },
             child: _buildTripCard(context, trip, provider),
@@ -475,13 +476,13 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   }
 
   Widget _buildTripCard(BuildContext context, Trip trip, TravelProvider provider) {
-    // Generate cover gradient based on the trip's title
+    // Genera i colori del gradiente di copertina in modo deterministico dal titolo del viaggio
     final gradientColors = [
       Color((trip.title.hashCode & 0xFFFFFF) | 0xFF000000).withOpacity(0.85),
       Color((trip.destination.hashCode & 0xFFFFFF) | 0xFF000000).withOpacity(0.85),
     ];
 
-    // Determine status badge details
+    // Determina i colori e le icone per il badge di stato
     String statusText = 'Futuro';
     Color badgeColor = Colors.blueAccent;
     IconData statusIcon = Icons.calendar_today;
@@ -520,7 +521,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Trip Cover Header
+              // Sezione superiore della scheda contenente destinazione, titolo e stato
               Container(
                 height: 140,
                 width: double.infinity,
@@ -533,10 +534,22 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
+                  image: trip.coverImagePath != null &&
+                          trip.coverImagePath!.isNotEmpty &&
+                          File(trip.coverImagePath!).existsSync()
+                      ? DecorationImage(
+                          image: FileImage(File(trip.coverImagePath!)),
+                          fit: BoxFit.cover,
+                          colorFilter: ColorFilter.mode(
+                            Colors.black.withOpacity(0.4),
+                            BlendMode.darken,
+                          ),
+                        )
+                      : null,
                 ),
                 child: Stack(
                   children: [
-                    // Background graphics
+                    // Cerchi geometrici decorativi di sfondo
                     Positioned(
                       right: -40,
                       top: -40,
@@ -608,7 +621,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                   ),
                                 ),
                               ),
-                              // Status Badge
+                              // Badge di stato del viaggio
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                 decoration: BoxDecoration(
@@ -635,7 +648,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           const SizedBox(height: 8),
                           Text(
                             trip.title,
-                            style: GoogleFonts.outfit(
+                            style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
@@ -644,7 +657,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         ],
                       ),
                     ),
-                    // Action Buttons (Edit)
+                    // Pulsante per modificare i dettagli del viaggio
                     Positioned(
                       top: 10,
                       right: 10,
@@ -663,7 +676,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   ],
                 ),
               ),
-              // Trip Dates & Info Footer
+              // Piè di pagina della scheda contenente le date e il budget
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: Row(
@@ -687,7 +700,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     ),
                     Text(
                       "Budget: €${trip.budget.toStringAsFixed(0)}",
-                      style: GoogleFonts.outfit(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).colorScheme.secondary,
                       ),

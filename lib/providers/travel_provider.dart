@@ -24,7 +24,7 @@ class TravelProvider with ChangeNotifier {
   List<TravelDocument> _currentTravelDocuments = [];
   bool _isLoading = false;
 
-  // Getters
+  // Getter
   List<Trip> get trips => _trips;
   Trip? get selectedTrip => _selectedTrip;
   List<Stop> get currentStops => _currentStops;
@@ -39,7 +39,7 @@ class TravelProvider with ChangeNotifier {
     return _stopActivities[stopId] ?? [];
   }
 
-  // Load all trips
+  // Carica tutti i viaggi
   Future<void> loadTrips() async {
     _isLoading = true;
     notifyListeners();
@@ -53,7 +53,7 @@ class TravelProvider with ChangeNotifier {
     }
   }
 
-  // Set the selected trip and load all its details
+  // Imposta il viaggio selezionato e carica tutti i suoi dettagli
   Future<void> selectTrip(Trip trip) async {
     _selectedTrip = trip;
     try {
@@ -64,7 +64,7 @@ class TravelProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // Reload details for the selected trip
+  // Ricarica i dettagli del viaggio selezionato
   Future<void> loadTripDetails(int tripId) async {
     _currentStops = await _dbHelper.getStopsForTrip(tripId);
     _currentChecklist = await _dbHelper.getChecklistItemsForTrip(tripId);
@@ -73,7 +73,7 @@ class TravelProvider with ChangeNotifier {
     _currentDiaryEntries = await _dbHelper.getDiaryEntriesForTrip(tripId);
     _currentTravelDocuments = await _dbHelper.getTravelDocumentsForTrip(tripId);
 
-    // Load activities for all stops
+    // Carica le attività per tutte le tappe
     _stopActivities.clear();
     for (var stop in _currentStops) {
       final activities = await _dbHelper.getActivitiesForStop(stop.id!);
@@ -82,7 +82,7 @@ class TravelProvider with ChangeNotifier {
   }
 
   // ==========================================
-  // TRIP OPERATIONS
+  // OPERAZIONI SUI VIAGGI
   // ==========================================
 
   Future<void> addTrip(Trip trip) async {
@@ -107,7 +107,7 @@ class TravelProvider with ChangeNotifier {
   }
 
   // ==========================================
-  // STOP OPERATIONS
+  // OPERAZIONI SULLE TAPPE
   // ==========================================
 
   int _dayNumberFor(Trip trip, DateTime dateTime) {
@@ -156,7 +156,7 @@ class TravelProvider with ChangeNotifier {
   }
 
   // ==========================================
-  // ACTIVITY OPERATIONS
+  // OPERAZIONI SULLE ATTIVITÀ
   // ==========================================
 
   Future<void> addActivity(Activity activity) async {
@@ -184,7 +184,7 @@ class TravelProvider with ChangeNotifier {
   }
 
   // ==========================================
-  // CHECKLIST OPERATIONS
+  // OPERAZIONI SULLA CHECKLIST
   // ==========================================
 
   Future<void> addChecklistItem(ChecklistItem item) async {
@@ -221,7 +221,7 @@ class TravelProvider with ChangeNotifier {
   }
 
   // ==========================================
-  // USEFUL INFO OPERATIONS
+  // OPERAZIONI SULLE INFO UTILI
   // ==========================================
 
   Future<void> addUsefulInfo(UsefulInfo info) async {
@@ -249,7 +249,7 @@ class TravelProvider with ChangeNotifier {
   }
 
   // ==========================================
-  // EXPENSE OPERATIONS
+  // OPERAZIONI SULLE SPESE
   // ==========================================
 
   Future<void> addExpense(Expense expense) async {
@@ -276,7 +276,7 @@ class TravelProvider with ChangeNotifier {
     }
   }
 
-  // Helper getters for selected trip statistics
+  // Getter di supporto per le statistiche del viaggio selezionato
   double get totalBudget => _selectedTrip?.budget ?? 0.0;
 
   double get totalExpenses {
@@ -302,7 +302,7 @@ class TravelProvider with ChangeNotifier {
   }
 
   // ==========================================
-  // DIARY CRUD OPERATIONS
+  // OPERAZIONI CRUD SUL DIARIO DI BORDO
   // ==========================================
 
   Future<void> addDiaryEntry(DiaryEntry entry) async {
@@ -330,7 +330,7 @@ class TravelProvider with ChangeNotifier {
   }
 
   // ==========================================
-  // TRAVEL DOCUMENT OPERATIONS
+  // OPERAZIONI SUI DOCUMENTI DI VIAGGIO
   // ==========================================
 
   Future<void> addTravelDocument(TravelDocument doc) async {

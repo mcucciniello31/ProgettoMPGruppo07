@@ -2,7 +2,7 @@ class TravelDocument {
   final int? id;
   final int tripId;
   final String title;
-  final String documentType; // 'Volo', 'Treno', 'Hotel', 'Attrazione', 'Altro'
+  final String documentType; // Tipo di documento: 'Volo', 'Treno', 'Hotel', 'Attrazione', 'Altro'
   final String? bookingCode;
   final String? seat;
   final String? gate;

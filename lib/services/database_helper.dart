@@ -38,7 +38,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 9, // Upgraded to 9 for travel_documents
+      version: 9, // Database aggiornato alla versione 9 per supportare i documenti di viaggio
       onCreate: _createDB,
       onConfigure: _onConfigure,
       onUpgrade: _onUpgrade,
@@ -46,7 +46,7 @@ class DatabaseHelper {
   }
 
   Future _onConfigure(Database db) async {
-    // Enable foreign keys support for cascade deletes
+    // Abilita il vincolo delle chiavi esterne per supportare l'eliminazione a cascata
     await db.execute('PRAGMA foreign_keys = ON');
   }
 
@@ -58,7 +58,7 @@ class DatabaseHelper {
     const textNullableType = 'TEXT';
     const doubleNullableType = 'REAL';
 
-    // 1. Trips table (updated for version 2)
+    // 1. Tabella dei Viaggi (aggiornata alla versione 2)
     await db.execute('''
       CREATE TABLE trips (
         id $idType,
@@ -76,7 +76,7 @@ class DatabaseHelper {
       )
     ''');
 
-    // 2. Stops table (Tappe)
+    // 2. Tabella delle Tappe (Fermate dell'itinerario)
     await db.execute('''
       CREATE TABLE stops (
         id $idType,
@@ -93,7 +93,7 @@ class DatabaseHelper {
       )
     ''');
 
-    // 3. Activities table
+    // 3. Tabella delle Attività
     await db.execute('''
       CREATE TABLE activities (
         id $idType,
@@ -110,7 +110,7 @@ class DatabaseHelper {
       )
     ''');
 
-    // 4. Checklist Items table
+    // 4. Tabella degli elementi della Checklist e bagagli
     await db.execute('''
       CREATE TABLE checklist_items (
         id $idType,
@@ -123,7 +123,7 @@ class DatabaseHelper {
       )
     ''');
 
-    // 5. Expenses table
+    // 5. Tabella delle Spese
     await db.execute('''
       CREATE TABLE expenses (
         id $idType,
@@ -143,7 +143,7 @@ class DatabaseHelper {
       )
     ''');
 
-    // 6. Useful Info table
+    // 6. Tabella delle Informazioni Utili
     await db.execute('''
       CREATE TABLE useful_info (
         id $idType,
@@ -155,7 +155,7 @@ class DatabaseHelper {
       )
     ''');
 
-    // 7. Diary Entries table
+    // 7. Tabella delle voci del Diario di Bordo (Ricordi)
     await db.execute('''
       CREATE TABLE diary_entries (
         id $idType,
@@ -168,7 +168,7 @@ class DatabaseHelper {
       )
     ''');
 
-    // 8. Travel Documents table
+    // 8. Tabella dei Documenti di Viaggio (Biglietti)
     await db.execute('''
       CREATE TABLE travel_documents (
         id $idType,
@@ -187,7 +187,7 @@ class DatabaseHelper {
 
   Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2) {
-      // Add columns for trip status, participants, general info and coordinates
+      // Aggiunge le colonne per lo stato, i partecipanti, le info generali e le coordinate dei viaggi
       await db.execute("ALTER TABLE trips ADD COLUMN status TEXT NOT NULL DEFAULT 'futuro'");
       await db.execute("ALTER TABLE trips ADD COLUMN participants TEXT NOT NULL DEFAULT ''");
       await db.execute("ALTER TABLE trips ADD COLUMN generalInfo TEXT NOT NULL DEFAULT ''");
@@ -195,18 +195,18 @@ class DatabaseHelper {
       await db.execute("ALTER TABLE trips ADD COLUMN longitude REAL");
     }
     if (oldVersion < 3) {
-      // Add itineraryOrder and notes to stops table
+      // Aggiunge l'ordine dell'itinerario e le note alla tabella delle tappe
       await db.execute("ALTER TABLE stops ADD COLUMN itineraryOrder INTEGER NOT NULL DEFAULT 1");
       await db.execute("ALTER TABLE stops ADD COLUMN notes TEXT DEFAULT ''");
     }
     if (oldVersion < 4) {
-      // Add location, status, notes to activities table
+      // Aggiunge località, stato e note alla tabella delle attività
       await db.execute("ALTER TABLE activities ADD COLUMN location TEXT NOT NULL DEFAULT ''");
       await db.execute("ALTER TABLE activities ADD COLUMN status TEXT NOT NULL DEFAULT 'Da svolgere'");
       await db.execute("ALTER TABLE activities ADD COLUMN notes TEXT DEFAULT ''");
     }
     if (oldVersion < 5) {
-      // Add category to checklist_items and create useful_info table
+      // Aggiunge la categoria alla checklist e crea la tabella delle info utili
       await db.execute("ALTER TABLE checklist_items ADD COLUMN category TEXT NOT NULL DEFAULT 'Bagaglio'");
       await db.execute('''
         CREATE TABLE useful_info (
@@ -220,7 +220,7 @@ class DatabaseHelper {
       ''');
     }
     if (oldVersion < 6) {
-      // Upgrade expenses table: create new, copy data, drop old, rename
+      // Aggiorna la tabella delle spese: crea la nuova, copia i dati, elimina la vecchia e rinomina
       await db.execute('''
         CREATE TABLE expenses_new (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -291,7 +291,7 @@ class DatabaseHelper {
   }
 
   // ==========================================
-  // TRIP CRUD OPERATIONS
+  // OPERAZIONI CRUD SUI VIAGGI
   // ==========================================
 
   Future<Trip> insertTrip(Trip trip) async {
@@ -355,7 +355,7 @@ class DatabaseHelper {
   }
 
   // ==========================================
-  // STOP CRUD OPERATIONS
+  // OPERAZIONI CRUD SULLE TAPPE
   // ==========================================
 
   Future<Stop> insertStop(Stop stop) async {
@@ -395,7 +395,7 @@ class DatabaseHelper {
   }
 
   // ==========================================
-  // ACTIVITY CRUD OPERATIONS
+  // OPERAZIONI CRUD SULLE ATTIVITÀ
   // ==========================================
 
   Future<Activity> insertActivity(Activity activity) async {
@@ -435,7 +435,7 @@ class DatabaseHelper {
   }
 
   // ==========================================
-  // CHECKLIST ITEM CRUD OPERATIONS
+  // OPERAZIONI CRUD SUGLI ELEMENTI DELLA CHECKLIST
   // ==========================================
 
   Future<ChecklistItem> insertChecklistItem(ChecklistItem item) async {
@@ -475,7 +475,7 @@ class DatabaseHelper {
   }
 
   // ==========================================
-  // EXPENSE CRUD OPERATIONS
+  // OPERAZIONI CRUD SULLE SPESE
   // ==========================================
 
   Future<Expense> insertExpense(Expense expense) async {
@@ -515,7 +515,7 @@ class DatabaseHelper {
   }
 
   // ==========================================
-  // USEFUL INFO CRUD OPERATIONS
+  // OPERAZIONI CRUD SULLE INFO UTILI
   // ==========================================
 
   Future<UsefulInfo> insertUsefulInfo(UsefulInfo info) async {
@@ -554,7 +554,7 @@ class DatabaseHelper {
     );
   }
 
-  // Global queries for all trips (used in Analytics)
+  // Query globali su tutti i viaggi (usate per la dashboard di analisi e statistiche)
   Future<List<Stop>> getAllStops() async {
     final db = await instance.database;
     final result = await db.query('stops');
@@ -580,7 +580,7 @@ class DatabaseHelper {
   }
 
   // ==========================================
-  // DIARY ENTRIES CRUD OPERATIONS
+  // OPERAZIONI CRUD SULLE VOCI DEL DIARIO DI BORDO
   // ==========================================
 
   Future<DiaryEntry> insertDiaryEntry(DiaryEntry entry) async {
@@ -620,7 +620,7 @@ class DatabaseHelper {
   }
 
   // ==========================================
-  // TRAVEL DOCUMENTS CRUD OPERATIONS
+  // OPERAZIONI CRUD SUI DOCUMENTI DI VIAGGIO
   // ==========================================
 
   Future<TravelDocument> insertTravelDocument(TravelDocument doc) async {
@@ -659,7 +659,7 @@ class DatabaseHelper {
     );
   }
 
-  // Close database
+  // Chiude la connessione al database
   Future close() async {
     final db = await instance.database;
     db.close();

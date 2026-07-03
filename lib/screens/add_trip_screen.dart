@@ -1,8 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 import '../models/trip.dart';
 import '../providers/travel_provider.dart';
 
@@ -27,8 +31,9 @@ class _AddTripScreenState extends State<AddTripScreen> {
   DateTime? _endDate;
   double? _latitude;
   double? _longitude;
+  String? _coverImagePath;
 
-  // Autocomplete variables
+  // Variabili per la gestione dell'autocompletamento dell'indirizzo
   List<Map<String, dynamic>> _suggestions = [];
   bool _isSearching = false;
   Timer? _debounce;
@@ -48,10 +53,11 @@ class _AddTripScreenState extends State<AddTripScreen> {
     _endDate = widget.trip?.endDate;
     _latitude = widget.trip?.latitude;
     _longitude = widget.trip?.longitude;
+    _coverImagePath = widget.trip?.coverImagePath;
 
     _destinationFocusNode.addListener(() {
       if (!_destinationFocusNode.hasFocus) {
-        // Clear suggestions when losing focus (delayed to allow tapping suggestions)
+        // Pulisce i suggerimenti di indirizzo quando si perde il focus (con ritardo per permettere il clic)
         Future.delayed(const Duration(milliseconds: 200), () {
           if (mounted) {
             setState(() {
@@ -138,7 +144,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
     if (picked != null) {
       setState(() {
         _startDate = picked;
-        // Adjust end date if start date is after it
+        // Sposta in avanti la data di fine se la data d'inizio viene selezionata dopo
         if (_endDate != null && _endDate!.isBefore(_startDate!)) {
           _endDate = _startDate;
         }
@@ -160,7 +166,58 @@ class _AddTripScreenState extends State<AddTripScreen> {
     }
   }
 
-  // Fetch location suggestions using free OpenStreetMap Nominatim API
+  Future<void> _pickCoverImage(ImageSource source) async {
+    try {
+      final picker = ImagePicker();
+      final image = await picker.pickImage(
+        source: source,
+        maxWidth: 1200,
+        maxHeight: 800,
+        imageQuality: 85,
+      );
+      if (image != null) {
+        setState(() {
+          _coverImagePath = image.path;
+        });
+      }
+    } catch (e) {
+      debugPrint("Errore durante la selezione dell'immagine: $e");
+    }
+  }
+
+  void _showCoverImageSourceSheet() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetCtx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_library_outlined),
+              title: const Text("Scegli dalla galleria"),
+              onTap: () {
+                Navigator.pop(sheetCtx);
+                _pickCoverImage(ImageSource.gallery);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.camera_alt_outlined),
+              title: const Text("Scatta una foto"),
+              onTap: () {
+                Navigator.pop(sheetCtx);
+                _pickCoverImage(ImageSource.camera);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Cerca suggerimenti di indirizzo usando l'API gratuita Nominatim di OpenStreetMap
   Future<void> _fetchSuggestions(String query) async {
     if (query.trim().length < 3) {
       setState(() {
@@ -212,7 +269,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
     });
   }
 
-  void _saveTrip() {
+  Future<void> _saveTrip() async {
     final title = _titleController.text;
     final destination = _destinationController.text;
     final budgetText = _budgetController.text;
@@ -221,7 +278,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
 
     List<String> validationErrors = [];
 
-    // 1. Title validation
+    // 1. Validazione del titolo del viaggio
     if (title.isEmpty) {
       validationErrors.add("Titolo del viaggio: campo obbligatorio");
     } else if (title.startsWith(' ')) {
@@ -230,14 +287,14 @@ class _AddTripScreenState extends State<AddTripScreen> {
       validationErrors.add("Titolo del viaggio: può contenere solo lettere, numeri, spazi e i caratteri speciali ' - , . ! : ? (che devono essere preceduti e seguiti da lettere o numeri)");
     }
 
-    // 2. Destination validation
+    // 2. Validazione della destinazione principale
     if (destination.isEmpty) {
       validationErrors.add("Destinazione principale: campo obbligatorio");
     } else if (destination.startsWith(' ')) {
       validationErrors.add("Destinazione principale: non può iniziare con uno spazio");
     }
 
-    // 3. Budget validation
+    // 3. Validazione dell'importo del budget
     if (budgetText.isEmpty) {
       validationErrors.add("Budget stimato: campo obbligatorio");
     } else if (budgetText.startsWith(' ')) {
@@ -251,7 +308,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
       }
     }
 
-    // 4. Dates validation
+    // 4. Validazione delle date selezionate
     if (_startDate == null) {
       validationErrors.add("Data di inizio: campo obbligatorio");
     }
@@ -259,7 +316,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
       validationErrors.add("Data di fine: campo obbligatorio");
     }
 
-    // 5. Participants validation (optional but must be valid if filled)
+    // 5. Validazione dei partecipanti (facoltativi, ma devono avere formati validi)
     if (participantsText.startsWith(' ')) {
       validationErrors.add("Partecipanti: non può iniziare con uno spazio");
     } else if (participantsText.isNotEmpty) {
@@ -276,7 +333,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
       }
     }
 
-    // 6. Useful Info validation (optional but must be valid if filled)
+    // 6. Validazione delle informazioni utili (facoltative, ma devono contenere almeno una lettera)
     if (generalInfoText.startsWith(' ')) {
       validationErrors.add("Informazioni utili: non possono iniziare con uno spazio");
     } else if (generalInfoText.isNotEmpty) {
@@ -340,7 +397,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
         ),
       );
       
-      // Trigger native form validation to highlight missing fields in red
+      // Esegue la validazione del form per colorare i campi mancanti in rosso
       _formKey.currentState!.validate();
       return;
     }
@@ -352,7 +409,21 @@ class _AddTripScreenState extends State<AddTripScreen> {
     final participants = _participantsController.text.trim();
     final generalInfo = _generalInfoController.text.trim();
 
-    // Calculate status based on dates
+    // Copia l'immagine selezionata nella memoria interna permanente dell'applicazione
+    String? finalCoverPath = _coverImagePath;
+    if (_coverImagePath != null && _coverImagePath != widget.trip?.coverImagePath) {
+      try {
+        final appDocDir = await getApplicationDocumentsDirectory();
+        final extension = path.extension(_coverImagePath!);
+        final fileName = "trip_cover_${DateTime.now().millisecondsSinceEpoch}$extension";
+        final savedFile = await File(_coverImagePath!).copy("${appDocDir.path}/$fileName");
+        finalCoverPath = savedFile.path;
+      } catch (e) {
+        debugPrint("Error copying cover image to persistent folder: $e");
+      }
+    }
+
+    // Calcola lo stato del viaggio ('futuro', 'in_corso', 'completato') in base al calendario
     String status = widget.trip?.status ?? 'futuro';
     if (status != 'archiviato') {
       final now = DateTime.now();
@@ -370,12 +441,13 @@ class _AddTripScreenState extends State<AddTripScreen> {
     }
 
     if (widget.trip == null) {
-      // Create new trip
+      // Logica per creare un nuovo viaggio
       final newTrip = Trip(
         title: title.trim(),
         destination: destination.trim(),
         startDate: _startDate!,
         endDate: _endDate!,
+        coverImagePath: finalCoverPath,
         budget: budget,
         status: status,
         participants: participants,
@@ -385,12 +457,13 @@ class _AddTripScreenState extends State<AddTripScreen> {
       );
       provider.addTrip(newTrip);
     } else {
-      // Update existing trip
+      // Logica per aggiornare un viaggio esistente
       final updatedTrip = widget.trip!.copyWith(
         title: title.trim(),
         destination: destination.trim(),
         startDate: _startDate!,
         endDate: _endDate!,
+        coverImagePath: finalCoverPath,
         budget: budget,
         status: status,
         participants: participants,
@@ -401,16 +474,18 @@ class _AddTripScreenState extends State<AddTripScreen> {
       provider.updateTrip(updatedTrip);
     }
 
-    Navigator.pop(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          widget.trip == null
-              ? "Viaggio creato con successo!"
-              : "Viaggio modificato con successo!",
+    if (mounted) {
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            widget.trip == null
+                ? "Viaggio creato con successo!"
+                : "Viaggio modificato con successo!",
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 
   @override
@@ -438,7 +513,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
               ),
               const SizedBox(height: 28),
 
-              // Title input
+              // Input del nome del viaggio
               TextFormField(
                 controller: _titleController,
                 decoration: InputDecoration(
@@ -464,7 +539,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
               ),
               const SizedBox(height: 20),
 
-              // Destination input (with Nominatim Autocomplete suggestion dropdown)
+              // Input della destinazione con supporto all'autocompletamento Nominatim
               TextFormField(
                 controller: _destinationController,
                 focusNode: _destinationFocusNode,
@@ -494,7 +569,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
                 },
               ),
 
-              // Suggestions dropdown list container
+              // Elenco a discesa contenente le destinazioni suggerite
               if (_suggestions.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(top: 4.0),
@@ -539,7 +614,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
                 ),
               const SizedBox(height: 20),
 
-              // Budget input
+              // Input per specificare il budget stimato
               TextFormField(
                 controller: _budgetController,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -570,7 +645,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
               ),
               const SizedBox(height: 20),
 
-              // Participants input (comma-separated text area)
+              // Area di inserimento partecipanti (nomi separati da virgole)
               TextFormField(
                 controller: _participantsController,
                 decoration: InputDecoration(
@@ -598,7 +673,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
               ),
               const SizedBox(height: 20),
 
-              // Useful Info / Notes input (multiline)
+              // Input multilinea per le note e informazioni generali
               TextFormField(
                 controller: _generalInfoController,
                 maxLines: 4,
@@ -626,9 +701,113 @@ class _AddTripScreenState extends State<AddTripScreen> {
                   return null;
                 },
               ),
+
+              // Selettore dell'immagine di sfondo/copertina
+              const SizedBox(height: 20),
+              Text(
+                "Sfondo del Viaggio",
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+              ),
+              const SizedBox(height: 8),
+              GestureDetector(
+                onTap: _showCoverImageSourceSheet,
+                child: Container(
+                  height: 160,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: Theme.of(context).dividerColor.withOpacity(0.3),
+                    ),
+                  ),
+                  child: _coverImagePath == null
+                      ? Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.add_photo_alternate_outlined,
+                              size: 40,
+                              color: Theme.of(context).colorScheme.primary.withOpacity(0.7),
+                            ),
+                            const SizedBox(height: 8),
+                            const Text(
+                              "Seleziona Sfondo Viaggio",
+                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              "Verrà mostrato come copertina nella Home",
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: Theme.of(context).textTheme.bodySmall?.color,
+                              ),
+                            ),
+                          ],
+                        )
+                      : ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              Image.file(
+                                File(_coverImagePath!),
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    color: Colors.red.shade50,
+                                    child: const Icon(Icons.broken_image_outlined, color: Colors.redAccent),
+                                  );
+                                },
+                              ),
+                              Positioned(
+                                right: 12,
+                                top: 12,
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.black.withOpacity(0.6),
+                                  radius: 18,
+                                  child: IconButton(
+                                    icon: const Icon(Icons.delete, color: Colors.white, size: 16),
+                                    onPressed: () {
+                                      setState(() {
+                                        _coverImagePath = null;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                left: 12,
+                                bottom: 12,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withOpacity(0.6),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: const Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(Icons.edit, color: Colors.white, size: 12),
+                                      SizedBox(width: 4),
+                                      Text(
+                                        "Modifica sfondo",
+                                        style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                ),
+              ),
               const SizedBox(height: 24),
 
-              // Date Selectors
+              // Pulsanti e indicatori per selezionare la data di inizio e fine
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -777,7 +956,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
               ),
               const SizedBox(height: 40),
 
-              // Save button
+              // Pulsante per salvare o modificare il viaggio
               ElevatedButton(
                 onPressed: _saveTrip,
                 style: ElevatedButton.styleFrom(

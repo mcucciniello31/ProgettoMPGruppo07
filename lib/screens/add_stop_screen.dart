@@ -8,9 +8,9 @@ import '../theme/app_theme.dart';
 
 class AddStopScreen extends StatefulWidget {
   final int tripId;
-  final Stop? parentStop; // If set, we add an activity to this stop instead of a new stop
-  final Stop? stop; // If set, we edit this stop
-  final Activity? activity; // If set, we edit this activity
+  final Stop? parentStop; // Se impostato, aggiungiamo un'attività a questa tappa invece di creare una nuova tappa
+  final Stop? stop; // Se impostato, stiamo modificando questa tappa
+  final Activity? activity; // Se impostato, stiamo modificando questa attività
 
   const AddStopScreen({
     super.key,
@@ -27,7 +27,7 @@ class AddStopScreen extends StatefulWidget {
 class _AddStopScreenState extends State<AddStopScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  // Controllers
+  // Controller per la gestione dei campi di testo
   late TextEditingController _nameController;
   late TextEditingController _descriptionController;
   late TextEditingController _locationController;
@@ -48,7 +48,7 @@ class _AddStopScreenState extends State<AddStopScreen> {
     final provider = Provider.of<TravelProvider>(context, listen: false);
     _trip = provider.selectedTrip;
 
-    // Determine roles
+    // Determina il tipo di operazione (Tappa o Attività, Aggiunta o Modifica)
     final isActivity = widget.parentStop != null || widget.activity != null;
     final isEdit = widget.stop != null || widget.activity != null;
 
@@ -104,8 +104,8 @@ class _AddStopScreenState extends State<AddStopScreen> {
     }
   }
 
-  /// Total number of days in the trip, guarded to always be at least 1
-  /// even if the trip's endDate is before its startDate.
+  /// Numero totale di giorni nel viaggio, garantito per essere almeno 1
+  /// anche se la data di fine del viaggio è antecedente alla data di inizio.
   int _tripTotalDays() {
     final tripStartDay = DateTime(_trip!.startDate.year, _trip!.startDate.month, _trip!.startDate.day);
     final tripEndDay = DateTime(_trip!.endDate.year, _trip!.endDate.month, _trip!.endDate.day);
@@ -193,7 +193,7 @@ class _AddStopScreenState extends State<AddStopScreen> {
     List<String> validationErrors = [];
 
     if (!isActivity) {
-      // Validating Stop
+      // Validazione della Tappa
       if (name.isEmpty) {
         validationErrors.add("Nome tappa: campo obbligatorio");
       } else if (name.startsWith(' ')) {
@@ -218,7 +218,7 @@ class _AddStopScreenState extends State<AddStopScreen> {
         validationErrors.add("Note: non possono iniziare con uno spazio");
       }
     } else {
-      // Validating Activity
+      // Validazione dell'Attività
       if (name.isEmpty) {
         validationErrors.add("Nome attività: campo obbligatorio");
       } else if (name.startsWith(' ')) {
@@ -325,14 +325,14 @@ class _AddStopScreenState extends State<AddStopScreen> {
 
     if (!isActivity) {
       if (widget.stop == null) {
-        // Adding a Stop
+        // Aggiunta di una Tappa
         final newStop = Stop(
           tripId: widget.tripId,
           name: name.trim(),
           description: description.trim(),
           dateTime: _combinedStopDateTime,
           location: location.trim(),
-          itineraryOrder: 1, // overwritten by TravelProvider.addStop based on date
+          itineraryOrder: 1, // Sovrascritto da TravelProvider.addStop in base alla data della tappa
           notes: notesText.trim(),
         );
         provider.addStop(newStop);
@@ -341,7 +341,7 @@ class _AddStopScreenState extends State<AddStopScreen> {
           SnackBar(content: Text("Tappa '${name.trim()}' aggiunta con successo!")),
         );
       } else {
-        // Editing a Stop
+        // Modifica di una Tappa
         final updatedStop = widget.stop!.copyWith(
           name: name.trim(),
           description: description.trim(),
@@ -356,12 +356,12 @@ class _AddStopScreenState extends State<AddStopScreen> {
         );
       }
     } else {
-      // Adding/Editing an Activity
+      // Interfaccia di Aggiunta/Modifica di un'Attività
       final cost = double.tryParse(costText.trim().replaceAll(',', '.')) ?? 0.0;
       final status = _selectedActivityStatus;
 
       if (widget.activity == null) {
-        // Adding Activity
+        // Aggiunta dell'Attività
         final newActivity = Activity(
           stopId: widget.parentStop!.id!,
           name: name.trim(),
@@ -379,7 +379,7 @@ class _AddStopScreenState extends State<AddStopScreen> {
           SnackBar(content: Text("Attività '${name.trim()}' aggiunta con successo!")),
         );
       } else {
-        // Editing Activity
+        // Modifica dell'Attività
         final updatedActivity = widget.activity!.copyWith(
           name: name.trim(),
           type: _selectedActivityType,
@@ -437,7 +437,7 @@ class _AddStopScreenState extends State<AddStopScreen> {
                 const SizedBox(height: 20),
               ],
 
-              // 1. Name input
+              // 1. Input del nome (obbligatorio)
               TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(
@@ -463,9 +463,9 @@ class _AddStopScreenState extends State<AddStopScreen> {
               ),
               const SizedBox(height: 20),
 
-              // 2. Stop or Activity specific fields
+              // 2. Campi specifici a seconda che sia Tappa o Attività
               if (!isActivity) ...[
-                // Stop location input
+                // Input della località della tappa
                 TextFormField(
                   controller: _locationController,
                   decoration: InputDecoration(
@@ -488,7 +488,7 @@ class _AddStopScreenState extends State<AddStopScreen> {
                 ),
                 const SizedBox(height: 20),
 
-                // Day dropdown (bounded to the trip's actual days)
+                // Selezione del giorno di itinerario (limitato ai giorni effettivi del viaggio)
                 Builder(builder: (context) {
                   final tripStartDay = DateTime(_trip!.startDate.year, _trip!.startDate.month, _trip!.startDate.day);
                   final totalDays = _tripTotalDays();
@@ -520,7 +520,7 @@ class _AddStopScreenState extends State<AddStopScreen> {
                 }),
                 const SizedBox(height: 20),
 
-                // Stop time picker
+                // Selettore dell'orario della tappa
                 InkWell(
                   onTap: _selectStopTime,
                   borderRadius: BorderRadius.circular(16),
@@ -556,7 +556,7 @@ class _AddStopScreenState extends State<AddStopScreen> {
                   ),
                 ),
               ] else ...[
-                // Activity Type / Category Dropdown
+                // Selezione della categoria o tipo di attività
                 DropdownButtonFormField<String>(
                   value: _selectedActivityType,
                   decoration: InputDecoration(
@@ -588,7 +588,7 @@ class _AddStopScreenState extends State<AddStopScreen> {
                 ),
                 const SizedBox(height: 20),
 
-                // Activity Status Dropdown (Completata, Annullata, Da svolgere)
+                // Selezione dello stato dell'attività (Da svolgere, Completata, Annullata)
                 DropdownButtonFormField<String>(
                   value: _selectedActivityStatus,
                   decoration: InputDecoration(
@@ -613,7 +613,7 @@ class _AddStopScreenState extends State<AddStopScreen> {
                 ),
                 const SizedBox(height: 20),
 
-                // Location input for Activity
+                // Input della località dell'attività
                 TextFormField(
                   controller: _locationController,
                   decoration: InputDecoration(
@@ -636,7 +636,7 @@ class _AddStopScreenState extends State<AddStopScreen> {
                 ),
                 const SizedBox(height: 20),
 
-                // Activity Time / Fascia Oraria
+                // Orario o fascia oraria dell'attività
                 TextFormField(
                   controller: _timeController,
                   decoration: InputDecoration(
@@ -664,7 +664,7 @@ class _AddStopScreenState extends State<AddStopScreen> {
                 ),
                 const SizedBox(height: 20),
 
-                // Activity Cost input (Required)
+                // Input del costo dell'attività
                 TextFormField(
                   controller: _costController,
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -696,7 +696,7 @@ class _AddStopScreenState extends State<AddStopScreen> {
               ],
               const SizedBox(height: 20),
 
-              // 3. Description input
+              // 3. Input per la descrizione
               TextFormField(
                 controller: _descriptionController,
                 maxLines: 3,
@@ -725,7 +725,7 @@ class _AddStopScreenState extends State<AddStopScreen> {
               ),
               const SizedBox(height: 20),
 
-              // 4. Notes input (Shared, optional)
+              // 4. Input per note aggiuntive (condiviso, facoltativo)
               TextFormField(
                 controller: _notesController,
                 maxLines: 2,
@@ -749,7 +749,7 @@ class _AddStopScreenState extends State<AddStopScreen> {
               ),
               const SizedBox(height: 40),
 
-              // 5. Save Button
+              // 5. Pulsante di salvataggio del modulo
               ElevatedButton(
                 onPressed: _save,
                 style: ElevatedButton.styleFrom(

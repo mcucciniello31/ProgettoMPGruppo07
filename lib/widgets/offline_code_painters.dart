@@ -29,7 +29,7 @@ class BarcodePainter extends CustomPainter {
     final String cleanCode = code.trim().toUpperCase().replaceAll(RegExp(r'[^A-Z0-9\-\.\ \$\/\+\%]'), '');
     final String fullCode = '*$cleanCode*';
     
-    // Calculate total elements to find unit width
+    // Calcola la dimensione totale per determinare lo spessore dell'unità grafica
     double totalUnits = 0;
     const double narrowWidth = 1.0;
     const double wideWidth = 2.5;
@@ -103,7 +103,7 @@ class QrCodePainter extends CustomPainter {
       ..color = qrColor
       ..style = PaintingStyle.fill;
 
-    // Seed random number generator
+    // Inizializza il seed del generatore di numeri casuali
     int seed = 0;
     final cleanCode = code.trim().toUpperCase();
     for (int i = 0; i < cleanCode.length; i++) {
@@ -111,7 +111,7 @@ class QrCodePainter extends CustomPainter {
     }
     seed = seed.abs();
     
-    // LCG pseudo-random generator
+    // Generatore pseudo-casuale lineare congruenziale (LCG)
     int currentSeed = seed;
     double nextDouble() {
       currentSeed = (1103515245 * currentSeed + 12345) & 0x7FFFFFFF;
@@ -122,24 +122,24 @@ class QrCodePainter extends CustomPainter {
       for (int c = 0; c < gridSize; c++) {
         bool isBlack = false;
 
-        // 1. Finder patterns
+        // 1. Disegna i quadrati di allineamento (Finder patterns)
         if (r < 7 && c < 7) {
-          // Top-Left
+          // Quadrato in alto a sinistra
           isBlack = _isFinderPatternCell(r, c);
         } else if (r < 7 && c >= 14) {
-          // Top-Right
+          // Quadrato in alto a destra
           isBlack = _isFinderPatternCell(r, c - 14);
         } else if (r >= 14 && c < 7) {
-          // Bottom-Left
+          // Quadrato in basso a sinistra
           isBlack = _isFinderPatternCell(r - 14, c);
         }
-        // 2. Timing patterns
+        // 2. Disegna i pattern di sincronizzazione alternati (Timing patterns)
         else if (r == 6 && c >= 7 && c < 14) {
           isBlack = c % 2 == 0;
         } else if (c == 6 && r >= 7 && r < 14) {
           isBlack = r % 2 == 0;
         }
-        // 3. Deterministic noise based on booking code hash
+        // 3. Rumore deterministico calcolato in base all'hash del codice di prenotazione
         else {
           isBlack = nextDouble() < 0.5;
         }

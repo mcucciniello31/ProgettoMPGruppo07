@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import '../models/expense.dart';
 import '../models/stop.dart';
 import '../models/activity.dart';
@@ -10,7 +10,7 @@ import '../services/currency_service.dart';
 
 class AddExpenseScreen extends StatefulWidget {
   final int tripId;
-  final Expense? expense; // Null if adding, not null if editing
+  final Expense? expense; // Null se si sta aggiungendo, non null se si sta modificando
 
   const AddExpenseScreen({super.key, required this.tripId, this.expense});
 
@@ -28,10 +28,10 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   DateTime _expenseDate = DateTime.now();
   String _selectedCurrency = 'EUR';
   String _selectedPaymentMethod = 'Contanti';
-  String _selectedStatus = 'Sostenuta'; // 'Prevista', 'Sostenuta'
+  String _selectedStatus = 'Sostenuta'; // 'Prevista' o 'Sostenuta'
 
-  // Association properties
-  String _associatedType = 'Generale'; // 'Generale', 'Tappa', 'Attivita'
+  // Proprietà per collegare la spesa ad altri elementi
+  String _associatedType = 'Generale'; // Livello di associazione: 'Generale', 'Tappa', 'Attivita'
   int? _selectedStopId;
   int? _selectedActivityId;
 
@@ -44,7 +44,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     final provider = Provider.of<TravelProvider>(context, listen: false);
     _stops = provider.currentStops;
     
-    // Load all activities for this trip
+    // Carica tutte le attività collegate a questo viaggio
     _activities = [];
     for (var stop in _stops) {
       _activities.addAll(provider.getActivitiesForStop(stop.id!));
@@ -59,11 +59,11 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       }
     }
 
-    // Populate data if editing
+    // Popola i campi con i dati esistenti in caso di modifica
     final isEditing = widget.expense != null;
     if (isEditing) {
       final ex = widget.expense!;
-      // Replace dot with comma for display
+      // Sostituisce il punto decimale con la virgola per una migliore formattazione italiana
       _amountController.text = ex.amount.toString().replaceAll('.', ',');
       _titleController.text = ex.title;
       _notesController.text = ex.notes;
@@ -97,7 +97,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     final provider = Provider.of<TravelProvider>(context, listen: false);
     final trip = provider.selectedTrip;
     
-    // Constraint date picker to trip date range
+    // Vincola il calendario delle date al periodo del viaggio
     final firstDate = trip?.startDate ?? DateTime(2020);
     final lastDate = trip?.endDate ?? DateTime(2030);
 
@@ -164,33 +164,33 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     final amountText = _amountController.text;
     final notes = _notesController.text;
 
-    // 1. Check title leading space and emptiness
+    // 1. Controlla che il titolo non sia vuoto o non inizi con uno spazio
     if (title.isEmpty) {
       errors.add("Il titolo della spesa è obbligatorio");
     } else if (title.startsWith(' ')) {
       errors.add("Il titolo della spesa non può iniziare con uno spazio");
     }
 
-    // 2. Check notes leading space
+    // 2. Controlla che le note non inizino con uno spazio
     if (notes.startsWith(' ')) {
       errors.add("Le note della spesa non possono iniziare con uno spazio");
     }
 
-    // 3. Check amount leading space and parse
+    // 3. Controlla che l'importo non inizi con uno spazio e sia convertibile
     if (amountText.isEmpty) {
       errors.add("L'importo è obbligatorio");
     } else if (amountText.startsWith(' ')) {
       errors.add("L'importo non può iniziare con uno spazio");
     }
 
-    // Parse amount supporting commas
+    // Converte l'importo inserito, supportando l'uso della virgola per i decimali
     final normalizedAmount = amountText.replaceAll(',', '.');
     final amount = double.tryParse(normalizedAmount);
     if (amountText.isNotEmpty && (amount == null || amount <= 0)) {
       errors.add("Inserisci un importo numerico valido e maggiore di zero");
     }
 
-    // 4. Check association validity
+    // 4. Controlla che l'associazione a tappe o attività sia coerente
     int? finalAssociatedId;
     String finalAssociatedName = 'Generale';
 
@@ -210,7 +210,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       }
     }
 
-    // If validation fails, show error dialog
+    // Se la validazione fallisce, mostra la finestra di dialogo con gli errori
     if (errors.isNotEmpty) {
       _showValidationErrorsDialog(errors);
       return;
@@ -297,7 +297,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               Text(
                 label,
                 textAlign: TextAlign.center,
-                style: GoogleFonts.outfit(
+                style: TextStyle(
                   fontSize: 12,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                   color: isSelected 
@@ -338,7 +338,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               ),
               const SizedBox(height: 24),
 
-              // 1. Title input
+              // 1. Input del titolo della spesa
               TextFormField(
                 controller: _titleController,
                 decoration: InputDecoration(
@@ -352,7 +352,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               ),
               const SizedBox(height: 20),
 
-              // 2. Amount and Currency row
+              // 2. Riga Importo e Valuta
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -407,7 +407,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               ),
               const SizedBox(height: 20),
 
-              // 3. Category & Status row
+              // 3. Riga Categoria e Stato della spesa
               Row(
                 children: [
                   Expanded(
@@ -474,7 +474,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               ),
               const SizedBox(height: 20),
 
-              // 4. Payment Method & Date row
+              // 4. Riga Metodo di Pagamento e Data della spesa
               Row(
                 children: [
                   Expanded(
@@ -538,7 +538,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               ),
               const SizedBox(height: 20),
 
-              // 5. Association configuration
+              // 5. Associazione della spesa ad una tappa o attività specifica
               Card(
                 elevation: 0,
                 shape: RoundedRectangleBorder(
@@ -624,7 +624,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               ),
               const SizedBox(height: 20),
 
-              // 6. Notes input
+              // 6. Input per le note descrittive della spesa
               TextFormField(
                 controller: _notesController,
                 maxLines: 3,
@@ -639,7 +639,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               ),
               const SizedBox(height: 32),
 
-              // 7. Save Button
+              // 7. Pulsante per salvare la spesa
               ElevatedButton(
                 onPressed: _saveExpense,
                 style: ElevatedButton.styleFrom(
