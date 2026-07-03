@@ -31,12 +31,12 @@ class _AddStopScreenState extends State<AddStopScreen> {
   late TextEditingController _nameController;
   late TextEditingController _descriptionController;
   late TextEditingController _locationController;
-  late TextEditingController _itineraryOrderController;
   late TextEditingController _notesController;
   late TextEditingController _costController;
   late TextEditingController _timeController;
 
-  DateTime _stopDateTime = DateTime.now();
+  int _selectedDayIndex = 0;
+  TimeOfDay _stopTime = TimeOfDay.now();
   String _selectedActivityType = 'Altro';
   String _selectedActivityStatus = 'Da svolgere';
   Trip? _trip;
@@ -62,11 +62,6 @@ class _AddStopScreenState extends State<AddStopScreen> {
       text: isActivity ? widget.activity?.location ?? '' : widget.stop?.location ?? '',
     );
 
-    int defaultOrder = provider.currentStops.length + 1;
-    _itineraryOrderController = TextEditingController(
-      text: !isActivity && isEdit ? widget.stop!.itineraryOrder.toString() : defaultOrder.toString(),
-    );
-    
     _notesController = TextEditingController(
       text: isActivity ? widget.activity?.notes ?? '' : widget.stop?.notes ?? '',
     );
@@ -86,15 +81,22 @@ class _AddStopScreenState extends State<AddStopScreen> {
 
     if (!isActivity) {
       if (isEdit) {
-        _stopDateTime = widget.stop!.dateTime;
-      } else {
-        if (_trip != null) {
-          final now = DateTime.now();
-          if (now.isAfter(_trip!.startDate) && now.isBefore(_trip!.endDate)) {
-            _stopDateTime = now;
-          } else {
-            _stopDateTime = _trip!.startDate;
-          }
+        final stopDateTime = widget.stop!.dateTime;
+        final tripStartDay = DateTime(_trip!.startDate.year, _trip!.startDate.month, _trip!.startDate.day);
+        final stopDay = DateTime(stopDateTime.year, stopDateTime.month, stopDateTime.day);
+        _selectedDayIndex = stopDay.difference(tripStartDay).inDays;
+        _stopTime = TimeOfDay.fromDateTime(stopDateTime);
+      } else if (_trip != null) {
+        final now = DateTime.now();
+        final tripStartDay = DateTime(_trip!.startDate.year, _trip!.startDate.month, _trip!.startDate.day);
+        final tripEndDay = DateTime(_trip!.endDate.year, _trip!.endDate.month, _trip!.endDate.day);
+        final today = DateTime(now.year, now.month, now.day);
+        if (!today.isBefore(tripStartDay) && !today.isAfter(tripEndDay)) {
+          _selectedDayIndex = today.difference(tripStartDay).inDays;
+          _stopTime = TimeOfDay.fromDateTime(now);
+        } else {
+          _selectedDayIndex = 0;
+          _stopTime = TimeOfDay.now();
         }
       }
     }
@@ -105,7 +107,6 @@ class _AddStopScreenState extends State<AddStopScreen> {
     _nameController.dispose();
     _descriptionController.dispose();
     _locationController.dispose();
-    _itineraryOrderController.dispose();
     _notesController.dispose();
     _costController.dispose();
     _timeController.dispose();
@@ -139,39 +140,21 @@ class _AddStopScreenState extends State<AddStopScreen> {
     return true;
   }
 
-  Future<void> _selectDateTime() async {
-    final firstLimit = _trip?.startDate ?? DateTime(2020);
-    final lastLimit = _trip?.endDate ?? DateTime(2030);
-
-    final datePicked = await showDatePicker(
+  Future<void> _selectStopTime() async {
+    final timePicked = await showTimePicker(
       context: context,
-      initialDate: _stopDateTime.isBefore(firstLimit)
-          ? firstLimit
-          : (_stopDateTime.isAfter(lastLimit) ? lastLimit : _stopDateTime),
-      firstDate: firstLimit,
-      lastDate: lastLimit,
+      initialTime: _stopTime,
     );
-
-    if (datePicked != null) {
-      if (mounted) {
-        final timePicked = await showTimePicker(
-          context: context,
-          initialTime: TimeOfDay.fromDateTime(_stopDateTime),
-        );
-
-        if (timePicked != null) {
-          setState(() {
-            _stopDateTime = DateTime(
-              datePicked.year,
-              datePicked.month,
-              datePicked.day,
-              timePicked.hour,
-              timePicked.minute,
-            );
-          });
-        }
-      }
+    if (timePicked != null) {
+      setState(() {
+        _stopTime = timePicked;
+      });
     }
+  }
+
+  DateTime get _combinedStopDateTime {
+    final dayDate = _trip!.startDate.add(Duration(days: _selectedDayIndex));
+    return DateTime(dayDate.year, dayDate.month, dayDate.day, _stopTime.hour, _stopTime.minute);
   }
 
   Future<void> _selectActivityTime() async {
@@ -191,7 +174,6 @@ class _AddStopScreenState extends State<AddStopScreen> {
     final name = _nameController.text;
     final description = _descriptionController.text;
     final location = _locationController.text;
-    final orderText = _itineraryOrderController.text;
     final notesText = _notesController.text;
     final costText = _costController.text;
     final timeText = _timeController.text;
@@ -219,31 +201,6 @@ class _AddStopScreenState extends State<AddStopScreen> {
         validationErrors.add("Descrizione: campo obbligatorio");
       } else if (description.startsWith(' ')) {
         validationErrors.add("Descrizione: non può iniziare con uno spazio");
-      }
-
-      if (orderText.isEmpty) {
-        validationErrors.add("Ordine nell'itinerario: campo obbligatorio");
-      } else if (orderText.startsWith(' ')) {
-        validationErrors.add("Ordine nell'itinerario: non può iniziare con uno spazio");
-      } else {
-        final orderVal = int.tryParse(orderText);
-        if (orderVal == null || orderVal <= 0) {
-          validationErrors.add("Ordine nell'itinerario: deve essere un numero intero positivo maggiore di zero (es: 1, 2, 3)");
-        } else {
-          final provider = Provider.of<TravelProvider>(context, listen: false);
-          final existingStops = provider.currentStops;
-          if (widget.stop == null) {
-            final maxAllowed = existingStops.length + 1;
-            if (orderVal > maxAllowed) {
-              validationErrors.add("Ordine nell'itinerario: non puoi saltare giorni. La prossima tappa deve avere un ordine al massimo di $maxAllowed (attualmente ci sono ${existingStops.length} tappe).");
-            }
-          } else {
-            final maxAllowed = existingStops.length;
-            if (orderVal > maxAllowed) {
-              validationErrors.add("Ordine nell'itinerario: giorno non valido. Non può essere superiore al numero totale di tappe ($maxAllowed).");
-            }
-          }
-        }
       }
 
       if (notesText.startsWith(' ')) {
@@ -356,16 +313,15 @@ class _AddStopScreenState extends State<AddStopScreen> {
     final provider = Provider.of<TravelProvider>(context, listen: false);
 
     if (!isActivity) {
-      final orderVal = int.parse(orderText.trim());
       if (widget.stop == null) {
         // Adding a Stop
         final newStop = Stop(
           tripId: widget.tripId,
           name: name.trim(),
           description: description.trim(),
-          dateTime: _stopDateTime,
+          dateTime: _combinedStopDateTime,
           location: location.trim(),
-          itineraryOrder: orderVal,
+          itineraryOrder: 1, // overwritten by TravelProvider.addStop based on date
           notes: notesText.trim(),
         );
         provider.addStop(newStop);
@@ -378,9 +334,8 @@ class _AddStopScreenState extends State<AddStopScreen> {
         final updatedStop = widget.stop!.copyWith(
           name: name.trim(),
           description: description.trim(),
-          dateTime: _stopDateTime,
+          dateTime: _combinedStopDateTime,
           location: location.trim(),
-          itineraryOrder: orderVal,
           notes: notesText.trim(),
         );
         provider.updateStop(updatedStop);
@@ -522,50 +477,41 @@ class _AddStopScreenState extends State<AddStopScreen> {
                 ),
                 const SizedBox(height: 20),
 
-                // Order in itinerary input
-                TextFormField(
-                  controller: _itineraryOrderController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: "Ordine nell'itinerario *",
-                    hintText: "Es: 1 (giorno 1)",
-                    prefixIcon: const Icon(Icons.format_list_numbered),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
+                // Day dropdown (bounded to the trip's actual days)
+                Builder(builder: (context) {
+                  final tripStartDay = DateTime(_trip!.startDate.year, _trip!.startDate.month, _trip!.startDate.day);
+                  final tripEndDay = DateTime(_trip!.endDate.year, _trip!.endDate.month, _trip!.endDate.day);
+                  final totalDays = tripEndDay.difference(tripStartDay).inDays + 1;
+                  return DropdownButtonFormField<int>(
+                    value: _selectedDayIndex,
+                    decoration: InputDecoration(
+                      labelText: "Giorno del viaggio *",
+                      prefixIcon: const Icon(Icons.calendar_month),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
                     ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Inserisci l'ordine";
-                    }
-                    if (value.startsWith(' ')) {
-                      return "Non può iniziare con uno spazio";
-                    }
-                    final orderVal = int.tryParse(value);
-                    if (orderVal == null || orderVal <= 0) {
-                      return "Inserisci un numero intero maggiore di 0";
-                    }
-                    final provider = Provider.of<TravelProvider>(context, listen: false);
-                    final existingStops = provider.currentStops;
-                    if (widget.stop == null) {
-                      final maxAllowed = existingStops.length + 1;
-                      if (orderVal > maxAllowed) {
-                        return "Non puoi saltare giorni. Max consentito: $maxAllowed";
+                    items: List.generate(totalDays, (i) {
+                      final dayDate = tripStartDay.add(Duration(days: i));
+                      return DropdownMenuItem<int>(
+                        value: i,
+                        child: Text("Giorno ${i + 1} - ${_formatDate(dayDate)}"),
+                      );
+                    }),
+                    onChanged: (val) {
+                      if (val != null) {
+                        setState(() {
+                          _selectedDayIndex = val;
+                        });
                       }
-                    } else {
-                      final maxAllowed = existingStops.length;
-                      if (orderVal > maxAllowed) {
-                        return "Giorno non valido. Max consentito: $maxAllowed";
-                      }
-                    }
-                    return null;
-                  },
-                ),
+                    },
+                  );
+                }),
                 const SizedBox(height: 20),
 
-                // Stop DateTime Picker Card
+                // Stop time picker
                 InkWell(
-                  onTap: _selectDateTime,
+                  onTap: _selectStopTime,
                   borderRadius: BorderRadius.circular(16),
                   child: Container(
                     padding: const EdgeInsets.all(16),
@@ -577,7 +523,7 @@ class _AddStopScreenState extends State<AddStopScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Data e Ora *",
+                          "Ora *",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Theme.of(context).colorScheme.primary,
@@ -586,10 +532,10 @@ class _AddStopScreenState extends State<AddStopScreen> {
                         const SizedBox(height: 8),
                         Row(
                           children: [
-                            const Icon(Icons.calendar_month, size: 18),
+                            const Icon(Icons.access_time, size: 18),
                             const SizedBox(width: 8),
                             Text(
-                              "${_formatDate(_stopDateTime)} alle ${_stopDateTime.hour.toString().padLeft(2, '0')}:${_stopDateTime.minute.toString().padLeft(2, '0')}",
+                              "${_stopTime.hour.toString().padLeft(2, '0')}:${_stopTime.minute.toString().padLeft(2, '0')}",
                               style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
                             ),
                           ],
