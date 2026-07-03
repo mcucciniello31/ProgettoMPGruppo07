@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import '../models/trip.dart';
@@ -15,6 +16,15 @@ class DatabaseHelper {
   static Database? _database;
 
   DatabaseHelper._init();
+
+  @visibleForTesting
+  Future<void> resetDatabaseForTest() async {
+    final db = _database;
+    if (db != null) {
+      await db.close();
+    }
+    _database = null;
+  }
 
   Future<Database> get database async {
     if (_database != null) return _database!;

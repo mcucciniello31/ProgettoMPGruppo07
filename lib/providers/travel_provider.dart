@@ -115,28 +115,27 @@ class TravelProvider with ChangeNotifier {
   // STOP OPERATIONS
   // ==========================================
 
-  Future<void> _reorderStops(int tripId) async {
-    final stops = await _dbHelper.getStopsForTrip(tripId);
-    for (int i = 0; i < stops.length; i++) {
-      final expectedOrder = i + 1;
-      if (stops[i].itineraryOrder != expectedOrder) {
-        await _dbHelper.updateStop(stops[i].copyWith(itineraryOrder: expectedOrder));
-      }
+  int _dayNumberFor(Trip trip, DateTime dateTime) {
+    final tripStartDay = DateTime(trip.startDate.year, trip.startDate.month, trip.startDate.day);
+    final stopDay = DateTime(dateTime.year, dateTime.month, dateTime.day);
+    return 1 + stopDay.difference(tripStartDay).inDays;
+  }
+
+  Future<Trip> _tripFor(int tripId) async {
+    if (_selectedTrip != null && _selectedTrip!.id == tripId) {
+      return _selectedTrip!;
     }
+    final trip = await _dbHelper.getTrip(tripId);
+    if (trip == null) {
+      throw StateError('Trip $tripId not found while saving a stop');
+    }
+    return trip;
   }
 
   Future<void> addStop(Stop stop) async {
-    final existingStops = await _dbHelper.getStopsForTrip(stop.tripId);
-    // Shift existing stops that have order >= new order
-    for (var existing in existingStops) {
-      if (existing.itineraryOrder >= stop.itineraryOrder) {
-        await _dbHelper.updateStop(existing.copyWith(
-          itineraryOrder: existing.itineraryOrder + 1,
-        ));
-      }
-    }
-    await _dbHelper.insertStop(stop);
-    await _reorderStops(stop.tripId);
+    final trip = await _tripFor(stop.tripId);
+    final computedStop = stop.copyWith(itineraryOrder: _dayNumberFor(trip, stop.dateTime));
+    await _dbHelper.insertStop(computedStop);
     if (_selectedTrip != null) {
       await loadTripDetails(_selectedTrip!.id!);
       notifyListeners();
@@ -144,31 +143,9 @@ class TravelProvider with ChangeNotifier {
   }
 
   Future<void> updateStop(Stop stop) async {
-    final existingStops = await _dbHelper.getStopsForTrip(stop.tripId);
-    final oldStop = existingStops.firstWhere((s) => s.id == stop.id);
-    final oldOrder = oldStop.itineraryOrder;
-    final newOrder = stop.itineraryOrder;
-
-    if (oldOrder != newOrder) {
-      for (var existing in existingStops) {
-        if (existing.id == stop.id) continue;
-        if (newOrder < oldOrder) {
-          if (existing.itineraryOrder >= newOrder && existing.itineraryOrder < oldOrder) {
-            await _dbHelper.updateStop(existing.copyWith(
-              itineraryOrder: existing.itineraryOrder + 1,
-            ));
-          }
-        } else {
-          if (existing.itineraryOrder > oldOrder && existing.itineraryOrder <= newOrder) {
-            await _dbHelper.updateStop(existing.copyWith(
-              itineraryOrder: existing.itineraryOrder - 1,
-            ));
-          }
-        }
-      }
-    }
-    await _dbHelper.updateStop(stop);
-    await _reorderStops(stop.tripId);
+    final trip = await _tripFor(stop.tripId);
+    final computedStop = stop.copyWith(itineraryOrder: _dayNumberFor(trip, stop.dateTime));
+    await _dbHelper.updateStop(computedStop);
     if (_selectedTrip != null) {
       await loadTripDetails(_selectedTrip!.id!);
       notifyListeners();
@@ -178,7 +155,6 @@ class TravelProvider with ChangeNotifier {
   Future<void> deleteStop(int id) async {
     if (_selectedTrip != null) {
       await _dbHelper.deleteStop(id);
-      await _reorderStops(_selectedTrip!.id!);
       await loadTripDetails(_selectedTrip!.id!);
       notifyListeners();
     }
