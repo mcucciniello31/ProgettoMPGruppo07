@@ -12,6 +12,7 @@ import '../theme/app_theme.dart';
 import '../services/currency_service.dart';
 import 'add_stop_screen.dart';
 import 'add_expense_screen.dart';
+import 'add_checklist_item_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -35,13 +36,10 @@ class TripDetailsScreen extends StatefulWidget {
 class _TripDetailsScreenState extends State<TripDetailsScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  final TextEditingController _checklistController = TextEditingController();
   bool _isInfoExpanded = false;
 
   // Variabili per il filtraggio e la ricerca della checklist
   String _selectedChecklistCategory = 'Tutti';
-  String _addChecklistCategory = 'Bagaglio';
-  String _addChecklistPriority = 'Media';
   String _selectedChecklistStatusFilter =
       "Tutti"; // Opzioni: Tutti, Da completare, Completati
   String _selectedChecklistPriorityFilter =
@@ -95,7 +93,6 @@ class _TripDetailsScreenState extends State<TripDetailsScreen>
   @override
   void dispose() {
     _tabController.dispose();
-    _checklistController.dispose();
     _convAmountController.dispose();
     super.dispose();
   }
@@ -375,6 +372,22 @@ class _TripDetailsScreenState extends State<TripDetailsScreen>
         icon: const Icon(Icons.add_location_alt_outlined),
         label: const Text("Aggiungi Tappa"),
       );
+    } else if (_tabController.index == 1) {
+      // Pulsante FAB per la scheda Checklist: permette di aggiungere un elemento
+      return FloatingActionButton.extended(
+        key: const ValueKey('fab_checklist'),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  AddChecklistItemScreen(tripId: provider.selectedTrip!.id!),
+            ),
+          );
+        },
+        icon: const Icon(Icons.add),
+        label: const Text("Nuova Checklist"),
+      );
     } else if (_tabController.index == 2) {
       // Pulsante FAB per la scheda Spese: permette di registrare un'uscita
       return FloatingActionButton.extended(
@@ -423,7 +436,6 @@ class _TripDetailsScreenState extends State<TripDetailsScreen>
         );
       }
     }
-    // La checklist usa la barra di inserimento in basso, non ha bisogno del pulsante FAB
     return null;
   }
 
@@ -1208,142 +1220,14 @@ class _TripDetailsScreenState extends State<TripDetailsScreen>
     TravelProvider provider,
     ChecklistItem item,
   ) {
-    final textController = TextEditingController(text: item.itemText);
-    String selectedCategory = item.category;
-    String selectedPriority = item.priority;
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setDialogState) {
-            return AlertDialog(
-              title: const Text("Modifica Elemento"),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    controller: textController,
-                    decoration: InputDecoration(
-                      labelText: "Nome Elemento *",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  DropdownButtonFormField<String>(
-                    value: selectedCategory,
-                    decoration: InputDecoration(
-                      labelText: "Categoria",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    items:
-                        [
-                              'Bagaglio',
-                              'Documenti',
-                              'Pre-partenza',
-                              'Prenotazioni',
-                              'Acquisti',
-                              'Altro',
-                            ]
-                            .map(
-                              (cat) => DropdownMenuItem<String>(
-                                value: cat,
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      _getChecklistCategoryIcon(cat),
-                                      size: 18,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(cat),
-                                  ],
-                                ),
-                              ),
-                            )
-                            .toList(),
-                    onChanged: (val) {
-                      if (val != null) {
-                        setDialogState(() {
-                          selectedCategory = val;
-                        });
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  DropdownButtonFormField<String>(
-                    value: selectedPriority,
-                    decoration: InputDecoration(
-                      labelText: "Priorità",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    items: ['Bassa', 'Media', 'Alta']
-                        .map(
-                          (pri) => DropdownMenuItem<String>(
-                            value: pri,
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.flag,
-                                  size: 18,
-                                  color: _getPriorityColor(pri),
-                                ),
-                                const SizedBox(width: 8),
-                                Text(pri),
-                              ],
-                            ),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (val) {
-                      if (val != null) {
-                        setDialogState(() {
-                          selectedPriority = val;
-                        });
-                      }
-                    },
-                  ),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text("Annulla"),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    final text = textController.text.trim();
-                    if (text.isEmpty) {
-                      _showValidationError("Il nome non può essere vuoto");
-                      return;
-                    }
-                    if (textController.text.startsWith(' ')) {
-                      _showValidationError(
-                        "Il testo non può iniziare con uno spazio",
-                      );
-                      return;
-                    }
-                    provider.updateChecklistItem(
-                      item.copyWith(
-                        itemText: text,
-                        category: selectedCategory,
-                        priority: selectedPriority,
-                      ),
-                    );
-                    Navigator.pop(context);
-                  },
-                  child: const Text("Salva"),
-                ),
-              ],
-            );
-          },
-        );
-      },
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddChecklistItemScreen(
+          tripId: provider.selectedTrip!.id!,
+          checklistItem: item,
+        ),
+      ),
     );
   }
 
@@ -2024,10 +1908,6 @@ class _TripDetailsScreenState extends State<TripDetailsScreen>
                     if (val != null) {
                       setState(() {
                         _selectedChecklistCategory = val;
-                        // Aggiorna la categoria predefinita all'aggiunta se è selezionato un filtro specifico
-                        if (val != 'Tutti') {
-                          _addChecklistCategory = val;
-                        }
                       });
                     }
                   },
@@ -2186,7 +2066,8 @@ class _TripDetailsScreenState extends State<TripDetailsScreen>
           child: filteredList.isEmpty
               ? Center(
                   child: Text(
-                    "Nessun elemento in questa categoria. Aggiungine uno qui sotto!",
+                    "Nessun elemento in questa categoria.\nAggiungine uno!",
+                    textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 )
@@ -2275,160 +2156,6 @@ class _TripDetailsScreenState extends State<TripDetailsScreen>
                     );
                   },
                 ),
-        ),
-
-        // Casella di inserimento rapido per la checklist posta in basso
-        Container(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-          decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
-            border: Border(
-              top: BorderSide(
-                color: Theme.of(context).dividerColor.withOpacity(0.1),
-              ),
-            ),
-          ),
-          child: Row(
-            children: [
-              // Menu a discesa per selezionare l'icona per le nuove categorie
-              PopupMenuButton<String>(
-                initialValue: _addChecklistCategory,
-                icon: Icon(
-                  _getChecklistCategoryIcon(_addChecklistCategory),
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                tooltip: "Seleziona Categoria",
-                onSelected: (String cat) {
-                  setState(() {
-                    _addChecklistCategory = cat;
-                  });
-                },
-                itemBuilder: (context) =>
-                    [
-                          'Bagaglio',
-                          'Documenti',
-                          'Pre-partenza',
-                          'Prenotazioni',
-                          'Acquisti',
-                          'Altro',
-                        ]
-                        .map(
-                          (cat) => PopupMenuItem<String>(
-                            value: cat,
-                            child: Row(
-                              children: [
-                                Icon(_getChecklistCategoryIcon(cat), size: 18),
-                                const SizedBox(width: 8),
-                                Text(cat),
-                              ],
-                            ),
-                          ),
-                        )
-                        .toList(),
-              ),
-              const SizedBox(width: 4),
-              // Menu per selezionare la priorità del bagaglio/promemoria
-              PopupMenuButton<String>(
-                initialValue: _addChecklistPriority,
-                icon: Icon(
-                  Icons.flag,
-                  color: _getPriorityColor(_addChecklistPriority),
-                ),
-                tooltip: "Seleziona Priorità",
-                onSelected: (String prio) {
-                  setState(() {
-                    _addChecklistPriority = prio;
-                  });
-                },
-                itemBuilder: (context) => ['Bassa', 'Media', 'Alta']
-                    .map(
-                      (prio) => PopupMenuItem<String>(
-                        value: prio,
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.flag,
-                              color: _getPriorityColor(prio),
-                              size: 18,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(prio),
-                          ],
-                        ),
-                      ),
-                    )
-                    .toList(),
-              ),
-              const SizedBox(width: 4),
-              Expanded(
-                child: TextField(
-                  controller: _checklistController,
-                  decoration: InputDecoration(
-                    hintText: _addChecklistCategory,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                  ),
-                  onSubmitted: (val) {
-                    if (val.startsWith(' ')) {
-                      _showValidationError(
-                        "Il testo non può iniziare con uno spazio",
-                      );
-                      return;
-                    }
-                    if (val.trim().isNotEmpty) {
-                      provider.addChecklistItem(
-                        ChecklistItem(
-                          tripId: provider.selectedTrip!.id!,
-                          itemText: val.trim(),
-                          category: _addChecklistCategory,
-                          priority: _addChecklistPriority,
-                        ),
-                      );
-                      _checklistController.clear();
-                    }
-                  },
-                ),
-              ),
-              const SizedBox(width: 8),
-              IconButton(
-                style: IconButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  padding: const EdgeInsets.all(12),
-                ),
-                icon: const Icon(Icons.send),
-                onPressed: () {
-                  final text = _checklistController.text;
-                  if (text.startsWith(' ')) {
-                    _showValidationError(
-                      "Il testo non può iniziare con uno spazio",
-                    );
-                    return;
-                  }
-                  final trimmed = text.trim();
-                  if (trimmed.isNotEmpty) {
-                    provider.addChecklistItem(
-                      ChecklistItem(
-                        tripId: provider.selectedTrip!.id!,
-                        itemText: trimmed,
-                        category: _addChecklistCategory,
-                        priority: _addChecklistPriority,
-                      ),
-                    );
-                    _checklistController.clear();
-                  }
-                },
-              ),
-            ],
-          ),
         ),
       ],
     );
