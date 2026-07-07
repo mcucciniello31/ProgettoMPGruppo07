@@ -2,15 +2,29 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   // Palette di colori del tema
-  static const Color primaryLight = Color.fromARGB(255, 43, 156, 237); // Indaco moderno
+  static const Color primaryLight = Color.fromARGB(
+    255,
+    43,
+    156,
+    237,
+  ); // Indaco moderno
   static const Color secondaryLight = Color(0xFF14B8A6); // Verde acqua / Teal
-  static const Color backgroundLight = Color(0xFFF8FAFC); // Grigio/azzurro molto chiaro
+  static const Color backgroundLight = Color(
+    0xFFF8FAFC,
+  ); // Grigio/azzurro molto chiaro
   static const Color cardLight = Color(0xFFFFFFFF);
   static const Color textPrimaryLight = Color(0xFF0F172A); // Ardesia scura
   static const Color textSecondaryLight = Color(0xFF64748B); // Grigio freddo
 
-  static const Color primaryDark = Color.fromARGB(255, 43, 156, 237); // Indaco chiaro
-  static const Color secondaryDark = Color(0xFF2DD4BF); // Verde acqua chiaro / Teal Light
+  static const Color primaryDark = Color.fromARGB(
+    255,
+    43,
+    156,
+    237,
+  ); // Indaco chiaro
+  static const Color secondaryDark = Color(
+    0xFF2DD4BF,
+  ); // Verde acqua chiaro / Teal Light
   static const Color backgroundDark = Color(0xFF0F172A); // Ardesia notte scura
   static const Color cardDark = Color(0xFF1E293B); // Scheda ardesia scura
   static const Color textPrimaryDark = Color(0xFFF8FAFC);
@@ -24,6 +38,18 @@ class AppTheme {
     'Attività': Color(0xFFC084FC), // Lavanda
     'Shopping': Color(0xFFF472B6), // Rosa
     'Spese Mediche': Color(0xFFE11D48), // Rosa cremisi
+    'Altro': Color(0xFF94A3B8), // Ardesia fredda
+  };
+
+  // Colori associati alle categorie di attività
+  static const Map<String, Color> activityColors = {
+    'Visita': Color(0xFF38BDF8), // Celeste
+    'Escursione': Color(0xFF34D399), // Smeraldo
+    'Prenotazione': Color(0xFFF87171), // Rosso corallo
+    'Pasto': Color(0xFFFB923C), // Arancione
+    'Spostamento': Color(0xFF818CF8), // Indaco
+    'Evento': Color(0xFFF472B6), // Rosa
+    'Momento Libero': Color(0xFF2DD4BF), // Teal
     'Altro': Color(0xFF94A3B8), // Ardesia fredda
   };
 
@@ -73,14 +99,8 @@ class AppTheme {
           fontWeight: FontWeight.w600,
           color: textPrimaryLight,
         ),
-        bodyLarge: TextStyle(
-          fontSize: 16,
-          color: textPrimaryLight,
-        ),
-        bodyMedium: TextStyle(
-          fontSize: 14,
-          color: textSecondaryLight,
-        ),
+        bodyLarge: TextStyle(fontSize: 16, color: textPrimaryLight),
+        bodyMedium: TextStyle(fontSize: 14, color: textSecondaryLight),
       ),
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent,
@@ -135,14 +155,8 @@ class AppTheme {
           fontWeight: FontWeight.w600,
           color: textPrimaryDark,
         ),
-        bodyLarge: TextStyle(
-          fontSize: 16,
-          color: textPrimaryDark,
-        ),
-        bodyMedium: TextStyle(
-          fontSize: 14,
-          color: textSecondaryDark,
-        ),
+        bodyLarge: TextStyle(fontSize: 16, color: textPrimaryDark),
+        bodyMedium: TextStyle(fontSize: 14, color: textSecondaryDark),
       ),
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent,

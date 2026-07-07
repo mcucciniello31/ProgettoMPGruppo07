@@ -96,7 +96,9 @@ class _ItineraryTabState extends State<ItineraryTab> {
         children: [
           Icon(
             AppTheme.activityIcons[activity.type] ?? Icons.explore,
-            color: Theme.of(context).colorScheme.primary,
+            color:
+                AppTheme.activityColors[activity.type] ??
+                Theme.of(context).colorScheme.primary,
             size: 20,
           ),
           const SizedBox(width: 12),
@@ -919,10 +921,18 @@ class _ItineraryTabState extends State<ItineraryTab> {
                                 Icon(
                                   AppTheme.activityIcons[type],
                                   size: 16,
-                                  color: Theme.of(context).colorScheme.primary,
+                                  color:
+                                      AppTheme.activityColors[type] ??
+                                      Theme.of(context).colorScheme.primary,
                                 ),
                                 const SizedBox(width: 8),
-                                Text(type),
+                                Text(
+                                  type,
+                                  style: TextStyle(
+                                    color: AppTheme.activityColors[type],
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -931,6 +941,16 @@ class _ItineraryTabState extends State<ItineraryTab> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      if (_selectedActivityCategoryFilter != 'Tutti') ...[
+                        Icon(
+                          AppTheme
+                              .activityIcons[_selectedActivityCategoryFilter],
+                          size: 16,
+                          color: AppTheme
+                              .activityColors[_selectedActivityCategoryFilter],
+                        ),
+                        const SizedBox(width: 6),
+                      ],
                       Text(
                         _selectedActivityCategoryFilter == 'Tutti'
                             ? "Tutte le attività"
@@ -939,14 +959,18 @@ class _ItineraryTabState extends State<ItineraryTab> {
                           fontFamily: 'Outfit',
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
-                          color: Theme.of(context).textTheme.bodyMedium?.color,
+                          color: _selectedActivityCategoryFilter == 'Tutti'
+                              ? Theme.of(context).textTheme.bodyMedium?.color
+                              : AppTheme
+                                    .activityColors[_selectedActivityCategoryFilter],
                         ),
                       ),
                       const SizedBox(width: 6),
                       Icon(
                         Icons.filter_list,
                         color: _selectedActivityCategoryFilter != 'Tutti'
-                            ? Theme.of(context).colorScheme.primary
+                            ? AppTheme.activityColors[_selectedActivityCategoryFilter] ??
+                                  Theme.of(context).colorScheme.primary
                             : Colors.grey,
                         size: 20,
                       ),

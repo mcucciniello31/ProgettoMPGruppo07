@@ -5,7 +5,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import '../../../models/diary_entry.dart';
+import '../../../models/activity.dart';
 import '../../../providers/travel_provider.dart';
+import '../../../theme/app_theme.dart';
 
 class DiaryTab extends StatefulWidget {
   final TravelProvider provider;
@@ -23,6 +25,27 @@ class DiaryTab extends StatefulWidget {
     final contentController = TextEditingController(text: entry?.content ?? '');
     DateTime selectedDate = entry?.date ?? DateTime.now();
     String? selectedImagePath = entry?.imagePath;
+
+    // Variabili di stato per l'associazione
+    String associatedType = entry?.associatedType ?? 'Generale';
+    int? selectedStopId;
+    int? selectedActivityId;
+
+    // Carica tappe e attività
+    final stops = provider.currentStops;
+    final List<Activity> activities = [];
+    for (var stop in stops) {
+      activities.addAll(provider.getActivitiesForStop(stop.id!));
+    }
+
+    // Se in modifica, ripristina gli ID selezionati
+    if (isEdit && entry.associatedId != null) {
+      if (entry.associatedType == 'Tappa') {
+        selectedStopId = entry.associatedId;
+      } else if (entry.associatedType == 'Attivita') {
+        selectedActivityId = entry.associatedId;
+      }
+    }
 
     showDialog(
       context: context,
@@ -74,6 +97,77 @@ class DiaryTab extends StatefulWidget {
                       },
                     ),
                   ],
+                ),
+              ),
+            );
+          }
+
+          Widget buildAssociationChip(
+            String label,
+            String value,
+            IconData icon,
+          ) {
+            final isSelected = associatedType == value;
+            final theme = Theme.of(context);
+            final primaryColor = theme.colorScheme.primary;
+            final onSurface = theme.colorScheme.onSurface;
+
+            return Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  setDialogState(() {
+                    associatedType = value;
+                    if (value == 'Generale') {
+                      selectedStopId = null;
+                      selectedActivityId = null;
+                    }
+                  });
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 10,
+                    horizontal: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? primaryColor.withOpacity(0.15)
+                        : Colors.transparent,
+                    border: Border.all(
+                      color: isSelected
+                          ? primaryColor
+                          : theme.dividerColor.withOpacity(0.2),
+                      width: isSelected ? 2 : 1,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        icon,
+                        size: 18,
+                        color: isSelected
+                            ? primaryColor
+                            : onSurface.withOpacity(0.6),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        label,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.w500,
+                          color: isSelected
+                              ? primaryColor
+                              : onSurface.withOpacity(0.8),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );
@@ -222,6 +316,127 @@ class DiaryTab extends StatefulWidget {
                         ),
                       ),
                     ),
+                    const SizedBox(height: 16),
+
+                    // Sezione Associazione Ricordo
+                    Text(
+                      "Associa a",
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        buildAssociationChip(
+                          'Generale',
+                          'Generale',
+                          Icons.photo_album_outlined,
+                        ),
+                        const SizedBox(width: 8),
+                        buildAssociationChip(
+                          'Tappa',
+                          'Tappa',
+                          Icons.map_outlined,
+                        ),
+                        const SizedBox(width: 8),
+                        buildAssociationChip(
+                          'Attività',
+                          'Attivita',
+                          Icons.local_activity_outlined,
+                        ),
+                      ],
+                    ),
+                    if (associatedType == 'Tappa') ...[
+                      const SizedBox(height: 12),
+                      stops.isEmpty
+                          ? const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                "Nessuna tappa presente in questo viaggio.",
+                                style: TextStyle(
+                                  color: Colors.orange,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            )
+                          : DropdownButtonFormField<int>(
+                              value: selectedStopId,
+                              decoration: InputDecoration(
+                                labelText: "Seleziona Tappa",
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              items: stops.map((stop) {
+                                return DropdownMenuItem<int>(
+                                  value: stop.id,
+                                  child: Text(
+                                    "Giorno ${stop.itineraryOrder} • ${stop.name}",
+                                    style: const TextStyle(fontSize: 13),
+                                  ),
+                                );
+                              }).toList(),
+                              onChanged: (val) {
+                                setDialogState(() {
+                                  selectedStopId = val;
+                                });
+                              },
+                            ),
+                    ],
+                    if (associatedType == 'Attivita') ...[
+                      const SizedBox(height: 12),
+                      activities.isEmpty
+                          ? const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                "Nessuna attività programmata in questo viaggio.",
+                                style: TextStyle(
+                                  color: Colors.orange,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            )
+                          : DropdownButtonFormField<int>(
+                              value: selectedActivityId,
+                              decoration: InputDecoration(
+                                labelText: "Seleziona Attività",
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              items: activities.map((act) {
+                                return DropdownMenuItem<int>(
+                                  value: act.id,
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        AppTheme.activityIcons[act.type] ??
+                                            Icons.local_activity,
+                                        size: 16,
+                                        color:
+                                            AppTheme.activityColors[act.type] ??
+                                            Colors.grey,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Text(
+                                          act.name,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(fontSize: 13),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                              onChanged: (val) {
+                                setDialogState(() {
+                                  selectedActivityId = val;
+                                });
+                              },
+                            ),
+                    ],
                   ],
                 ),
               ),
@@ -257,6 +472,28 @@ class DiaryTab extends StatefulWidget {
                     return;
                   }
 
+                  // Risolvi l'associazione
+                  String finalAssociatedType = associatedType;
+                  int? finalAssociatedId;
+                  String finalAssociatedName = 'Generale';
+
+                  if (associatedType == 'Tappa' && selectedStopId != null) {
+                    finalAssociatedId = selectedStopId;
+                    final stop = stops.firstWhere(
+                      (s) => s.id == selectedStopId,
+                    );
+                    finalAssociatedName = stop.name;
+                  } else if (associatedType == 'Attivita' &&
+                      selectedActivityId != null) {
+                    finalAssociatedId = selectedActivityId;
+                    final act = activities.firstWhere(
+                      (a) => a.id == selectedActivityId,
+                    );
+                    finalAssociatedName = act.name;
+                  } else {
+                    finalAssociatedType = 'Generale';
+                  }
+
                   String? finalPath = selectedImagePath;
                   if (selectedImagePath != null &&
                       (selectedImagePath!.startsWith('/') ||
@@ -283,6 +520,9 @@ class DiaryTab extends StatefulWidget {
                       content: content,
                       date: selectedDate,
                       imagePath: finalPath,
+                      associatedType: finalAssociatedType,
+                      associatedId: finalAssociatedId,
+                      associatedName: finalAssociatedName,
                     );
                     provider.updateDiaryEntry(updated);
                   } else {
@@ -292,6 +532,9 @@ class DiaryTab extends StatefulWidget {
                       content: content,
                       date: selectedDate,
                       imagePath: finalPath,
+                      associatedType: finalAssociatedType,
+                      associatedId: finalAssociatedId,
+                      associatedName: finalAssociatedName,
                     );
                     provider.addDiaryEntry(newEntry);
                   }
@@ -357,6 +600,51 @@ class DiaryTab extends StatefulWidget {
           ),
         );
       },
+    );
+  }
+
+  /// Costruisce un badge testuale per l'associazione del ricordo
+  static Widget buildAssociationBadge(DiaryEntry entry) {
+    if (entry.associatedType == 'Generale') {
+      return const SizedBox.shrink();
+    }
+
+    final IconData icon;
+    final Color color;
+
+    if (entry.associatedType == 'Tappa') {
+      icon = Icons.map_outlined;
+      color = Colors.teal;
+    } else {
+      icon = Icons.local_activity_outlined;
+      color = Colors.deepPurple;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 10, color: color),
+          const SizedBox(width: 3),
+          Flexible(
+            child: Text(
+              entry.associatedName,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 9,
+                fontWeight: FontWeight.w600,
+                color: color,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -533,13 +821,18 @@ class _DiaryTabState extends State<DiaryTab> {
                         ),
                       ],
                     ),
+                    // Badge associazione sotto la data
+                    if (entry.associatedType != 'Generale') ...[
+                      const SizedBox(height: 8),
+                      _buildDetailAssociationBadge(entry),
+                    ],
                     const SizedBox(height: 12),
                     Text(
                       entry.title,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
-                        color: Theme.of(context).colorScheme.onBackground,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -566,6 +859,50 @@ class _DiaryTabState extends State<DiaryTab> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildDetailAssociationBadge(DiaryEntry entry) {
+    final IconData icon;
+    final Color color;
+    final String label;
+
+    if (entry.associatedType == 'Tappa') {
+      icon = Icons.map_outlined;
+      color = Colors.teal;
+      label = "Tappa: ${entry.associatedName}";
+    } else {
+      icon = Icons.local_activity_outlined;
+      color = Colors.deepPurple;
+      label = "Attività: ${entry.associatedName}";
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 6),
+          Flexible(
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: color,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -606,7 +943,7 @@ class _DiaryTabState extends State<DiaryTab> {
         crossAxisCount: 2,
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
-        childAspectRatio: 0.75,
+        childAspectRatio: 0.70,
       ),
       itemCount: entries.length,
       itemBuilder: (context, index) {
@@ -677,6 +1014,10 @@ class _DiaryTabState extends State<DiaryTab> {
                           context,
                         ).textTheme.bodySmall?.copyWith(fontSize: 11),
                       ),
+                      if (entry.associatedType != 'Generale') ...[
+                        const SizedBox(height: 6),
+                        DiaryTab.buildAssociationBadge(entry),
+                      ],
                     ],
                   ),
                 ),

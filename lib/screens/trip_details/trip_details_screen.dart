@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../models/trip.dart';
 import '../../providers/travel_provider.dart';
 import 'checklist/checklist_tab.dart';
@@ -50,9 +49,8 @@ class _TripDetailsScreenState extends State<TripDetailsScreen>
   Widget _buildTripInfoSection(BuildContext context, Trip trip) {
     final hasParticipants = trip.participants.isNotEmpty;
     final hasGeneralInfo = trip.generalInfo.isNotEmpty;
-    final hasCoords = trip.latitude != null && trip.longitude != null;
 
-    if (!hasParticipants && !hasGeneralInfo && !hasCoords) {
+    if (!hasParticipants && !hasGeneralInfo) {
       return const SizedBox.shrink();
     }
 
@@ -172,55 +170,6 @@ class _TripDetailsScreenState extends State<TripDetailsScreen>
                       ],
                     ),
                     const SizedBox(height: 12),
-                  ],
-                  if (hasCoords) ...[
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.map_outlined,
-                          size: 16,
-                          color: Colors.grey,
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            "Posizione: ${trip.latitude!.toStringAsFixed(3)}°, ${trip.longitude!.toStringAsFixed(3)}°",
-                            style: const TextStyle(
-                              fontSize: 13,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
-                        TextButton.icon(
-                          onPressed: () async {
-                            final url = Uri.parse(
-                              'https://www.google.com/maps/search/?api=1&query=${trip.latitude},${trip.longitude}',
-                            );
-                            if (await canLaunchUrl(url)) {
-                              await launchUrl(
-                                url,
-                                mode: LaunchMode.externalApplication,
-                              );
-                            } else {
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      "Impossibile aprire la mappa",
-                                    ),
-                                  ),
-                                );
-                              }
-                            }
-                          },
-                          icon: const Icon(Icons.map, size: 16),
-                          label: const Text(
-                            "Vedi Mappa",
-                            style: TextStyle(fontSize: 12),
-                          ),
-                        ),
-                      ],
-                    ),
                   ],
                 ],
               ],

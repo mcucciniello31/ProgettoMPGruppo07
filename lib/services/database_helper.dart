@@ -38,7 +38,8 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 9, // Database aggiornato alla versione 9 per supportare i documenti di viaggio
+      version:
+          10, // Database aggiornato alla versione 10 per supportare l'associazione dei ricordi a tappe/attività
       onCreate: _createDB,
       onConfigure: _onConfigure,
       onUpgrade: _onUpgrade,
@@ -164,6 +165,9 @@ class DatabaseHelper {
         content $textType,
         date $textType,
         imagePath $textNullableType,
+        associatedType TEXT NOT NULL DEFAULT 'Generale',
+        associatedId INTEGER,
+        associatedName TEXT NOT NULL DEFAULT 'Generale',
         FOREIGN KEY (tripId) REFERENCES trips (id) ON DELETE CASCADE
       )
     ''');
@@ -188,26 +192,42 @@ class DatabaseHelper {
   Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2) {
       // Aggiunge le colonne per lo stato, i partecipanti, le info generali e le coordinate dei viaggi
-      await db.execute("ALTER TABLE trips ADD COLUMN status TEXT NOT NULL DEFAULT 'futuro'");
-      await db.execute("ALTER TABLE trips ADD COLUMN participants TEXT NOT NULL DEFAULT ''");
-      await db.execute("ALTER TABLE trips ADD COLUMN generalInfo TEXT NOT NULL DEFAULT ''");
+      await db.execute(
+        "ALTER TABLE trips ADD COLUMN status TEXT NOT NULL DEFAULT 'futuro'",
+      );
+      await db.execute(
+        "ALTER TABLE trips ADD COLUMN participants TEXT NOT NULL DEFAULT ''",
+      );
+      await db.execute(
+        "ALTER TABLE trips ADD COLUMN generalInfo TEXT NOT NULL DEFAULT ''",
+      );
       await db.execute("ALTER TABLE trips ADD COLUMN latitude REAL");
       await db.execute("ALTER TABLE trips ADD COLUMN longitude REAL");
     }
     if (oldVersion < 3) {
       // Aggiunge l'ordine dell'itinerario e le note alla tabella delle tappe
-      await db.execute("ALTER TABLE stops ADD COLUMN itineraryOrder INTEGER NOT NULL DEFAULT 1");
+      await db.execute(
+        "ALTER TABLE stops ADD COLUMN itineraryOrder INTEGER NOT NULL DEFAULT 1",
+      );
       await db.execute("ALTER TABLE stops ADD COLUMN notes TEXT DEFAULT ''");
     }
     if (oldVersion < 4) {
       // Aggiunge località, stato e note alla tabella delle attività
-      await db.execute("ALTER TABLE activities ADD COLUMN location TEXT NOT NULL DEFAULT ''");
-      await db.execute("ALTER TABLE activities ADD COLUMN status TEXT NOT NULL DEFAULT 'Da svolgere'");
-      await db.execute("ALTER TABLE activities ADD COLUMN notes TEXT DEFAULT ''");
+      await db.execute(
+        "ALTER TABLE activities ADD COLUMN location TEXT NOT NULL DEFAULT ''",
+      );
+      await db.execute(
+        "ALTER TABLE activities ADD COLUMN status TEXT NOT NULL DEFAULT 'Da svolgere'",
+      );
+      await db.execute(
+        "ALTER TABLE activities ADD COLUMN notes TEXT DEFAULT ''",
+      );
     }
     if (oldVersion < 5) {
       // Aggiunge la categoria alla checklist e crea la tabella delle info utili
-      await db.execute("ALTER TABLE checklist_items ADD COLUMN category TEXT NOT NULL DEFAULT 'Bagaglio'");
+      await db.execute(
+        "ALTER TABLE checklist_items ADD COLUMN category TEXT NOT NULL DEFAULT 'Bagaglio'",
+      );
       await db.execute('''
         CREATE TABLE useful_info (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -257,7 +277,9 @@ class DatabaseHelper {
       await db.execute('ALTER TABLE expenses_new RENAME TO expenses');
     }
     if (oldVersion < 7) {
-      await db.execute("ALTER TABLE checklist_items ADD COLUMN priority TEXT NOT NULL DEFAULT 'Media'");
+      await db.execute(
+        "ALTER TABLE checklist_items ADD COLUMN priority TEXT NOT NULL DEFAULT 'Media'",
+      );
     }
     if (oldVersion < 8) {
       await db.execute('''
@@ -287,6 +309,18 @@ class DatabaseHelper {
           FOREIGN KEY (tripId) REFERENCES trips (id) ON DELETE CASCADE
         )
       ''');
+    }
+    if (oldVersion < 10) {
+      // Aggiunge le colonne di associazione alla tabella dei ricordi del diario
+      await db.execute(
+        "ALTER TABLE diary_entries ADD COLUMN associatedType TEXT NOT NULL DEFAULT 'Generale'",
+      );
+      await db.execute(
+        "ALTER TABLE diary_entries ADD COLUMN associatedId INTEGER",
+      );
+      await db.execute(
+        "ALTER TABLE diary_entries ADD COLUMN associatedName TEXT NOT NULL DEFAULT 'Generale'",
+      );
     }
   }
 
@@ -322,7 +356,7 @@ class DatabaseHelper {
         'participants',
         'generalInfo',
         'latitude',
-        'longitude'
+        'longitude',
       ],
       where: 'id = ?',
       whereArgs: [id],
@@ -347,11 +381,7 @@ class DatabaseHelper {
 
   Future<int> deleteTrip(int id) async {
     final db = await instance.database;
-    return await db.delete(
-      'trips',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    return await db.delete('trips', where: 'id = ?', whereArgs: [id]);
   }
 
   // ==========================================
@@ -387,11 +417,7 @@ class DatabaseHelper {
 
   Future<int> deleteStop(int id) async {
     final db = await instance.database;
-    return await db.delete(
-      'stops',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    return await db.delete('stops', where: 'id = ?', whereArgs: [id]);
   }
 
   // ==========================================
@@ -427,11 +453,7 @@ class DatabaseHelper {
 
   Future<int> deleteActivity(int id) async {
     final db = await instance.database;
-    return await db.delete(
-      'activities',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    return await db.delete('activities', where: 'id = ?', whereArgs: [id]);
   }
 
   // ==========================================
@@ -467,11 +489,7 @@ class DatabaseHelper {
 
   Future<int> deleteChecklistItem(int id) async {
     final db = await instance.database;
-    return await db.delete(
-      'checklist_items',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    return await db.delete('checklist_items', where: 'id = ?', whereArgs: [id]);
   }
 
   // ==========================================
@@ -507,11 +525,7 @@ class DatabaseHelper {
 
   Future<int> deleteExpense(int id) async {
     final db = await instance.database;
-    return await db.delete(
-      'expenses',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    return await db.delete('expenses', where: 'id = ?', whereArgs: [id]);
   }
 
   // ==========================================
@@ -547,11 +561,7 @@ class DatabaseHelper {
 
   Future<int> deleteUsefulInfo(int id) async {
     final db = await instance.database;
-    return await db.delete(
-      'useful_info',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    return await db.delete('useful_info', where: 'id = ?', whereArgs: [id]);
   }
 
   // Query globali su tutti i viaggi (usate per la dashboard di analisi e statistiche)
@@ -612,11 +622,7 @@ class DatabaseHelper {
 
   Future<int> deleteDiaryEntry(int id) async {
     final db = await instance.database;
-    return await db.delete(
-      'diary_entries',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    return await db.delete('diary_entries', where: 'id = ?', whereArgs: [id]);
   }
 
   // ==========================================

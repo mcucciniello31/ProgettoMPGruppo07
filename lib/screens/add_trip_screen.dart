@@ -1,8 +1,5 @@
-import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -33,11 +30,6 @@ class _AddTripScreenState extends State<AddTripScreen> {
   double? _longitude;
   String? _coverImagePath;
 
-  // Variabili per la gestione dell'autocompletamento dell'indirizzo
-  List<Map<String, dynamic>> _suggestions = [];
-  bool _isSearching = false;
-  Timer? _debounce;
-  final FocusNode _destinationFocusNode = FocusNode();
   bool _validationTriggered = false;
 
   @override
@@ -63,19 +55,6 @@ class _AddTripScreenState extends State<AddTripScreen> {
     _latitude = widget.trip?.latitude;
     _longitude = widget.trip?.longitude;
     _coverImagePath = widget.trip?.coverImagePath;
-
-    _destinationFocusNode.addListener(() {
-      if (!_destinationFocusNode.hasFocus) {
-        // Pulisce i suggerimenti di indirizzo quando si perde il focus (con ritardo per permettere il clic)
-        Future.delayed(const Duration(milliseconds: 200), () {
-          if (mounted) {
-            setState(() {
-              _suggestions = [];
-            });
-          }
-        });
-      }
-    });
   }
 
   @override
@@ -85,8 +64,6 @@ class _AddTripScreenState extends State<AddTripScreen> {
     _budgetController.dispose();
     _participantsController.dispose();
     _generalInfoController.dispose();
-    _debounce?.cancel();
-    _destinationFocusNode.dispose();
     super.dispose();
   }
 
@@ -227,65 +204,6 @@ class _AddTripScreenState extends State<AddTripScreen> {
         ),
       ),
     );
-  }
-
-  // Cerca suggerimenti di indirizzo usando l'API gratuita Nominatim di OpenStreetMap
-  Future<void> _fetchSuggestions(String query) async {
-    if (query.trim().length < 3) {
-      setState(() {
-        _suggestions = [];
-      });
-      return;
-    }
-
-    setState(() {
-      _isSearching = true;
-    });
-
-    try {
-      final url = Uri.parse(
-        'https://nominatim.openstreetmap.org/search?q=${Uri.encodeComponent(query)}&format=json&limit=5&accept-language=it,en',
-      );
-      final response = await http.get(
-        url,
-        headers: {
-          'User-Agent': 'say_my_travel_planner_student_project',
-          'Accept-Language': 'it,en',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        if (mounted) {
-          setState(() {
-            _suggestions = data
-                .map(
-                  (item) => {
-                    'display_name': item['display_name'] as String,
-                    'lat': double.tryParse(item['lat'] as String) ?? 0.0,
-                    'lon': double.tryParse(item['lon'] as String) ?? 0.0,
-                  },
-                )
-                .toList();
-          });
-        }
-      }
-    } catch (e) {
-      debugPrint('Error fetching suggestions: $e');
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isSearching = false;
-        });
-      }
-    }
-  }
-
-  void _onDestinationChanged(String value) {
-    if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce = Timer(const Duration(milliseconds: 300), () {
-      _fetchSuggestions(value);
-    });
   }
 
   Future<void> _saveTrip() async {
@@ -598,21 +516,13 @@ class _AddTripScreenState extends State<AddTripScreen> {
               ),
               const SizedBox(height: 20),
 
-              // Input della destinazione con supporto all'autocompletamento Nominatim
+              // Input della destinazione
               TextFormField(
                 controller: _destinationController,
-                focusNode: _destinationFocusNode,
-                onChanged: _onDestinationChanged,
                 decoration: InputDecoration(
                   labelText: "Destinazione Principale *",
                   hintText: "Es: Tokyo, Parigi, Colosseo...",
                   prefixIcon: const Icon(Icons.location_on_outlined),
-                  suffixIcon: _isSearching
-                      ? const Padding(
-                          padding: EdgeInsets.all(12.0),
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : null,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
@@ -627,56 +537,6 @@ class _AddTripScreenState extends State<AddTripScreen> {
                   return null;
                 },
               ),
-
-              // Elenco a discesa contenente le destinazioni suggerite
-              if (_suggestions.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(top: 4.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).cardColor,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: Theme.of(context).dividerColor.withOpacity(0.2),
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: _suggestions.length,
-                      itemBuilder: (context, index) {
-                        final suggestion = _suggestions[index];
-                        return ListTile(
-                          leading: const Icon(
-                            Icons.location_on,
-                            color: Colors.redAccent,
-                            size: 20,
-                          ),
-                          title: Text(
-                            suggestion['display_name'] as String,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontSize: 13),
-                          ),
-                          onTap: () {
-                            _selectLocation(
-                              suggestion['display_name'] as String,
-                              suggestion['lat'] as double,
-                              suggestion['lon'] as double,
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                ),
               const SizedBox(height: 20),
 
               // Input per specificare il budget stimato
@@ -1120,15 +980,5 @@ class _AddTripScreenState extends State<AddTripScreen> {
         ),
       ),
     );
-  }
-
-  void _selectLocation(String displayName, double lat, double lon) {
-    setState(() {
-      _destinationController.text = displayName;
-      _latitude = lat;
-      _longitude = lon;
-      _suggestions = [];
-    });
-    _destinationFocusNode.unfocus();
   }
 }

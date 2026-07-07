@@ -19,6 +19,24 @@ class _ChecklistTabState extends State<ChecklistTab> {
   String _selectedChecklistPriorityFilter =
       'Tutte'; // Opzioni: Tutte, Bassa, Media, Alta
 
+  Color _getChecklistCategoryColor(String category) {
+    switch (category) {
+      case 'Bagaglio':
+        return Colors.orange;
+      case 'Documenti':
+        return Colors.blue;
+      case 'Pre-partenza':
+        return Colors.purple;
+      case 'Prenotazioni':
+        return Colors.teal;
+      case 'Acquisti':
+        return Colors.green;
+      case 'Altro':
+      default:
+        return Colors.grey;
+    }
+  }
+
   Color _getPriorityColor(String priority) {
     switch (priority) {
       case 'Alta':
@@ -145,163 +163,163 @@ class _ChecklistTabState extends State<ChecklistTab> {
           child: Row(
             children: [
               Expanded(
-                child: DropdownButtonFormField<String>(
-                  value: _selectedChecklistCategory,
-                  isExpanded: true,
-                  decoration: InputDecoration(
-                    labelText: "Categoria",
-                    isDense: true,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 8,
+                child: PopupMenuButton<String>(
+                  offset: const Offset(0, 40),
+                  onSelected: (val) {
+                    setState(() {
+                      _selectedChecklistCategory = val;
+                    });
+                  },
+                  itemBuilder: (BuildContext context) =>
+                      [
+                        'Tutti',
+                        'Bagaglio',
+                        'Documenti',
+                        'Pre-partenza',
+                        'Prenotazioni',
+                        'Acquisti',
+                        'Altro',
+                      ].map((cat) {
+                        return PopupMenuItem<String>(
+                          value: cat,
+                          child: Row(
+                            children: [
+                              if (cat != 'Tutti') ...[
+                                Icon(
+                                  _getChecklistCategoryIcon(cat),
+                                  size: 16,
+                                  color: _getChecklistCategoryColor(cat),
+                                ),
+                                const SizedBox(width: 8),
+                              ],
+                              Text(
+                                cat,
+                                style: TextStyle(
+                                  color: cat == 'Tutti'
+                                      ? null
+                                      : _getChecklistCategoryColor(cat),
+                                  fontWeight: cat == 'Tutti'
+                                      ? null
+                                      : FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                  child: InputDecorator(
+                    decoration: InputDecoration(
+                      labelText: "Categoria",
+                      isDense: true,
+                      contentPadding: const EdgeInsets.fromLTRB(8, 8, 2, 8),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Row(
+                            children: [
+                              if (_selectedChecklistCategory != 'Tutti') ...[
+                                Icon(
+                                  _getChecklistCategoryIcon(
+                                    _selectedChecklistCategory,
+                                  ),
+                                  size: 16,
+                                  color: _getChecklistCategoryColor(
+                                    _selectedChecklistCategory,
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                              ],
+                              Expanded(
+                                child: Text(
+                                  _selectedChecklistCategory,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: _selectedChecklistCategory == 'Tutti'
+                                        ? null
+                                        : _getChecklistCategoryColor(
+                                            _selectedChecklistCategory,
+                                          ),
+                                    fontWeight:
+                                        _selectedChecklistCategory == 'Tutti'
+                                        ? null
+                                        : FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(
+                          Icons.arrow_drop_down,
+                          color: Colors.grey,
+                          size: 20,
+                        ),
+                      ],
                     ),
                   ),
-                  selectedItemBuilder: (BuildContext context) {
-                    return [
-                      'Tutti',
-                      'Bagaglio',
-                      'Documenti',
-                      'Pre-partenza',
-                      'Prenotazioni',
-                      'Acquisti',
-                      'Altro',
-                    ].map((cat) {
-                      return Row(
-                        children: [
-                          if (cat != 'Tutti') ...[
-                            Icon(
-                              _getChecklistCategoryIcon(cat),
-                              size: 16,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                            const SizedBox(width: 6),
-                          ],
-                          Expanded(
-                            child: Text(cat, overflow: TextOverflow.ellipsis),
-                          ),
-                        ],
-                      );
-                    }).toList();
-                  },
-                  items:
-                      [
-                            'Tutti',
-                            'Bagaglio',
-                            'Documenti',
-                            'Pre-partenza',
-                            'Prenotazioni',
-                            'Acquisti',
-                            'Altro',
-                          ]
-                          .map(
-                            (cat) => DropdownMenuItem<String>(
-                              value: cat,
-                              child: Row(
-                                children: [
-                                  if (cat != 'Tutti') ...[
-                                    Icon(
-                                      _getChecklistCategoryIcon(cat),
-                                      size: 16,
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.primary,
-                                    ),
-                                    const SizedBox(width: 8),
-                                  ],
-                                  Expanded(
-                                    child: Text(
-                                      cat,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )
-                          .toList(),
-                  onChanged: (val) {
-                    if (val != null) {
-                      setState(() {
-                        _selectedChecklistCategory = val;
-                      });
-                    }
-                  },
                 ),
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: DropdownButtonFormField<String>(
-                  value: _selectedChecklistStatusFilter,
-                  isExpanded: true,
-                  decoration: InputDecoration(
-                    labelText: "Stato",
-                    isDense: true,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 8,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  items: ['Tutti', 'Da completare', 'Completati']
-                      .map(
-                        (status) => DropdownMenuItem<String>(
+                child: PopupMenuButton<String>(
+                  offset: const Offset(0, 40),
+                  onSelected: (val) {
+                    setState(() {
+                      _selectedChecklistStatusFilter = val;
+                    });
+                  },
+                  itemBuilder: (BuildContext context) =>
+                      ['Tutti', 'Da completare', 'Completati'].map((status) {
+                        return PopupMenuItem<String>(
                           value: status,
                           child: Text(status),
+                        );
+                      }).toList(),
+                  child: InputDecorator(
+                    decoration: InputDecoration(
+                      labelText: "Stato",
+                      isDense: true,
+                      contentPadding: const EdgeInsets.fromLTRB(8, 8, 2, 8),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            _selectedChecklistStatusFilter,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
-                      )
-                      .toList(),
-                  onChanged: (val) {
-                    if (val != null) {
-                      setState(() {
-                        _selectedChecklistStatusFilter = val;
-                      });
-                    }
-                  },
+                        const Icon(
+                          Icons.arrow_drop_down,
+                          color: Colors.grey,
+                          size: 20,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: DropdownButtonFormField<String>(
-                  value: _selectedChecklistPriorityFilter,
-                  isExpanded: true,
-                  decoration: InputDecoration(
-                    labelText: "Priorità",
-                    isDense: true,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 8,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  selectedItemBuilder: (BuildContext context) {
-                    return ['Tutte', 'Bassa', 'Media', 'Alta'].map((prio) {
-                      return Row(
-                        children: [
-                          if (prio != 'Tutte') ...[
-                            Icon(
-                              Icons.flag,
-                              size: 14,
-                              color: _getPriorityColor(prio),
-                            ),
-                            const SizedBox(width: 6),
-                          ],
-                          Expanded(
-                            child: Text(prio, overflow: TextOverflow.ellipsis),
-                          ),
-                        ],
-                      );
-                    }).toList();
+                child: PopupMenuButton<String>(
+                  offset: const Offset(0, 40),
+                  onSelected: (val) {
+                    setState(() {
+                      _selectedChecklistPriorityFilter = val;
+                    });
                   },
-                  items: ['Tutte', 'Bassa', 'Media', 'Alta']
-                      .map(
-                        (prio) => DropdownMenuItem<String>(
+                  itemBuilder: (BuildContext context) =>
+                      ['Tutte', 'Bassa', 'Media', 'Alta'].map((prio) {
+                        return PopupMenuItem<String>(
                           value: prio,
                           child: Row(
                             children: [
@@ -313,24 +331,78 @@ class _ChecklistTabState extends State<ChecklistTab> {
                                 ),
                                 const SizedBox(width: 8),
                               ],
+                              Text(
+                                prio,
+                                style: TextStyle(
+                                  color: prio == 'Tutte'
+                                      ? null
+                                      : _getPriorityColor(prio),
+                                  fontWeight: prio == 'Tutte'
+                                      ? null
+                                      : FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                  child: InputDecorator(
+                    decoration: InputDecoration(
+                      labelText: "Priorità",
+                      isDense: true,
+                      contentPadding: const EdgeInsets.fromLTRB(8, 8, 2, 8),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Row(
+                            children: [
+                              if (_selectedChecklistPriorityFilter !=
+                                  'Tutte') ...[
+                                Icon(
+                                  Icons.flag,
+                                  size: 14,
+                                  color: _getPriorityColor(
+                                    _selectedChecklistPriorityFilter,
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                              ],
                               Expanded(
                                 child: Text(
-                                  prio,
+                                  _selectedChecklistPriorityFilter,
                                   overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color:
+                                        _selectedChecklistPriorityFilter ==
+                                            'Tutte'
+                                        ? null
+                                        : _getPriorityColor(
+                                            _selectedChecklistPriorityFilter,
+                                          ),
+                                    fontWeight:
+                                        _selectedChecklistPriorityFilter ==
+                                            'Tutte'
+                                        ? null
+                                        : FontWeight.w600,
+                                  ),
                                 ),
                               ),
                             ],
                           ),
                         ),
-                      )
-                      .toList(),
-                  onChanged: (val) {
-                    if (val != null) {
-                      setState(() {
-                        _selectedChecklistPriorityFilter = val;
-                      });
-                    }
-                  },
+                        const Icon(
+                          Icons.arrow_drop_down,
+                          color: Colors.grey,
+                          size: 20,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -446,14 +518,19 @@ class _ChecklistTabState extends State<ChecklistTab> {
                                 Icon(
                                   _getChecklistCategoryIcon(item.category),
                                   size: 12,
-                                  color: Colors.grey,
+                                  color: _getChecklistCategoryColor(
+                                    item.category,
+                                  ),
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
                                   item.category,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 11,
-                                    color: Colors.grey,
+                                    color: _getChecklistCategoryColor(
+                                      item.category,
+                                    ),
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                                 const SizedBox(width: 12),

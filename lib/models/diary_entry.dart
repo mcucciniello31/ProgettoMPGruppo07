@@ -5,6 +5,9 @@ class DiaryEntry {
   final String content;
   final DateTime date;
   final String? imagePath;
+  final String associatedType; // 'Generale', 'Tappa', 'Attivita'
+  final int? associatedId; // ID della tappa o attività associata
+  final String associatedName; // Nome della tappa/attività, o 'Generale'
 
   DiaryEntry({
     this.id,
@@ -13,6 +16,9 @@ class DiaryEntry {
     required this.content,
     required this.date,
     this.imagePath,
+    this.associatedType = 'Generale',
+    this.associatedId,
+    this.associatedName = 'Generale',
   });
 
   Map<String, dynamic> toMap() {
@@ -23,6 +29,9 @@ class DiaryEntry {
       'content': content,
       'date': date.toIso8601String(),
       'imagePath': imagePath,
+      'associatedType': associatedType,
+      'associatedId': associatedId,
+      'associatedName': associatedName,
     };
   }
 
@@ -34,6 +43,9 @@ class DiaryEntry {
       content: map['content'] as String? ?? '',
       date: DateTime.parse(map['date'] as String),
       imagePath: map['imagePath'] as String?,
+      associatedType: map['associatedType'] as String? ?? 'Generale',
+      associatedId: map['associatedId'] as int?,
+      associatedName: map['associatedName'] as String? ?? 'Generale',
     );
   }
 
@@ -44,6 +56,9 @@ class DiaryEntry {
     String? content,
     DateTime? date,
     String? imagePath,
+    String? associatedType,
+    int? associatedId,
+    String? associatedName,
   }) {
     return DiaryEntry(
       id: id ?? this.id,
@@ -52,6 +67,9 @@ class DiaryEntry {
       content: content ?? this.content,
       date: date ?? this.date,
       imagePath: imagePath ?? this.imagePath,
+      associatedType: associatedType ?? this.associatedType,
+      associatedId: associatedId ?? this.associatedId,
+      associatedName: associatedName ?? this.associatedName,
     );
   }
 }
