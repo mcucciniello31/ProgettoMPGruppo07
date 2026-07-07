@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/checklist_item.dart';
-import '../providers/travel_provider.dart';
+import '../../../models/checklist_item.dart';
+import '../../../providers/travel_provider.dart';
 
 class AddChecklistItemScreen extends StatefulWidget {
   final int tripId;
@@ -242,6 +242,20 @@ class _AddChecklistItemScreenState extends State<AddChecklistItemScreen> {
                     borderRadius: BorderRadius.circular(16),
                   ),
                 ),
+                selectedItemBuilder: (BuildContext context) {
+                  return _categories.map((cat) {
+                    return Row(
+                      children: [
+                        Icon(
+                          _getChecklistCategoryIcon(cat),
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        const SizedBox(width: 12),
+                        Text(cat),
+                      ],
+                    );
+                  }).toList();
+                },
                 items: _categories.map((cat) {
                   return DropdownMenuItem<String>(
                     value: cat,
@@ -277,6 +291,17 @@ class _AddChecklistItemScreenState extends State<AddChecklistItemScreen> {
                     borderRadius: BorderRadius.circular(16),
                   ),
                 ),
+                selectedItemBuilder: (BuildContext context) {
+                  return _priorities.map((pri) {
+                    return Row(
+                      children: [
+                        Icon(Icons.flag, color: _getPriorityColor(pri)),
+                        const SizedBox(width: 12),
+                        Text(pri),
+                      ],
+                    );
+                  }).toList();
+                },
                 items: _priorities.map((pri) {
                   return DropdownMenuItem<String>(
                     value: pri,

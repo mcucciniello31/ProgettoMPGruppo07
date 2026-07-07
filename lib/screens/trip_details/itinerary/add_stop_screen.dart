@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/stop.dart';
-import '../models/activity.dart';
-import '../models/trip.dart';
-import '../providers/travel_provider.dart';
-import '../theme/app_theme.dart';
+import '../../../models/stop.dart';
+import '../../../models/activity.dart';
+import '../../../models/trip.dart';
+import '../../../providers/travel_provider.dart';
+import '../../../theme/app_theme.dart';
 
 class AddStopScreen extends StatefulWidget {
   final int tripId;
@@ -41,7 +41,6 @@ class _AddStopScreenState extends State<AddStopScreen> {
   String _selectedActivityType = 'Altro';
   String _selectedActivityStatus = 'Da svolgere';
   Trip? _trip;
-  bool _validationTriggered = false;
 
   @override
   void initState() {
@@ -318,9 +317,7 @@ class _AddStopScreenState extends State<AddStopScreen> {
     }
 
     if (validationErrors.isNotEmpty) {
-      setState(() {
-        _validationTriggered = true;
-      });
+      setState(() {});
       showDialog(
         context: context,
         builder: (context) => AlertDialog(

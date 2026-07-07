@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import '../providers/travel_provider.dart';
 import '../models/trip.dart';
 import 'add_trip_screen.dart';
-import 'trip_details_screen.dart';
+import 'trip_details/trip_details_screen.dart';
 import 'analytics_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -247,20 +247,13 @@ class _HomeScreenState extends State<HomeScreen>
                             SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               child: Row(
-                                children:
-                                    [
-                                      'Tutti',
-                                      'futuro',
-                                      'in_corso',
-                                      'completato',
-                                    ].map((status) {
+                                children: ['futuro', 'in_corso', 'completato']
+                                    .map((status) {
                                       final display = status == 'futuro'
                                           ? 'Futuro'
                                           : status == 'in_corso'
                                           ? 'In Corso'
-                                          : status == 'completato'
-                                          ? 'Completato'
-                                          : 'Tutti';
+                                          : 'Completato';
                                       final isSelected =
                                           _selectedStatusFilter == status;
                                       return Padding(
@@ -285,15 +278,16 @@ class _HomeScreenState extends State<HomeScreen>
                                                   ).textTheme.bodyMedium?.color,
                                           ),
                                           onSelected: (selected) {
-                                            if (selected) {
-                                              setState(() {
-                                                _selectedStatusFilter = status;
-                                              });
-                                            }
+                                            setState(() {
+                                              _selectedStatusFilter = selected
+                                                  ? status
+                                                  : 'Tutti';
+                                            });
                                           },
                                         ),
                                       );
-                                    }).toList(),
+                                    })
+                                    .toList(),
                               ),
                             ),
                             const Divider(height: 20),
