@@ -806,7 +806,7 @@ class _UsefulInfoTabState extends State<UsefulInfoTab> {
               children: [
                 Expanded(
                   child: PopupMenuButton<String>(
-                    offset: const Offset(0, 40),
+                    offset: const Offset(0, 48),
                     onSelected: (val) {
                       setState(() {
                         _selectedUsefulInfoCategory = val;
@@ -825,29 +825,30 @@ class _UsefulInfoTabState extends State<UsefulInfoTab> {
                             value: cat,
                             child: Row(
                               children: [
-                                if (cat != 'Tutti') ...[
-                                  Icon(
-                                    UsefulInfoTab.getUsefulInfoCategoryIcon(
-                                      cat,
-                                    ),
-                                    size: 16,
-                                    color:
-                                        UsefulInfoTab.getUsefulInfoCategoryColor(
+                                Icon(
+                                  cat == 'Tutti'
+                                      ? Icons.category_outlined
+                                      : UsefulInfoTab.getUsefulInfoCategoryIcon(
                                           cat,
                                         ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                ],
+                                  size: 16,
+                                  color: cat == 'Tutti'
+                                      ? const Color(0xFF3B6A8A)
+                                      : UsefulInfoTab.getUsefulInfoCategoryColor(
+                                          cat,
+                                        ),
+                                ),
+                                const SizedBox(width: 8),
                                 Text(
                                   cat,
                                   style: TextStyle(
                                     color: cat == 'Tutti'
-                                        ? null
+                                        ? const Color(0xFF0D2137)
                                         : UsefulInfoTab.getUsefulInfoCategoryColor(
                                             cat,
                                           ),
                                     fontWeight: cat == 'Tutti'
-                                        ? null
+                                        ? FontWeight.normal
                                         : FontWeight.w600,
                                   ),
                                 ),
@@ -855,59 +856,89 @@ class _UsefulInfoTabState extends State<UsefulInfoTab> {
                             ),
                           );
                         }).toList(),
-                    child: InputDecorator(
-                      decoration: InputDecoration(
-                        labelText: "Filtra per Categoria",
-                        isDense: true,
-                        contentPadding: const EdgeInsets.fromLTRB(12, 8, 2, 8),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: const Color(0xFFADCDE2),
+                          width: 1.5,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFFADCDE2).withOpacity(0.15),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(
-                            child: Row(
-                              children: [
-                                if (_selectedUsefulInfoCategory != 'Tutti') ...[
-                                  Icon(
-                                    UsefulInfoTab.getUsefulInfoCategoryIcon(
-                                      _selectedUsefulInfoCategory,
-                                    ),
-                                    size: 16,
-                                    color:
-                                        UsefulInfoTab.getUsefulInfoCategoryColor(
-                                          _selectedUsefulInfoCategory,
-                                        ),
-                                  ),
-                                  const SizedBox(width: 6),
-                                ],
-                                Expanded(
-                                  child: Text(
-                                    _selectedUsefulInfoCategory,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
+                          const Text(
+                            "Filtra per Categoria",
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF3B6A8A),
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      _selectedUsefulInfoCategory == 'Tutti'
+                                          ? Icons.category_outlined
+                                          : UsefulInfoTab.getUsefulInfoCategoryIcon(
+                                              _selectedUsefulInfoCategory,
+                                            ),
+                                      size: 14,
                                       color:
                                           _selectedUsefulInfoCategory == 'Tutti'
-                                          ? null
+                                          ? const Color(0xFF3B6A8A)
                                           : UsefulInfoTab.getUsefulInfoCategoryColor(
                                               _selectedUsefulInfoCategory,
                                             ),
-                                      fontWeight:
-                                          _selectedUsefulInfoCategory == 'Tutti'
-                                          ? null
-                                          : FontWeight.w600,
                                     ),
-                                  ),
+                                    const SizedBox(width: 4),
+                                    Expanded(
+                                      child: Text(
+                                        _selectedUsefulInfoCategory,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color:
+                                              _selectedUsefulInfoCategory ==
+                                                  'Tutti'
+                                              ? const Color(0xFF0D2137)
+                                              : UsefulInfoTab.getUsefulInfoCategoryColor(
+                                                  _selectedUsefulInfoCategory,
+                                                ),
+                                          fontWeight:
+                                              _selectedUsefulInfoCategory ==
+                                                  'Tutti'
+                                              ? FontWeight.normal
+                                              : FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ),
-                          const Icon(
-                            Icons.arrow_drop_down,
-                            color: Colors.grey,
-                            size: 20,
+                              ),
+                              const Icon(
+                                Icons.arrow_drop_down,
+                                color: Color(0xFF3B6A8A),
+                                size: 18,
+                              ),
+                            ],
                           ),
                         ],
                       ),

@@ -17,7 +17,20 @@ class AddDiaryEntryDialog {
     final titleController = TextEditingController(text: entry?.title ?? '');
     final contentController = TextEditingController(text: entry?.content ?? '');
     DateTime selectedDate = entry?.date ?? DateTime.now();
+    // Clamp initial date to trip dates so that the DatePicker doesn't crash on initialDate out of bounds
+    final tripStart = provider.selectedTrip!.startDate;
+    final tripEnd = provider.selectedTrip!.endDate;
+    if (selectedDate.isBefore(tripStart)) {
+      selectedDate = tripStart;
+    } else if (selectedDate.isAfter(tripEnd)) {
+      selectedDate = tripEnd;
+    }
+
     String? selectedImagePath = entry?.imagePath;
+
+    // Form validation key
+    final formKey = GlobalKey<FormState>();
+    String? imageError;
 
     // Variabili di stato per l'associazione
     String associatedType = entry?.associatedType ?? 'Generale';
@@ -31,12 +44,27 @@ class AddDiaryEntryDialog {
       activities.addAll(provider.getActivitiesForStop(stop.id!));
     }
 
-    // Se in modifica, ripristina gli ID selezionati
+    // Se in modifica, ripristina gli ID selezionati e forza la data corretta
     if (isEdit && entry.associatedId != null) {
       if (entry.associatedType == 'Tappa') {
         selectedStopId = entry.associatedId;
+        final stopIndex = stops.indexWhere((s) => s.id == selectedStopId);
+        if (stopIndex != -1) {
+          selectedDate = stops[stopIndex].dateTime;
+        }
       } else if (entry.associatedType == 'Attivita') {
         selectedActivityId = entry.associatedId;
+        final actIndex = activities.indexWhere(
+          (a) => a.id == selectedActivityId,
+        );
+        if (actIndex != -1) {
+          final stopIndex = stops.indexWhere(
+            (s) => s.id == activities[actIndex].stopId,
+          );
+          if (stopIndex != -1) {
+            selectedDate = stops[stopIndex].dateTime;
+          }
+        }
       }
     }
 
@@ -56,6 +84,7 @@ class AddDiaryEntryDialog {
               if (image != null) {
                 setDialogState(() {
                   selectedImagePath = image.path;
+                  imageError = null;
                 });
               }
             } catch (e) {
@@ -113,6 +142,31 @@ class AddDiaryEntryDialog {
                     if (value == 'Generale') {
                       selectedStopId = null;
                       selectedActivityId = null;
+                    } else if (value == 'Tappa') {
+                      selectedActivityId = null;
+                      if (selectedStopId == null && stops.isNotEmpty) {
+                        selectedStopId = stops.first.id;
+                      }
+                      if (selectedStopId != null) {
+                        final stop = stops.firstWhere(
+                          (s) => s.id == selectedStopId,
+                        );
+                        selectedDate = stop.dateTime;
+                      }
+                    } else if (value == 'Attivita') {
+                      selectedStopId = null;
+                      if (selectedActivityId == null && activities.isNotEmpty) {
+                        selectedActivityId = activities.first.id;
+                      }
+                      if (selectedActivityId != null) {
+                        final act = activities.firstWhere(
+                          (a) => a.id == selectedActivityId,
+                        );
+                        final stop = stops.firstWhere(
+                          (s) => s.id == act.stopId,
+                        );
+                        selectedDate = stop.dateTime;
+                      }
                     }
                   });
                 },
@@ -185,252 +239,327 @@ class AddDiaryEntryDialog {
             content: SingleChildScrollView(
               child: SizedBox(
                 width: MediaQuery.of(context).size.width * 0.85,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    GestureDetector(
-                      onTap: showImageSourceSheet,
-                      child: Container(
-                        height: 150,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).cardColor,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: Theme.of(
-                              context,
-                            ).dividerColor.withOpacity(0.3),
-                          ),
-                        ),
-                        child: selectedImagePath == null
-                            ? Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.add_a_photo_outlined,
-                                    size: 36,
-                                    color: Theme.of(
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      GestureDetector(
+                        onTap: showImageSourceSheet,
+                        child: Container(
+                          height: 150,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).cardColor,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: imageError != null
+                                  ? Colors.redAccent
+                                  : Theme.of(
                                       context,
-                                    ).colorScheme.primary.withOpacity(0.7),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  const Text(
-                                    "Seleziona Foto",
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    "Tocca per scegliere o scattare",
-                                    style: TextStyle(
-                                      fontSize: 11,
+                                    ).dividerColor.withOpacity(0.3),
+                              width: imageError != null ? 2.0 : 1.0,
+                            ),
+                          ),
+                          child: selectedImagePath == null
+                              ? Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.add_a_photo_outlined,
+                                      size: 36,
                                       color: Theme.of(
                                         context,
-                                      ).textTheme.bodySmall?.color,
+                                      ).colorScheme.primary.withOpacity(0.7),
                                     ),
-                                  ),
-                                ],
-                              )
-                            : ClipRRect(
-                                borderRadius: BorderRadius.circular(16),
-                                child: Stack(
-                                  fit: StackFit.expand,
-                                  children: [
-                                    DiaryTab.buildDiaryImage(selectedImagePath),
-                                    Positioned(
-                                      right: 8,
-                                      bottom: 8,
-                                      child: Container(
-                                        padding: const EdgeInsets.all(6),
-                                        decoration: BoxDecoration(
-                                          color: Colors.black.withOpacity(0.6),
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: const Icon(
-                                          Icons.edit,
-                                          color: Colors.white,
-                                          size: 16,
-                                        ),
+                                    const SizedBox(height: 8),
+                                    const Text(
+                                      "Seleziona Foto *",
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      "Tocca per scegliere o scattare",
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: Theme.of(
+                                          context,
+                                        ).textTheme.bodySmall?.color,
                                       ),
                                     ),
                                   ],
-                                ),
-                              ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: titleController,
-                      decoration: InputDecoration(
-                        labelText: "Titolo Ricordo *",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    OutlinedButton.icon(
-                      onPressed: () async {
-                        final picked = await showDatePicker(
-                          context: context,
-                          initialDate: selectedDate,
-                          firstDate: provider.selectedTrip!.startDate,
-                          lastDate: provider.selectedTrip!.endDate,
-                        );
-                        if (picked != null) {
-                          setDialogState(() {
-                            selectedDate = picked;
-                          });
-                        }
-                      },
-                      icon: const Icon(Icons.calendar_today, size: 16),
-                      label: Text(
-                        "Data: ${selectedDate.day.toString().padLeft(2, '0')}/${selectedDate.month.toString().padLeft(2, '0')}/${selectedDate.year}",
-                      ),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: contentController,
-                      minLines: 3,
-                      maxLines: 5,
-                      decoration: InputDecoration(
-                        labelText: "Racconta questo momento... *",
-                        alignLabelWithHint: true,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Sezione Associazione Ricordo
-                    Text(
-                      "Associa a",
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        buildAssociationChip(
-                          'Generale',
-                          'Generale',
-                          Icons.photo_album_outlined,
-                        ),
-                        const SizedBox(width: 8),
-                        buildAssociationChip(
-                          'Tappa',
-                          'Tappa',
-                          Icons.map_outlined,
-                        ),
-                        const SizedBox(width: 8),
-                        buildAssociationChip(
-                          'Attività',
-                          'Attivita',
-                          Icons.local_activity_outlined,
-                        ),
-                      ],
-                    ),
-                    if (associatedType == 'Tappa') ...[
-                      const SizedBox(height: 12),
-                      stops.isEmpty
-                          ? const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text(
-                                "Nessuna tappa presente in questo viaggio.",
-                                style: TextStyle(
-                                  color: Colors.orange,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            )
-                          : DropdownButtonFormField<int>(
-                              value: selectedStopId,
-                              decoration: InputDecoration(
-                                labelText: "Seleziona Tappa",
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                              items: stops.map((stop) {
-                                return DropdownMenuItem<int>(
-                                  value: stop.id,
-                                  child: Text(
-                                    "Giorno ${stop.itineraryOrder} • ${stop.name}",
-                                    style: const TextStyle(fontSize: 13),
-                                  ),
-                                );
-                              }).toList(),
-                              onChanged: (val) {
-                                setDialogState(() {
-                                  selectedStopId = val;
-                                });
-                              },
-                            ),
-                    ],
-                    if (associatedType == 'Attivita') ...[
-                      const SizedBox(height: 12),
-                      activities.isEmpty
-                          ? const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text(
-                                "Nessuna attività programmata in questo viaggio.",
-                                style: TextStyle(
-                                  color: Colors.orange,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            )
-                          : DropdownButtonFormField<int>(
-                              value: selectedActivityId,
-                              decoration: InputDecoration(
-                                labelText: "Seleziona Attività",
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                              items: activities.map((act) {
-                                return DropdownMenuItem<int>(
-                                  value: act.id,
-                                  child: Row(
+                                )
+                              : ClipRRect(
+                                  borderRadius: BorderRadius.circular(16),
+                                  child: Stack(
+                                    fit: StackFit.expand,
                                     children: [
-                                      Icon(
-                                        AppTheme.activityIcons[act.type] ??
-                                            Icons.local_activity,
-                                        size: 16,
-                                        color:
-                                            AppTheme.activityColors[act.type] ??
-                                            Colors.grey,
+                                      DiaryTab.buildDiaryImage(
+                                        selectedImagePath,
                                       ),
-                                      const SizedBox(width: 8),
-                                      Expanded(
-                                        child: Text(
-                                          act.name,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(fontSize: 13),
+                                      Positioned(
+                                        right: 8,
+                                        bottom: 8,
+                                        child: Container(
+                                          padding: const EdgeInsets.all(6),
+                                          decoration: BoxDecoration(
+                                            color: Colors.black.withOpacity(
+                                              0.6,
+                                            ),
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: const Icon(
+                                            Icons.edit,
+                                            color: Colors.white,
+                                            size: 16,
+                                          ),
                                         ),
                                       ),
                                     ],
                                   ),
-                                );
-                              }).toList(),
-                              onChanged: (val) {
-                                setDialogState(() {
-                                  selectedActivityId = val;
-                                });
-                              },
+                                ),
+                        ),
+                      ),
+                      if (imageError != null) ...[
+                        const SizedBox(height: 6),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Text(
+                            imageError!,
+                            style: const TextStyle(
+                              color: Colors.redAccent,
+                              fontSize: 12,
                             ),
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: titleController,
+                        decoration: InputDecoration(
+                          labelText: "Titolo Ricordo *",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return "Il titolo è obbligatorio";
+                          }
+                          if (value.startsWith(' ')) {
+                            return "Il titolo non può iniziare con uno spazio";
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      OutlinedButton.icon(
+                        onPressed: associatedType == 'Generale'
+                            ? () async {
+                                DateTime initialPickDate = selectedDate;
+                                if (initialPickDate.isBefore(
+                                  provider.selectedTrip!.startDate,
+                                )) {
+                                  initialPickDate =
+                                      provider.selectedTrip!.startDate;
+                                } else if (initialPickDate.isAfter(
+                                  provider.selectedTrip!.endDate,
+                                )) {
+                                  initialPickDate =
+                                      provider.selectedTrip!.endDate;
+                                }
+                                final picked = await showDatePicker(
+                                  context: context,
+                                  initialDate: initialPickDate,
+                                  firstDate: provider.selectedTrip!.startDate,
+                                  lastDate: provider.selectedTrip!.endDate,
+                                );
+                                if (picked != null) {
+                                  setDialogState(() {
+                                    selectedDate = picked;
+                                  });
+                                }
+                              }
+                            : null,
+                        icon: const Icon(Icons.calendar_today, size: 16),
+                        label: Text(
+                          associatedType == 'Generale'
+                              ? "Data: ${selectedDate.day.toString().padLeft(2, '0')}/${selectedDate.month.toString().padLeft(2, '0')}/${selectedDate.year}"
+                              : "Data (da associazione): ${selectedDate.day.toString().padLeft(2, '0')}/${selectedDate.month.toString().padLeft(2, '0')}/${selectedDate.year}",
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: contentController,
+                        minLines: 3,
+                        maxLines: 5,
+                        decoration: InputDecoration(
+                          labelText: "Racconta questo momento... *",
+                          alignLabelWithHint: true,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return "La descrizione è obbligatoria";
+                          }
+                          if (value.startsWith(' ')) {
+                            return "La descrizione non può iniziare con uno spazio";
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Sezione Associazione Ricordo
+                      Text(
+                        "Associa a",
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          buildAssociationChip(
+                            'Generale',
+                            'Generale',
+                            Icons.photo_album_outlined,
+                          ),
+                          const SizedBox(width: 8),
+                          buildAssociationChip(
+                            'Tappa',
+                            'Tappa',
+                            Icons.map_outlined,
+                          ),
+                          const SizedBox(width: 8),
+                          buildAssociationChip(
+                            'Attività',
+                            'Attivita',
+                            Icons.local_activity_outlined,
+                          ),
+                        ],
+                      ),
+                      if (associatedType == 'Tappa') ...[
+                        const SizedBox(height: 12),
+                        stops.isEmpty
+                            ? const Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text(
+                                  "Nessuna tappa presente in questo viaggio.",
+                                  style: TextStyle(
+                                    color: Colors.orange,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              )
+                            : DropdownButtonFormField<int>(
+                                value: selectedStopId,
+                                decoration: InputDecoration(
+                                  labelText: "Seleziona Tappa",
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                items: stops.map((stop) {
+                                  return DropdownMenuItem<int>(
+                                    value: stop.id,
+                                    child: Text(
+                                      "Giorno ${stop.itineraryOrder} • ${stop.name}",
+                                      style: const TextStyle(fontSize: 13),
+                                    ),
+                                  );
+                                }).toList(),
+                                onChanged: (val) {
+                                  setDialogState(() {
+                                    selectedStopId = val;
+                                    if (val != null) {
+                                      final stop = stops.firstWhere(
+                                        (s) => s.id == val,
+                                      );
+                                      selectedDate = stop.dateTime;
+                                    }
+                                  });
+                                },
+                              ),
+                      ],
+                      if (associatedType == 'Attivita') ...[
+                        const SizedBox(height: 12),
+                        activities.isEmpty
+                            ? const Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text(
+                                  "Nessuna attività programmata in questo viaggio.",
+                                  style: TextStyle(
+                                    color: Colors.orange,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              )
+                            : DropdownButtonFormField<int>(
+                                value: selectedActivityId,
+                                decoration: InputDecoration(
+                                  labelText: "Seleziona Attività",
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                items: activities.map((act) {
+                                  return DropdownMenuItem<int>(
+                                    value: act.id,
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          AppTheme.activityIcons[act.type] ??
+                                              Icons.local_activity,
+                                          size: 16,
+                                          color:
+                                              AppTheme.activityColors[act
+                                                  .type] ??
+                                              Colors.grey,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Text(
+                                            act.name,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }).toList(),
+                                onChanged: (val) {
+                                  setDialogState(() {
+                                    selectedActivityId = val;
+                                    if (val != null) {
+                                      final act = activities.firstWhere(
+                                        (a) => a.id == val,
+                                      );
+                                      final stop = stops.firstWhere(
+                                        (s) => s.id == act.stopId,
+                                      );
+                                      selectedDate = stop.dateTime;
+                                    }
+                                  });
+                                },
+                              ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -441,29 +570,22 @@ class AddDiaryEntryDialog {
               ),
               ElevatedButton(
                 onPressed: () async {
+                  // Validazione foto obbligatoria
+                  if (selectedImagePath == null) {
+                    setDialogState(() {
+                      imageError = "La fotografia è obbligatoria";
+                    });
+                  }
+
+                  // Validazione campi di testo
+                  final isValidForm = formKey.currentState?.validate() ?? false;
+
+                  if (selectedImagePath == null || !isValidForm) {
+                    return;
+                  }
+
                   final title = titleController.text.trim();
                   final content = contentController.text.trim();
-
-                  if (title.isEmpty || title.startsWith(' ')) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          "Il titolo non può essere vuoto o iniziare con uno spazio.",
-                        ),
-                      ),
-                    );
-                    return;
-                  }
-                  if (content.isEmpty || content.startsWith(' ')) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          "La descrizione non può essere vuota o iniziare con uno spazio.",
-                        ),
-                      ),
-                    );
-                    return;
-                  }
 
                   // Risolvi l'associazione
                   String finalAssociatedType = associatedType;

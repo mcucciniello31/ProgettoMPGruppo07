@@ -351,6 +351,53 @@ class _ExpensesTabState extends State<ExpensesTab> {
     );
   }
 
+  IconData getExpenseCategoryIcon(String category) {
+    switch (category) {
+      case 'Trasporto':
+        return Icons.directions_bus_outlined;
+      case 'Alloggio':
+        return Icons.hotel_outlined;
+      case 'Cibo':
+        return Icons.restaurant_outlined;
+      case 'Attività':
+        return Icons.local_activity_outlined;
+      case 'Shopping':
+        return Icons.shopping_bag_outlined;
+      case 'Spese Mediche':
+        return Icons.medical_services_outlined;
+      case 'Altro':
+      default:
+        return Icons.money_outlined;
+    }
+  }
+
+  InputDecoration _buildDropdownDecoration(String label) {
+    return InputDecoration(
+      labelText: label,
+      filled: true,
+      fillColor: Colors.white,
+      isDense: true,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      labelStyle: const TextStyle(
+        color: Color(0xFF3B6A8A), // AppTheme.textSecondary
+        fontWeight: FontWeight.bold,
+        fontSize: 13,
+      ),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: Color(0xFFADCDE2), width: 1.5),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: Color(0xFFADCDE2), width: 1.5),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: Color(0xFF4DA8DA), width: 2.0),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = widget.provider;
@@ -385,12 +432,18 @@ class _ExpensesTabState extends State<ExpensesTab> {
 
     // Costruisce la lista di tappe e attività collegate a questo viaggio per i filtri
     final associations = <String>['Tutti', 'Generale'];
+    final uniqueAssoc = <String>{};
     for (var stop in provider.currentStops) {
-      associations.add(stop.name);
+      uniqueAssoc.add(stop.name);
       final activities = provider.getActivitiesForStop(stop.id!);
       for (var act in activities) {
-        associations.add(act.name);
+        uniqueAssoc.add(act.name);
       }
+    }
+    associations.addAll(uniqueAssoc);
+
+    if (!associations.contains(_selectedExpenseAssociationFilter)) {
+      _selectedExpenseAssociationFilter = 'Tutti';
     }
 
     // Elenco delle transazioni registrate storiche che corrispondono ai filtri selezionati
@@ -635,63 +688,18 @@ class _ExpensesTabState extends State<ExpensesTab> {
                   context,
                 ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
-              Row(
-                children: [
-                  PopupMenuButton<String>(
-                    initialValue: _selectedExpenseFilter,
-                    offset: const Offset(0, 30),
-                    onSelected: (String value) {
-                      setState(() {
-                        _selectedExpenseFilter = value;
-                      });
-                    },
-                    itemBuilder: (BuildContext context) =>
-                        <PopupMenuEntry<String>>[
-                          const PopupMenuItem<String>(
-                            value: 'Tutte',
-                            child: Text('Tutte'),
-                          ),
-                          const PopupMenuItem<String>(
-                            value: 'Sostenute',
-                            child: Text('Sostenute'),
-                          ),
-                          const PopupMenuItem<String>(
-                            value: 'Previste',
-                            child: Text('Previste'),
-                          ),
-                        ],
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          _selectedExpenseFilter,
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
-                          ),
-                        ),
-                        Icon(
-                          Icons.arrow_drop_down,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ],
-                    ),
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.filter_alt_outlined,
-                      color: _showExpenseFilterPanel
-                          ? Theme.of(context).colorScheme.primary
-                          : Colors.grey,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _showExpenseFilterPanel = !_showExpenseFilterPanel;
-                      });
-                    },
-                  ),
-                ],
+              IconButton(
+                icon: Icon(
+                  Icons.filter_alt_outlined,
+                  color: _showExpenseFilterPanel
+                      ? Theme.of(context).colorScheme.primary
+                      : Colors.grey,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _showExpenseFilterPanel = !_showExpenseFilterPanel;
+                  });
+                },
               ),
             ],
           ),
@@ -701,89 +709,289 @@ class _ExpensesTabState extends State<ExpensesTab> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: Theme.of(context).dividerColor.withOpacity(0.1),
-                ),
+                border: Border.all(color: const Color(0xFFADCDE2), width: 1.5),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFFADCDE2).withOpacity(0.15),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: Column(
                 children: [
-                  DropdownButtonFormField<String>(
-                    value: _selectedExpenseCategoryFilter,
-                    decoration: const InputDecoration(
-                      labelText: "Categoria",
-                      isDense: true,
-                    ),
-                    items: [
-                      const DropdownMenuItem(
-                        value: 'Tutte',
-                        child: Text("Tutte"),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: DropdownButtonFormField<String>(
+                          value: _selectedExpenseCategoryFilter,
+                          isExpanded: true,
+                          decoration: _buildDropdownDecoration("Categoria"),
+                          items: [
+                            const DropdownMenuItem(
+                              value: 'Tutte',
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.category_outlined,
+                                    size: 16,
+                                    color: Color(0xFF3B6A8A),
+                                  ),
+                                  SizedBox(width: 6),
+                                  Text("Tutte", style: TextStyle(fontSize: 13)),
+                                ],
+                              ),
+                            ),
+                            ...AppTheme.categoryColors.keys.map(
+                              (c) => DropdownMenuItem(
+                                value: c,
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      getExpenseCategoryIcon(c),
+                                      size: 16,
+                                      color: AppTheme.categoryColors[c],
+                                    ),
+                                    SizedBox(width: 6),
+                                    Text(c, style: TextStyle(fontSize: 13)),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                          onChanged: (val) {
+                            if (val != null) {
+                              setState(() {
+                                _selectedExpenseCategoryFilter = val;
+                              });
+                            }
+                          },
+                        ),
                       ),
-                      ...AppTheme.categoryColors.keys.map(
-                        (c) => DropdownMenuItem(value: c, child: Text(c)),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: DropdownButtonFormField<String>(
+                          value: _selectedExpenseAmountRangeFilter,
+                          isExpanded: true,
+                          decoration: _buildDropdownDecoration("Importo"),
+                          items: [
+                            const DropdownMenuItem(
+                              value: 'Tutti',
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.monetization_on_outlined,
+                                    size: 16,
+                                    color: Color(0xFF3B6A8A),
+                                  ),
+                                  SizedBox(width: 6),
+                                  Text("Tutti", style: TextStyle(fontSize: 13)),
+                                ],
+                              ),
+                            ),
+                            const DropdownMenuItem(
+                              value: 'Fino a €50',
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.euro_outlined,
+                                    size: 16,
+                                    color: Color(0xFF3B6A8A),
+                                  ),
+                                  SizedBox(width: 6),
+                                  Text(
+                                    "Fino a €50",
+                                    style: TextStyle(fontSize: 13),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const DropdownMenuItem(
+                              value: '€50 - €200',
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.payments_outlined,
+                                    size: 16,
+                                    color: Color(0xFF3B6A8A),
+                                  ),
+                                  SizedBox(width: 6),
+                                  Text(
+                                    "€50 - €200",
+                                    style: TextStyle(fontSize: 13),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const DropdownMenuItem(
+                              value: 'Oltre €200',
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.account_balance_wallet_outlined,
+                                    size: 16,
+                                    color: Color(0xFF3B6A8A),
+                                  ),
+                                  SizedBox(width: 6),
+                                  Text(
+                                    "Oltre €200",
+                                    style: TextStyle(fontSize: 13),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                          onChanged: (val) {
+                            if (val != null) {
+                              setState(() {
+                                _selectedExpenseAmountRangeFilter = val;
+                              });
+                            }
+                          },
+                        ),
                       ),
                     ],
-                    onChanged: (val) {
-                      if (val != null) {
-                        setState(() {
-                          _selectedExpenseCategoryFilter = val;
-                        });
-                      }
-                    },
                   ),
                   const SizedBox(height: 8),
-                  DropdownButtonFormField<String>(
-                    value: _selectedExpenseAmountRangeFilter,
-                    decoration: const InputDecoration(
-                      labelText: "Fascia d'importo",
-                      isDense: true,
-                    ),
-                    items: const [
-                      DropdownMenuItem(value: 'Tutti', child: Text("Tutti")),
-                      DropdownMenuItem(
-                        value: 'Fino a €50',
-                        child: Text("Fino a €50"),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: DropdownButtonFormField<String>(
+                          value: _selectedExpenseAssociationFilter,
+                          isExpanded: true,
+                          decoration: _buildDropdownDecoration("Associazione"),
+                          items: [
+                            const DropdownMenuItem(
+                              value: 'Tutti',
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.link_off_outlined,
+                                    size: 16,
+                                    color: Color(0xFF3B6A8A),
+                                  ),
+                                  SizedBox(width: 6),
+                                  Text("Tutti", style: TextStyle(fontSize: 13)),
+                                ],
+                              ),
+                            ),
+                            const DropdownMenuItem(
+                              value: 'Generale',
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.travel_explore_outlined,
+                                    size: 16,
+                                    color: Color(0xFF3B6A8A),
+                                  ),
+                                  SizedBox(width: 6),
+                                  Text(
+                                    "Generale",
+                                    style: TextStyle(fontSize: 13),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            ...associations
+                                .where((a) => a != 'Tutti' && a != 'Generale')
+                                .map(
+                                  (a) => DropdownMenuItem(
+                                    value: a,
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.pin_drop_outlined,
+                                          size: 16,
+                                          color: Color(0xFF3B6A8A),
+                                        ),
+                                        SizedBox(width: 6),
+                                        Text(
+                                          a,
+                                          style: const TextStyle(fontSize: 13),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                          ],
+                          onChanged: (val) {
+                            if (val != null) {
+                              setState(() {
+                                _selectedExpenseAssociationFilter = val;
+                              });
+                            }
+                          },
+                        ),
                       ),
-                      DropdownMenuItem(
-                        value: '€50 - €200',
-                        child: Text("€50 - €200"),
-                      ),
-                      DropdownMenuItem(
-                        value: 'Oltre €200',
-                        child: Text("Oltre €200"),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: DropdownButtonFormField<String>(
+                          value: _selectedExpenseFilter,
+                          isExpanded: true,
+                          decoration: _buildDropdownDecoration("Stato Spesa"),
+                          items: const [
+                            DropdownMenuItem(
+                              value: 'Tutte',
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.receipt_long_outlined,
+                                    size: 16,
+                                    color: Color(0xFF3B6A8A),
+                                  ),
+                                  SizedBox(width: 6),
+                                  Text("Tutte", style: TextStyle(fontSize: 13)),
+                                ],
+                              ),
+                            ),
+                            DropdownMenuItem(
+                              value: 'Sostenute',
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.check_circle_outline,
+                                    size: 16,
+                                    color: Colors.green,
+                                  ),
+                                  SizedBox(width: 6),
+                                  Text(
+                                    "Sostenute",
+                                    style: TextStyle(fontSize: 13),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            DropdownMenuItem(
+                              value: 'Previste',
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.schedule,
+                                    size: 16,
+                                    color: Colors.orange,
+                                  ),
+                                  SizedBox(width: 6),
+                                  Text(
+                                    "Previste",
+                                    style: TextStyle(fontSize: 13),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                          onChanged: (val) {
+                            if (val != null) {
+                              setState(() {
+                                _selectedExpenseFilter = val;
+                              });
+                            }
+                          },
+                        ),
                       ),
                     ],
-                    onChanged: (val) {
-                      if (val != null) {
-                        setState(() {
-                          _selectedExpenseAmountRangeFilter = val;
-                        });
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 8),
-                  DropdownButtonFormField<String>(
-                    value: _selectedExpenseAssociationFilter,
-                    decoration: const InputDecoration(
-                      labelText: "Associazione",
-                      isDense: true,
-                    ),
-                    items: associations
-                        .map(
-                          (assoc) => DropdownMenuItem(
-                            value: assoc,
-                            child: Text(assoc),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (val) {
-                      if (val != null) {
-                        setState(() {
-                          _selectedExpenseAssociationFilter = val;
-                        });
-                      }
-                    },
                   ),
                 ],
               ),
