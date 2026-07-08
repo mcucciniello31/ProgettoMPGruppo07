@@ -1,34 +1,13 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  // Palette di colori del tema
-  static const Color primaryLight = Color.fromARGB(
-    255,
-    43,
-    156,
-    237,
-  ); // Indaco moderno
-  static const Color secondaryLight = Color(0xFF14B8A6); // Verde acqua / Teal
-  static const Color backgroundLight = Color(
-    0xFFF8FAFC,
-  ); // Grigio/azzurro molto chiaro
-  static const Color cardLight = Color(0xFFFFFFFF);
-  static const Color textPrimaryLight = Color(0xFF0F172A); // Ardesia scura
-  static const Color textSecondaryLight = Color(0xFF64748B); // Grigio freddo
-
-  static const Color primaryDark = Color.fromARGB(
-    255,
-    43,
-    156,
-    237,
-  ); // Indaco chiaro
-  static const Color secondaryDark = Color(
-    0xFF2DD4BF,
-  ); // Verde acqua chiaro / Teal Light
-  static const Color backgroundDark = Color(0xFF0F172A); // Ardesia notte scura
-  static const Color cardDark = Color(0xFF1E293B); // Scheda ardesia scura
-  static const Color textPrimaryDark = Color(0xFFF8FAFC);
-  static const Color textSecondaryDark = Color(0xFF94A3B8);
+  // Palette di colori del tema unico — azzurrino chiaro con contrasto blu scuro
+  static const Color primary = Color(0xFF4DA8DA); // Azzurro cielo
+  static const Color secondary = Color(0xFF14B8A6); // Verde acqua / Teal
+  static const Color background = Color(0xFFCBE0F0); // Sfondo azzurro pastello (leggermente più scuro/intenso per maggior contrasto con le card bianche)
+  static const Color card = Color(0xFFFFFFFF); // Bianco puro per le card
+  static const Color textPrimary = Color(0xFF0D2137); // Blu notte scuro
+  static const Color textSecondary = Color(0xFF3B6A8A); // Blu medio/grigio
 
   // Colori associati alle categorie di spesa
   static const Map<String, Color> categoryColors = {
@@ -70,109 +49,83 @@ class AppTheme {
       useMaterial3: true,
       brightness: Brightness.light,
       colorScheme: const ColorScheme.light(
-        primary: primaryLight,
-        secondary: secondaryLight,
-        background: backgroundLight,
-        surface: cardLight,
+        primary: primary,
+        secondary: secondary,
+        background: background,
+        surface: card,
         onPrimary: Colors.white,
         onSecondary: Colors.white,
-        onBackground: textPrimaryLight,
-        onSurface: textPrimaryLight,
+        onBackground: textPrimary,
+        onSurface: textPrimary,
       ),
-      scaffoldBackgroundColor: backgroundLight,
+      scaffoldBackgroundColor: background,
       cardTheme: CardThemeData(
-        color: cardLight,
+        color: card,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: const BorderSide(color: Color(0xFFE2E8F0), width: 1),
+          side: const BorderSide(color: Color(0xFFADCDE2), width: 1),
         ),
       ),
       textTheme: const TextTheme(
         titleLarge: TextStyle(
           fontSize: 22,
           fontWeight: FontWeight.bold,
-          color: textPrimaryLight,
+          color: textPrimary,
         ),
         titleMedium: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w600,
-          color: textPrimaryLight,
+          color: textPrimary,
         ),
-        bodyLarge: TextStyle(fontSize: 16, color: textPrimaryLight),
-        bodyMedium: TextStyle(fontSize: 14, color: textSecondaryLight),
+        bodyLarge: TextStyle(fontSize: 16, color: textPrimary),
+        bodyMedium: TextStyle(fontSize: 14, color: textSecondary),
+        bodySmall: TextStyle(fontSize: 12, color: textSecondary),
       ),
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        iconTheme: IconThemeData(color: textPrimaryLight),
+        iconTheme: IconThemeData(color: textPrimary),
         titleTextStyle: TextStyle(
           fontSize: 24,
           fontWeight: FontWeight.bold,
-          color: textPrimaryLight,
+          color: textPrimary,
         ),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: primaryLight,
+        backgroundColor: primary,
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         elevation: 4,
       ),
-    );
-  }
-
-  static ThemeData get darkTheme {
-    return ThemeData(
-      useMaterial3: true,
-      brightness: Brightness.dark,
-      colorScheme: const ColorScheme.dark(
-        primary: primaryDark,
-        secondary: secondaryDark,
-        background: backgroundDark,
-        surface: cardDark,
-        onPrimary: Colors.black,
-        onSecondary: Colors.black,
-        onBackground: textPrimaryDark,
-        onSurface: textPrimaryDark,
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFFADCDE2)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFFADCDE2)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: primary, width: 2),
+        ),
       ),
-      scaffoldBackgroundColor: backgroundDark,
-      cardTheme: CardThemeData(
-        color: cardDark,
-        elevation: 0,
+      dividerColor: const Color(0xFFADCDE2),
+      dialogTheme: DialogThemeData(
+        backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: const BorderSide(color: Color(0xFF334155), width: 1),
+          borderRadius: BorderRadius.circular(24),
         ),
       ),
-      textTheme: const TextTheme(
-        titleLarge: TextStyle(
-          fontSize: 22,
-          fontWeight: FontWeight.bold,
-          color: textPrimaryDark,
-        ),
-        titleMedium: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          color: textPrimaryDark,
-        ),
-        bodyLarge: TextStyle(fontSize: 16, color: textPrimaryDark),
-        bodyMedium: TextStyle(fontSize: 14, color: textSecondaryDark),
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: Colors.white,
       ),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        iconTheme: IconThemeData(color: textPrimaryDark),
-        titleTextStyle: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-          color: textPrimaryDark,
-        ),
-      ),
-      floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: primaryDark,
-        foregroundColor: Colors.black,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        elevation: 4,
+      popupMenuTheme: const PopupMenuThemeData(
+        color: Colors.white,
       ),
     );
   }

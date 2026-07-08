@@ -709,7 +709,7 @@ class _ItineraryTabState extends State<ItineraryTab> {
 
   Widget _buildItineraryToggle() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
       child: Container(
         padding: const EdgeInsets.all(4),
         decoration: BoxDecoration(

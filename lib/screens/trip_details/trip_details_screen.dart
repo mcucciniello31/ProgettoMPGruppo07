@@ -277,12 +277,19 @@ class _TripDetailsScreenState extends State<TripDetailsScreen>
       );
     }
 
-    final gradientColors = [
-      Color((trip.title.hashCode & 0xFFFFFF) | 0xFF000000).withOpacity(0.85),
-      Color(
-        (trip.destination.hashCode & 0xFFFFFF) | 0xFF000000,
-      ).withOpacity(0.85),
+    // Seleziona un colore a tinta unita vibrante in modo deterministico
+    final vibrantColors = [
+      const Color(0xFF1E40AF), // Deep Blue
+      const Color(0xFF0F766E), // Deep Teal
+      const Color(0xFFC2410C), // Deep Orange
+      const Color(0xFF6D28D9), // Deep Purple
+      const Color(0xFF4338CA), // Deep Indigo
+      const Color(0xFFBE123C), // Deep Rose
+      const Color(0xFF047857), // Deep Green
+      const Color(0xFF0369A1), // Deep Sky Blue
     ];
+    final cardColor =
+        vibrantColors[trip.title.hashCode.abs() % vibrantColors.length];
 
     final isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
 
@@ -301,14 +308,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen>
                         child: Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                gradientColors[0],
-                                gradientColors[1].withBlue(180),
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
+                            color: cardColor,
                             image:
                                 trip.coverImagePath != null &&
                                     trip.coverImagePath!.isNotEmpty &&
@@ -327,7 +327,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen>
                             borderRadius: BorderRadius.circular(24),
                             boxShadow: [
                               BoxShadow(
-                                color: gradientColors[0].withOpacity(0.2),
+                                color: cardColor.withOpacity(0.2),
                                 blurRadius: 10,
                                 offset: const Offset(0, 4),
                               ),

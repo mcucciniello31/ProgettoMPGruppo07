@@ -597,13 +597,19 @@ class _HomeScreenState extends State<HomeScreen>
     Trip trip,
     TravelProvider provider,
   ) {
-    // Genera i colori del gradiente di copertina in modo deterministico dal titolo del viaggio
-    final gradientColors = [
-      Color((trip.title.hashCode & 0xFFFFFF) | 0xFF000000).withOpacity(0.85),
-      Color(
-        (trip.destination.hashCode & 0xFFFFFF) | 0xFF000000,
-      ).withOpacity(0.85),
+    // Seleziona un colore a tinta unita vibrante in modo deterministico
+    final vibrantColors = [
+      const Color(0xFF1E40AF), // Deep Blue
+      const Color(0xFF0F766E), // Deep Teal
+      const Color(0xFFC2410C), // Deep Orange
+      const Color(0xFF6D28D9), // Deep Purple
+      const Color(0xFF4338CA), // Deep Indigo
+      const Color(0xFFBE123C), // Deep Rose
+      const Color(0xFF047857), // Deep Green
+      const Color(0xFF0369A1), // Deep Sky Blue
     ];
+    final cardColor =
+        vibrantColors[trip.title.hashCode.abs() % vibrantColors.length];
 
     // Determina i colori e le icone per il badge di stato
     String statusText = 'Futuro';
@@ -649,14 +655,7 @@ class _HomeScreenState extends State<HomeScreen>
                 height: 140,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      gradientColors[0],
-                      gradientColors[1].withBlue(180),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  color: cardColor,
                   image:
                       trip.coverImagePath != null &&
                           trip.coverImagePath!.isNotEmpty &&

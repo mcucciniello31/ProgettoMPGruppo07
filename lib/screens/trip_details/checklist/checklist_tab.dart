@@ -159,7 +159,7 @@ class _ChecklistTabState extends State<ChecklistTab> {
       children: [
         // Menu a discesa per filtrare gli elementi per categoria, stato e priorità
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+          padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
           child: Row(
             children: [
               Expanded(

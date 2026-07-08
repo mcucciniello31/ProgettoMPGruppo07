@@ -24,8 +24,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Say My Travel Planner',
       theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system, // Cambia automaticamente il tema in base alle impostazioni del sistema operativo
       home: const HomeScreen(),
       debugShowCheckedModeBanner: false,
     );
