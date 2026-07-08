@@ -4,18 +4,18 @@ import 'package:say_my_travel/main.dart';
 import 'package:say_my_travel/providers/travel_provider.dart';
 
 void main() {
-  testWidgets('Smoke test - Verify Say My Travel main screen loads', (WidgetTester tester) async {
-    // Build our app and trigger a frame, wrapping in MultiProvider.
+  testWidgets('Smoke test - Verify Say My Travel main screen loads', (
+    WidgetTester tester,
+  ) async {
+    // Costruisce la nostra app e avvia un frame, avvolgendolo in MultiProvider.
     await tester.pumpWidget(
       MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (_) => TravelProvider()),
-        ],
+        providers: [ChangeNotifierProvider(create: (_) => TravelProvider())],
         child: const MyApp(),
       ),
     );
 
-    // Verify that the title "Say My Travel" is found on screen.
+    // Verifica che il titolo "Say My Travel" sia presente sullo schermo.
     expect(find.text('Say My Travel'), findsOneWidget);
     expect(find.text('Organizza le tue prossime avventure!'), findsOneWidget);
   });
