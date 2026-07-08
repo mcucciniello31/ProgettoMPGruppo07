@@ -10,7 +10,11 @@ import 'itinerary/add_stop_screen.dart';
 import 'expenses/expenses_tab.dart';
 import 'expenses/add_expense_screen.dart';
 import 'diary/diary_tab.dart';
+import 'diary/add_diary_entry_dialog.dart';
 import 'useful_info/useful_info_tab.dart';
+import 'useful_info/add_useful_info_dialog.dart';
+import 'useful_info/add_travel_document_dialog.dart';
+import 'useful_info/export_trip_dialog.dart';
 
 class TripDetailsScreen extends StatefulWidget {
   const TripDetailsScreen({super.key});
@@ -233,7 +237,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen>
       return FloatingActionButton.extended(
         key: const ValueKey('fab_diary'),
         onPressed: () {
-          DiaryTab.showAddEditDiaryDialog(context, null);
+          AddDiaryEntryDialog.show(context, null);
         },
         icon: const Icon(Icons.add_photo_alternate_outlined),
         label: const Text("Nuovo Ricordo"),
@@ -243,11 +247,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen>
         return FloatingActionButton.extended(
           key: const ValueKey('fab_travel_tickets'),
           onPressed: () {
-            UsefulInfoTab.showAddEditTravelDocumentDialog(
-              context,
-              provider,
-              null,
-            );
+            AddTravelDocumentDialog.show(context, provider, null);
           },
           icon: const Icon(Icons.add_card_outlined),
           label: const Text("Aggiungi Biglietto"),
@@ -256,7 +256,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen>
         return FloatingActionButton.extended(
           key: const ValueKey('fab_useful_info'),
           onPressed: () {
-            UsefulInfoTab.showAddEditUsefulInfoDialog(context, provider, null);
+            AddUsefulInfoDialog.show(context, provider, null);
           },
           icon: const Icon(Icons.add_comment_outlined),
           label: const Text("Nuova Info"),
@@ -370,11 +370,10 @@ class _TripDetailsScreenState extends State<TripDetailsScreen>
                                         color: Colors.white,
                                       ),
                                       tooltip: "Esporta Viaggio",
-                                      onPressed: () =>
-                                          UsefulInfoTab.showExportTripDialog(
-                                            context,
-                                            provider,
-                                          ),
+                                      onPressed: () => ExportTripDialog.show(
+                                        context,
+                                        provider,
+                                      ),
                                     ),
                                   ],
                                 ),
