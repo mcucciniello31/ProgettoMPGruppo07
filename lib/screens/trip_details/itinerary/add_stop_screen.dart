@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../models/stop.dart';
 import '../../../models/activity.dart';
 import '../../../models/trip.dart';
-import '../../../providers/travel_provider.dart';
+import 'package:say_my_travel/providers/travel_provider.dart';
 import '../../../theme/app_theme.dart';
 
 class AddStopScreen extends StatefulWidget {

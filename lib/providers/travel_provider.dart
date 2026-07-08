@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../models/trip.dart';
 import '../models/stop.dart';
@@ -9,6 +10,11 @@ import '../models/diary_entry.dart';
 import '../models/travel_document.dart';
 import '../services/database_helper.dart';
 import '../services/currency_service.dart';
+part 'itinerary_provider.dart';
+part 'checklist_provider.dart';
+part 'expenses_provider.dart';
+part 'diary_provider.dart';
+part 'useful_info_provider.dart';
 
 class TravelProvider with ChangeNotifier {
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
@@ -16,7 +22,7 @@ class TravelProvider with ChangeNotifier {
   List<Trip> _trips = [];
   Trip? _selectedTrip;
   List<Stop> _currentStops = [];
-  Map<int, List<Activity>> _stopActivities = {};
+  final Map<int, List<Activity>> _stopActivities = {};
   List<ChecklistItem> _currentChecklist = [];
   List<Expense> _currentExpenses = [];
   List<UsefulInfo> _currentUsefulInfo = [];
@@ -106,254 +112,13 @@ class TravelProvider with ChangeNotifier {
     await loadTrips();
   }
 
-  // ==========================================
-  // OPERAZIONI SULLE TAPPE
-  // ==========================================
-
-  int _dayNumberFor(Trip trip, DateTime dateTime) {
-    final tripStartDay = DateTime(trip.startDate.year, trip.startDate.month, trip.startDate.day);
-    final stopDay = DateTime(dateTime.year, dateTime.month, dateTime.day);
-    return 1 + stopDay.difference(tripStartDay).inDays;
-  }
-
-  Future<Trip> _tripFor(int tripId) async {
-    if (_selectedTrip != null && _selectedTrip!.id == tripId) {
-      return _selectedTrip!;
-    }
-    final trip = await _dbHelper.getTrip(tripId);
-    if (trip == null) {
-      throw StateError('Trip $tripId not found while saving a stop');
-    }
-    return trip;
-  }
-
-  Future<void> addStop(Stop stop) async {
-    final trip = await _tripFor(stop.tripId);
-    final computedStop = stop.copyWith(itineraryOrder: _dayNumberFor(trip, stop.dateTime));
-    await _dbHelper.insertStop(computedStop);
-    if (_selectedTrip != null) {
-      await loadTripDetails(_selectedTrip!.id!);
-      notifyListeners();
-    }
-  }
-
-  Future<void> updateStop(Stop stop) async {
-    final trip = await _tripFor(stop.tripId);
-    final computedStop = stop.copyWith(itineraryOrder: _dayNumberFor(trip, stop.dateTime));
-    await _dbHelper.updateStop(computedStop);
-    if (_selectedTrip != null) {
-      await loadTripDetails(_selectedTrip!.id!);
-      notifyListeners();
-    }
-  }
-
-  Future<void> deleteStop(int id) async {
-    if (_selectedTrip != null) {
-      await _dbHelper.deleteStop(id);
-      await loadTripDetails(_selectedTrip!.id!);
-      notifyListeners();
-    }
-  }
-
-  // ==========================================
-  // OPERAZIONI SULLE ATTIVITÀ
-  // ==========================================
-
-  Future<void> addActivity(Activity activity) async {
-    await _dbHelper.insertActivity(activity);
-    if (_selectedTrip != null) {
-      await loadTripDetails(_selectedTrip!.id!);
-      notifyListeners();
-    }
-  }
-
-  Future<void> updateActivity(Activity activity) async {
-    await _dbHelper.updateActivity(activity);
-    if (_selectedTrip != null) {
-      await loadTripDetails(_selectedTrip!.id!);
-      notifyListeners();
-    }
-  }
-
-  Future<void> deleteActivity(int id) async {
-    await _dbHelper.deleteActivity(id);
-    if (_selectedTrip != null) {
-      await loadTripDetails(_selectedTrip!.id!);
-      notifyListeners();
-    }
-  }
-
-  // ==========================================
-  // OPERAZIONI SULLA CHECKLIST
-  // ==========================================
-
-  Future<void> addChecklistItem(ChecklistItem item) async {
-    await _dbHelper.insertChecklistItem(item);
-    if (_selectedTrip != null) {
-      await loadTripDetails(_selectedTrip!.id!);
-      notifyListeners();
-    }
-  }
-
-  Future<void> toggleChecklistItem(ChecklistItem item) async {
-    final updatedItem = item.copyWith(isChecked: !item.isChecked);
-    await _dbHelper.updateChecklistItem(updatedItem);
-    if (_selectedTrip != null) {
-      await loadTripDetails(_selectedTrip!.id!);
-      notifyListeners();
-    }
-  }
-
-  Future<void> deleteChecklistItem(int id) async {
-    await _dbHelper.deleteChecklistItem(id);
-    if (_selectedTrip != null) {
-      await loadTripDetails(_selectedTrip!.id!);
-      notifyListeners();
-    }
-  }
-
-  Future<void> updateChecklistItem(ChecklistItem item) async {
-    await _dbHelper.updateChecklistItem(item);
-    if (_selectedTrip != null) {
-      await loadTripDetails(_selectedTrip!.id!);
-      notifyListeners();
-    }
-  }
-
-  // ==========================================
-  // OPERAZIONI SULLE INFO UTILI
-  // ==========================================
-
-  Future<void> addUsefulInfo(UsefulInfo info) async {
-    await _dbHelper.insertUsefulInfo(info);
-    if (_selectedTrip != null) {
-      await loadTripDetails(_selectedTrip!.id!);
-      notifyListeners();
-    }
-  }
-
-  Future<void> updateUsefulInfo(UsefulInfo info) async {
-    await _dbHelper.updateUsefulInfo(info);
-    if (_selectedTrip != null) {
-      await loadTripDetails(_selectedTrip!.id!);
-      notifyListeners();
-    }
-  }
-
-  Future<void> deleteUsefulInfo(int id) async {
-    await _dbHelper.deleteUsefulInfo(id);
-    if (_selectedTrip != null) {
-      await loadTripDetails(_selectedTrip!.id!);
-      notifyListeners();
-    }
-  }
-
-  // ==========================================
-  // OPERAZIONI SULLE SPESE
-  // ==========================================
-
-  Future<void> addExpense(Expense expense) async {
-    await _dbHelper.insertExpense(expense);
-    if (_selectedTrip != null) {
-      await loadTripDetails(_selectedTrip!.id!);
-      notifyListeners();
-    }
-  }
-
-  Future<void> updateExpense(Expense expense) async {
-    await _dbHelper.updateExpense(expense);
-    if (_selectedTrip != null) {
-      await loadTripDetails(_selectedTrip!.id!);
-      notifyListeners();
-    }
-  }
-
-  Future<void> deleteExpense(int id) async {
-    await _dbHelper.deleteExpense(id);
-    if (_selectedTrip != null) {
-      await loadTripDetails(_selectedTrip!.id!);
-      notifyListeners();
-    }
-  }
-
-  // Getter di supporto per le statistiche del viaggio selezionato
-  double get totalBudget => _selectedTrip?.budget ?? 0.0;
-
-  double get totalExpenses {
-    return _currentExpenses
-        .where((e) => e.status == 'Sostenuta')
-        .fold(0.0, (sum, item) => sum + CurrencyService.convert(item.amount, item.currency, 'EUR'));
-  }
-
-  double get totalPlannedExpenses {
-    return _currentExpenses
-        .where((e) => e.status == 'Prevista')
-        .fold(0.0, (sum, item) => sum + CurrencyService.convert(item.amount, item.currency, 'EUR'));
-  }
-
-  double get remainingBudget => totalBudget - totalExpenses;
-
-  double get remainingBudgetPlanned => totalBudget - totalPlannedExpenses;
-
   double get checklistCompletionRate {
     if (_currentChecklist.isEmpty) return 0.0;
-    final checkedCount = _currentChecklist.where((item) => item.isChecked).length;
+    final checkedCount = _currentChecklist
+        .where((item) => item.isChecked)
+        .length;
     return checkedCount / _currentChecklist.length;
   }
 
-  // ==========================================
-  // OPERAZIONI CRUD SUL DIARIO DI BORDO
-  // ==========================================
-
-  Future<void> addDiaryEntry(DiaryEntry entry) async {
-    await _dbHelper.insertDiaryEntry(entry);
-    if (_selectedTrip != null) {
-      await loadTripDetails(_selectedTrip!.id!);
-      notifyListeners();
-    }
-  }
-
-  Future<void> updateDiaryEntry(DiaryEntry entry) async {
-    await _dbHelper.updateDiaryEntry(entry);
-    if (_selectedTrip != null) {
-      await loadTripDetails(_selectedTrip!.id!);
-      notifyListeners();
-    }
-  }
-
-  Future<void> deleteDiaryEntry(int id) async {
-    await _dbHelper.deleteDiaryEntry(id);
-    if (_selectedTrip != null) {
-      await loadTripDetails(_selectedTrip!.id!);
-      notifyListeners();
-    }
-  }
-
-  // ==========================================
-  // OPERAZIONI SUI DOCUMENTI DI VIAGGIO
-  // ==========================================
-
-  Future<void> addTravelDocument(TravelDocument doc) async {
-    await _dbHelper.insertTravelDocument(doc);
-    if (_selectedTrip != null) {
-      await loadTripDetails(_selectedTrip!.id!);
-      notifyListeners();
-    }
-  }
-
-  Future<void> updateTravelDocument(TravelDocument doc) async {
-    await _dbHelper.updateTravelDocument(doc);
-    if (_selectedTrip != null) {
-      await loadTripDetails(_selectedTrip!.id!);
-      notifyListeners();
-    }
-  }
-
-  Future<void> deleteTravelDocument(int id) async {
-    await _dbHelper.deleteTravelDocument(id);
-    if (_selectedTrip != null) {
-      await loadTripDetails(_selectedTrip!.id!);
-      notifyListeners();
-    }
-  }
+  void notify() => notifyListeners();
 }

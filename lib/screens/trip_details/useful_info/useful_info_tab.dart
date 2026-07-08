@@ -5,7 +5,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import '../../../models/useful_info.dart';
 import '../../../models/travel_document.dart';
-import '../../../providers/travel_provider.dart';
+import 'package:say_my_travel/providers/travel_provider.dart';
 import '../../../widgets/offline_code_painters.dart';
 
 class UsefulInfoTab extends StatefulWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../models/checklist_item.dart';
-import '../../../providers/travel_provider.dart';
+import 'package:say_my_travel/providers/travel_provider.dart';
 
 class AddChecklistItemScreen extends StatefulWidget {
   final int tripId;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../models/checklist_item.dart';
-import '../../../providers/travel_provider.dart';
+import 'package:say_my_travel/providers/travel_provider.dart';
 import 'add_checklist_item_screen.dart';
 
 class ChecklistTab extends StatefulWidget {

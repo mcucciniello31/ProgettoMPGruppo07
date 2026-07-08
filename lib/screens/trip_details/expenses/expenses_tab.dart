@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../models/expense.dart';
-import '../../../providers/travel_provider.dart';
+import 'package:say_my_travel/providers/travel_provider.dart';
 import '../../../theme/app_theme.dart';
 import '../../../services/currency_service.dart';
 import 'add_expense_screen.dart';

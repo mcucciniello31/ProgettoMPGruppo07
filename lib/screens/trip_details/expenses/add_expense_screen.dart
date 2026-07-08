@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../models/expense.dart';
 import '../../../models/stop.dart';
 import '../../../models/activity.dart';
-import '../../../providers/travel_provider.dart';
+import 'package:say_my_travel/providers/travel_provider.dart';
 import '../../../theme/app_theme.dart';
 import '../../../services/currency_service.dart';
 

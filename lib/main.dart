@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'providers/travel_provider.dart';
+import 'package:say_my_travel/providers/travel_provider.dart';
 import 'screens/home_screen.dart';
 import 'theme/app_theme.dart';
 

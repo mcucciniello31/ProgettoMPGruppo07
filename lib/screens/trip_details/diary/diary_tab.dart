@@ -6,7 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import '../../../models/diary_entry.dart';
 import '../../../models/activity.dart';
-import '../../../providers/travel_provider.dart';
+import 'package:say_my_travel/providers/travel_provider.dart';
 import '../../../theme/app_theme.dart';
 
 class DiaryTab extends StatefulWidget {

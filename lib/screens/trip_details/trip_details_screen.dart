@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/trip.dart';
-import '../../providers/travel_provider.dart';
+import 'package:say_my_travel/providers/travel_provider.dart';
 import 'checklist/checklist_tab.dart';
 import 'checklist/add_checklist_item_screen.dart';
 import 'itinerary/itinerary_tab.dart';
