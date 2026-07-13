@@ -234,7 +234,6 @@ class _AddStopScreenState extends State<AddStopScreen> {
     final description = _descriptionController.text;
     final location = _locationController.text;
     final notesText = _notesController.text;
-    final costText = _costController.text;
     final timeText = _timeController.text;
 
     final isActivity = widget.parentStop != null || widget.activity != null;
