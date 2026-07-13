@@ -268,9 +268,10 @@ class AddDiaryEntryDialog {
                                     Icon(
                                       Icons.add_a_photo_outlined,
                                       size: 36,
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.primary.withValues(alpha: 0.7),
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary
+                                          .withValues(alpha: 0.7),
                                     ),
                                     const SizedBox(height: 8),
                                     const Text(
@@ -464,7 +465,7 @@ class AddDiaryEntryDialog {
                                 ),
                               )
                             : DropdownButtonFormField<int>(
-                                initialValue: selectedStopId,
+                                value: selectedStopId,
                                 decoration: InputDecoration(
                                   labelText: "Seleziona Tappa",
                                   border: OutlineInputBorder(
@@ -507,7 +508,7 @@ class AddDiaryEntryDialog {
                                 ),
                               )
                             : DropdownButtonFormField<int>(
-                                initialValue: selectedActivityId,
+                                value: selectedActivityId,
                                 decoration: InputDecoration(
                                   labelText: "Seleziona Attività",
                                   border: OutlineInputBorder(
