@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import '../../../models/useful_info.dart';
 import '../../../models/travel_document.dart';
 import 'package:say_my_travel/providers/travel_provider.dart';
-import '../../../widgets/offline_code_painters.dart';
 import 'add_useful_info_dialog.dart';
 import 'add_travel_document_dialog.dart';
 
@@ -163,7 +163,6 @@ class _UsefulInfoTabState extends State<UsefulInfoTab> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        String activeCodeType = 'QR';
         return StatefulBuilder(
           builder: (context, setModalState) {
             final gradient = _getTravelDocumentGradient(doc.documentType);
@@ -624,76 +623,14 @@ class _UsefulInfoTabState extends State<UsefulInfoTab> {
                                 ),
                                 child: Column(
                                   children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        ChoiceChip(
-                                          label: const Text("Codice QR"),
-                                          selected: activeCodeType == 'QR',
-                                          selectedColor: Colors.grey.shade200,
-                                          backgroundColor: Colors.transparent,
-                                          labelStyle: TextStyle(
-                                            fontFamily: 'Outfit',
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold,
-                                            color: activeCodeType == 'QR'
-                                                ? Colors.black
-                                                : Colors.grey,
-                                          ),
-                                          onSelected: (selected) {
-                                            if (selected) {
-                                              setModalState(() {
-                                                activeCodeType = 'QR';
-                                              });
-                                            }
-                                          },
-                                        ),
-                                        const SizedBox(width: 12),
-                                        ChoiceChip(
-                                          label: const Text("Codice a Barre"),
-                                          selected: activeCodeType == 'BAR',
-                                          selectedColor: Colors.grey.shade200,
-                                          backgroundColor: Colors.transparent,
-                                          labelStyle: TextStyle(
-                                            fontFamily: 'Outfit',
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold,
-                                            color: activeCodeType == 'BAR'
-                                                ? Colors.black
-                                                : Colors.grey,
-                                          ),
-                                          onSelected: (selected) {
-                                            if (selected) {
-                                              setModalState(() {
-                                                activeCodeType = 'BAR';
-                                              });
-                                            }
-                                          },
-                                        ),
-                                      ],
+                                    QrImageView(
+                                      data:
+                                          doc.bookingCode ??
+                                          "SAY-MY-TRAVEL-PASS",
+                                      version: QrVersions.auto,
+                                      size: 160.0,
+                                      gapless: false,
                                     ),
-                                    const SizedBox(height: 16),
-                                    if (activeCodeType == 'QR')
-                                      CustomPaint(
-                                        painter: QrCodePainter(
-                                          code:
-                                              doc.bookingCode ??
-                                              "SAY-MY-TRAVEL-PASS",
-                                          qrColor: Colors.black,
-                                        ),
-                                        size: const Size(140, 140),
-                                      )
-                                    else
-                                      CustomPaint(
-                                        painter: BarcodePainter(
-                                          code:
-                                              doc.bookingCode ??
-                                              "SAY-MY-TRAVEL-PASS",
-                                          barColor: Colors.black,
-                                        ),
-                                        size: const Size(220, 60),
-                                      ),
                                     const SizedBox(height: 16),
                                     Text(
                                       doc.bookingCode != null
