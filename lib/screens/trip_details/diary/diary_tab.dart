@@ -281,8 +281,13 @@ class _DiaryTabState extends State<DiaryTab> {
                             IconButton(
                               icon: const Icon(Icons.edit_outlined, size: 20),
                               onPressed: () {
-                                AddDiaryEntryDialog.show(context, entry);
+                                final navigator = Navigator.of(context);
                                 Navigator.pop(ctx);
+                                Future.delayed(const Duration(milliseconds: 150), () {
+                                  if (navigator.mounted) {
+                                    AddDiaryEntryDialog.show(navigator.context, entry);
+                                  }
+                                });
                               },
                             ),
                             IconButton(
