@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 import '../../../models/diary_entry.dart';
 import 'package:say_my_travel/providers/travel_provider.dart';
 import 'add_diary_entry_dialog.dart';
@@ -12,6 +14,26 @@ class DiaryTab extends StatefulWidget {
   @override
   State<DiaryTab> createState() => _DiaryTabState();
 
+  static Future<File?> _resolveLocalFile(String imagePath) async {
+    // Se il percorso assoluto esiste direttamente, lo restituisce
+    final file = File(imagePath);
+    if (await file.exists()) {
+      return file;
+    }
+    // Altrimenti estrae il nome del file e lo cerca nella cartella documenti attuale
+    try {
+      final fileName = path.basename(imagePath);
+      final appDocDir = await getApplicationDocumentsDirectory();
+      final resolvedFile = File("${appDocDir.path}/$fileName");
+      if (await resolvedFile.exists()) {
+        return resolvedFile;
+      }
+    } catch (e) {
+      debugPrint("Error resolving local file: $e");
+    }
+    return null;
+  }
+
   static Widget buildDiaryImage(String? imagePath) {
     if (imagePath == null || imagePath.isEmpty) {
       return Container(
@@ -20,10 +42,37 @@ class DiaryTab extends StatefulWidget {
       );
     }
     if (imagePath.startsWith('/') || imagePath.contains(':/')) {
-      return Image.file(
-        File(imagePath),
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
+      return FutureBuilder<File?>(
+        future: _resolveLocalFile(imagePath),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Container(
+              color: Colors.grey.shade100,
+              child: const Center(
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+              ),
+            );
+          }
+          final file = snapshot.data;
+          if (file != null) {
+            return Image.file(
+              file,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  color: Colors.red.shade50,
+                  child: const Icon(
+                    Icons.broken_image_outlined,
+                    color: Colors.redAccent,
+                  ),
+                );
+              },
+            );
+          }
           return Container(
             color: Colors.red.shade50,
             child: const Icon(
@@ -366,7 +415,9 @@ class _DiaryTabState extends State<DiaryTab> {
             Icon(
               Icons.photo_library_outlined,
               size: 70,
-              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
+              color: Theme.of(
+                context,
+              ).colorScheme.primary.withValues(alpha: 0.5),
             ),
             const SizedBox(height: 16),
             Text(
