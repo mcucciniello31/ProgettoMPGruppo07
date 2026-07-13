@@ -466,6 +466,7 @@ class AddDiaryEntryDialog {
                               )
                             : DropdownButtonFormField<int>(
                                 value: selectedStopId,
+                                isExpanded: true,
                                 decoration: InputDecoration(
                                   labelText: "Seleziona Tappa",
                                   border: OutlineInputBorder(
@@ -509,6 +510,7 @@ class AddDiaryEntryDialog {
                               )
                             : DropdownButtonFormField<int>(
                                 value: selectedActivityId,
+                                isExpanded: true,
                                 decoration: InputDecoration(
                                   labelText: "Seleziona Attività",
                                   border: OutlineInputBorder(
