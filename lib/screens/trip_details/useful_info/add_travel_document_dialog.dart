@@ -244,10 +244,10 @@ class AddTravelDocumentDialog {
                         ),
                       )
                     else if (selectedDocType == 'Volo' || isAssigned)
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
+                      if (selectedDocType == 'Treno')
+                        Column(
+                          children: [
+                            TextField(
                               controller: seatController,
                               decoration: InputDecoration(
                                 labelText: "Posto",
@@ -256,34 +256,62 @@ class AddTravelDocumentDialog {
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: TextField(
-                              controller: gateController,
-                              decoration: InputDecoration(
-                                labelText: selectedDocType == 'Treno'
-                                    ? "Carrozza"
-                                    : selectedDocType == 'Pullman'
-                                    ? "Fila"
-                                    : "Gate",
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                            const SizedBox(height: 16),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: TextField(
+                                    controller: gateController,
+                                    decoration: InputDecoration(
+                                      labelText: "Carrozza",
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: TextField(
+                                    controller: trainRowController,
+                                    maxLength: 1,
+                                    textCapitalization:
+                                        TextCapitalization.characters,
+                                    decoration: InputDecoration(
+                                      labelText: "Fila",
+                                      counterText: "",
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        )
+                      else
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: seatController,
+                                decoration: InputDecoration(
+                                  labelText: "Posto",
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          if (selectedDocType == 'Treno') ...[
                             const SizedBox(width: 12),
                             Expanded(
                               child: TextField(
-                                controller: trainRowController,
-                                maxLength: 1,
-                                textCapitalization:
-                                    TextCapitalization.characters,
+                                controller: gateController,
                                 decoration: InputDecoration(
-                                  labelText: "Fila",
-                                  counterText: "",
+                                  labelText: selectedDocType == 'Pullman'
+                                      ? "Fila"
+                                      : "Gate",
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
@@ -291,8 +319,7 @@ class AddTravelDocumentDialog {
                               ),
                             ),
                           ],
-                        ],
-                      ),
+                        ),
                     const SizedBox(height: 16),
                     InkWell(
                       onTap: () async {
