@@ -14,24 +14,43 @@ class DiaryTab extends StatefulWidget {
   @override
   State<DiaryTab> createState() => _DiaryTabState();
 
-  static Future<File?> _resolveLocalFile(String imagePath) async {
-    // Se il percorso assoluto esiste direttamente, lo restituisce
-    final file = File(imagePath);
-    if (await file.exists()) {
-      return file;
+  static final Map<String, File?> _resolvedFilesCache = {};
+  static final Map<String, Future<File?>> _resolutionFutures = {};
+
+  static Future<File?> _resolveLocalFile(String imagePath) {
+    if (_resolutionFutures.containsKey(imagePath)) {
+      return _resolutionFutures[imagePath]!;
     }
-    // Altrimenti estrae il nome del file e lo cerca nella cartella documenti attuale
-    try {
-      final fileName = path.basename(imagePath);
-      final appDocDir = await getApplicationDocumentsDirectory();
-      final resolvedFile = File("${appDocDir.path}/$fileName");
-      if (await resolvedFile.exists()) {
-        return resolvedFile;
+
+    final future = () async {
+      if (_resolvedFilesCache.containsKey(imagePath)) {
+        return _resolvedFilesCache[imagePath];
       }
-    } catch (e) {
-      debugPrint("Error resolving local file: $e");
-    }
-    return null;
+
+      // Se il percorso assoluto esiste direttamente, lo restituisce
+      final file = File(imagePath);
+      if (await file.exists()) {
+        _resolvedFilesCache[imagePath] = file;
+        return file;
+      }
+      // Altrimenti estrae il nome del file e lo cerca nella cartella documenti attuale
+      try {
+        final fileName = path.basename(imagePath);
+        final appDocDir = await getApplicationDocumentsDirectory();
+        final resolvedFile = File("${appDocDir.path}/$fileName");
+        if (await resolvedFile.exists()) {
+          _resolvedFilesCache[imagePath] = resolvedFile;
+          return resolvedFile;
+        }
+      } catch (e) {
+        debugPrint("Error resolving local file: $e");
+      }
+      _resolvedFilesCache[imagePath] = null;
+      return null;
+    }();
+
+    _resolutionFutures[imagePath] = future;
+    return future;
   }
 
   static Widget buildDiaryImage(String? imagePath) {
@@ -262,8 +281,8 @@ class _DiaryTabState extends State<DiaryTab> {
                             IconButton(
                               icon: const Icon(Icons.edit_outlined, size: 20),
                               onPressed: () {
-                                Navigator.pop(ctx);
                                 AddDiaryEntryDialog.show(context, entry);
+                                Navigator.pop(ctx);
                               },
                             ),
                             IconButton(
