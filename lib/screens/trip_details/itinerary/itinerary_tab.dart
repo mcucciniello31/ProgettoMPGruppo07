@@ -213,11 +213,12 @@ class _ItineraryTabState extends State<ItineraryTab> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               if (activity.cost > 0)
-                Text(
-                  "€${activity.cost.toStringAsFixed(2).replaceAll('.', ',')}",
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
+                const Text(
+                  "A pagamento",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 12,
+                    color: Colors.orange,
                   ),
                 )
               else
@@ -491,12 +492,23 @@ class _ItineraryTabState extends State<ItineraryTab> {
                                                 ),
                                               ),
                                               if (act.cost > 0)
-                                                Text(
-                                                  "${act.cost.toStringAsFixed(2)} €",
-                                                  style: const TextStyle(
+                                                const Text(
+                                                  "A pagamento",
+                                                  style: TextStyle(
                                                     fontFamily: 'Outfit',
                                                     fontSize: 13,
                                                     fontWeight: FontWeight.bold,
+                                                    color: Colors.orange,
+                                                  ),
+                                                )
+                                              else
+                                                const Text(
+                                                  "Gratis",
+                                                  style: TextStyle(
+                                                    fontFamily: 'Outfit',
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.green,
                                                   ),
                                                 ),
                                             ],

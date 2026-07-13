@@ -51,9 +51,7 @@ class ExportTripDialog {
         if (activities.isNotEmpty) {
           buffer.writeln("\n**Attività pianificate:**");
           for (var act in activities) {
-            final costStr = act.cost > 0
-                ? " (Costo: ${act.cost.toStringAsFixed(2)}€)"
-                : "";
+            final costStr = act.cost > 0 ? " (A pagamento)" : " (Gratuito)";
             buffer.writeln(
               "- [${act.status}] ${act.time} - **${act.name}** [${act.type}]$costStr",
             );
@@ -460,9 +458,7 @@ class ExportTripDialog {
                                   pw.Padding(
                                     padding: const pw.EdgeInsets.all(4),
                                     child: pw.Text(
-                                      act.cost > 0
-                                          ? "${act.cost.toStringAsFixed(2)} €"
-                                          : "Gratis",
+                                      act.cost > 0 ? "A pagamento" : "Gratis",
                                       style: const pw.TextStyle(fontSize: 10),
                                     ),
                                   ),

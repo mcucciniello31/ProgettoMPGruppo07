@@ -41,6 +41,7 @@ class _AddStopScreenState extends State<AddStopScreen> {
   String _selectedActivityType = 'Altro';
   String _selectedActivityStatus = 'Da svolgere';
   Trip? _trip;
+  bool _isPaid = false;
 
   @override
   void initState() {
@@ -83,6 +84,10 @@ class _AddStopScreenState extends State<AddStopScreen> {
     _timeController = TextEditingController(
       text: isActivity ? widget.activity?.time ?? '' : '',
     );
+
+    _isPaid = isActivity
+        ? (widget.activity != null ? widget.activity!.cost > 0 : false)
+        : false;
 
     _selectedActivityType = isActivity
         ? widget.activity?.type ?? 'Altro'
@@ -294,23 +299,6 @@ class _AddStopScreenState extends State<AddStopScreen> {
         validationErrors.add("Luogo attività: non può iniziare con uno spazio");
       }
 
-      if (costText.isEmpty) {
-        validationErrors.add("Costo previsto: campo obbligatorio");
-      } else if (costText.startsWith(' ')) {
-        validationErrors.add("Costo previsto: non può iniziare con uno spazio");
-      } else if (!RegExp(r'^\d+,\d+$').hasMatch(costText)) {
-        validationErrors.add(
-          "Costo previsto: deve includere i decimali separati da una virgola (es: 15,50 o 0,00)",
-        );
-      } else {
-        final parsed = double.tryParse(costText.replaceAll(',', '.'));
-        if (parsed == null || parsed < 0) {
-          validationErrors.add(
-            "Costo previsto: deve essere maggiore o uguale a zero",
-          );
-        }
-      }
-
       if (notesText.startsWith(' ')) {
         validationErrors.add("Note: non possono iniziare con uno spazio");
       }
@@ -422,7 +410,7 @@ class _AddStopScreenState extends State<AddStopScreen> {
       }
     } else {
       // Interfaccia di Aggiunta/Modifica di un'Attività
-      final cost = double.tryParse(costText.trim().replaceAll(',', '.')) ?? 0.0;
+      final cost = _isPaid ? 1.0 : 0.0;
       final status = _selectedActivityStatus;
 
       if (widget.activity == null) {
@@ -803,36 +791,119 @@ class _AddStopScreenState extends State<AddStopScreen> {
                 ),
                 const SizedBox(height: 20),
 
-                // Input del costo dell'attività
-                TextFormField(
-                  controller: _costController,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                  ),
-                  decoration: InputDecoration(
-                    labelText: "Costo previsto (€) *",
-                    hintText: "Es: 15,50 o 0,00",
-                    prefixIcon: const Icon(Icons.euro),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
+                // Selettore del costo dell'attività (Gratuita o A pagamento)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Costo previsto *",
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF3B6A8A),
+                      ),
                     ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Inserisci il costo previsto (scrivi 0,00 se gratuita)";
-                    }
-                    if (value.startsWith(' ')) {
-                      return "Non può iniziare con uno spazio";
-                    }
-                    final val = value.replaceAll(',', '.');
-                    if (double.tryParse(val) == null || double.parse(val) < 0) {
-                      return "Importo non valido";
-                    }
-                    if (!RegExp(r'^\d+,\d+$').hasMatch(value)) {
-                      return "Deve includere i decimali separati da una virgola (es: 15,50)";
-                    }
-                    return null;
-                  },
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _isPaid = false;
+                              });
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              decoration: BoxDecoration(
+                                color: !_isPaid
+                                    ? Colors.green.shade50
+                                    : Colors.white,
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  color: !_isPaid
+                                      ? Colors.green
+                                      : const Color(0xFFADCDE2),
+                                  width: 1.5,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.money_off_rounded,
+                                    color: !_isPaid
+                                        ? Colors.green
+                                        : Colors.grey,
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    "Gratuita",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: !_isPaid
+                                          ? Colors.green.shade700
+                                          : Colors.grey,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _isPaid = true;
+                              });
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              decoration: BoxDecoration(
+                                color: _isPaid
+                                    ? Colors.orange.shade50
+                                    : Colors.white,
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  color: _isPaid
+                                      ? Colors.orange
+                                      : const Color(0xFFADCDE2),
+                                  width: 1.5,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.monetization_on_rounded,
+                                    color: _isPaid
+                                        ? Colors.orange
+                                        : Colors.grey,
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    "A pagamento",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: _isPaid
+                                          ? Colors.orange.shade700
+                                          : Colors.grey,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ],
               const SizedBox(height: 20),
