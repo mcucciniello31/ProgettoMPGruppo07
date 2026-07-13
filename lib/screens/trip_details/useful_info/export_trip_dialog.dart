@@ -130,7 +130,9 @@ class ExportTripDialog {
                   color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: Theme.of(context).dividerColor.withValues(alpha: 0.2),
+                    color: Theme.of(
+                      context,
+                    ).dividerColor.withValues(alpha: 0.2),
                   ),
                 ),
                 child: Scrollbar(
@@ -721,10 +723,14 @@ class ExportTripDialog {
                               "Posto: ${doc.seat}",
                               style: const pw.TextStyle(fontSize: 10),
                             ),
-                          if (doc.gate != null)
+                          if (doc.gate != null && doc.gate!.isNotEmpty)
                             pw.Text(
                               doc.documentType == 'Hotel'
                                   ? "Indirizzo: ${doc.gate}"
+                                  : doc.documentType == 'Treno'
+                                  ? "Carrozza: ${doc.gate}"
+                                  : doc.documentType == 'Pullman'
+                                  ? "Fila: ${doc.gate}"
                                   : "Gate: ${doc.gate}",
                               style: const pw.TextStyle(fontSize: 10),
                             ),

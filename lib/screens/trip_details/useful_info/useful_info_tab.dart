@@ -293,7 +293,9 @@ class _UsefulInfoTabState extends State<UsefulInfoTab> {
                                   Container(
                                     padding: const EdgeInsets.all(8),
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withValues(alpha: 0.2),
+                                      color: Colors.white.withValues(
+                                        alpha: 0.2,
+                                      ),
                                       shape: BoxShape.circle,
                                     ),
                                     child: Icon(
@@ -870,7 +872,9 @@ class _UsefulInfoTabState extends State<UsefulInfoTab> {
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFADCDE2).withValues(alpha: 0.15),
+                            color: const Color(
+                              0xFFADCDE2,
+                            ).withValues(alpha: 0.15),
                             blurRadius: 4,
                             offset: const Offset(0, 2),
                           ),
@@ -958,7 +962,9 @@ class _UsefulInfoTabState extends State<UsefulInfoTab> {
                         Icon(
                           Icons.note_alt_outlined,
                           size: 64,
-                          color: Theme.of(context).hintColor.withValues(alpha: 0.5),
+                          color: Theme.of(
+                            context,
+                          ).hintColor.withValues(alpha: 0.5),
                         ),
                         const SizedBox(height: 12),
                         Text(
@@ -1056,9 +1062,8 @@ class _UsefulInfoTabState extends State<UsefulInfoTab> {
                                   width: double.infinity,
                                   padding: const EdgeInsets.all(12),
                                   decoration: BoxDecoration(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primary.withValues(alpha: 0.02),
+                                    color: Theme.of(context).colorScheme.primary
+                                        .withValues(alpha: 0.02),
                                     borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
                                       color: Theme.of(
@@ -1093,7 +1098,9 @@ class _UsefulInfoTabState extends State<UsefulInfoTab> {
                         Icon(
                           Icons.wallet_travel_outlined,
                           size: 64,
-                          color: Theme.of(context).hintColor.withValues(alpha: 0.5),
+                          color: Theme.of(
+                            context,
+                          ).hintColor.withValues(alpha: 0.5),
                         ),
                         const SizedBox(height: 12),
                         Text(
@@ -1164,7 +1171,9 @@ class _UsefulInfoTabState extends State<UsefulInfoTab> {
                                           fontFamily: 'Outfit',
                                           fontSize: 10,
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.white.withValues(alpha: 0.7),
+                                          color: Colors.white.withValues(
+                                            alpha: 0.7,
+                                          ),
                                           letterSpacing: 1.0,
                                         ),
                                       ),

@@ -20,6 +20,14 @@ class AddTravelDocumentDialog {
     String selectedDocType = doc?.documentType ?? 'Volo';
     DateTime? selectedDateTime = doc?.dateTime;
 
+    bool isAssigned = true;
+    if (isEditing &&
+        (doc.documentType == 'Treno' || doc.documentType == 'Pullman')) {
+      if (doc.seat == 'Posto unico') {
+        isAssigned = false;
+      }
+    }
+
     showDialog(
       context: context,
       builder: (context) {
@@ -86,6 +94,126 @@ class AddTravelDocumentDialog {
                       ),
                     ),
                     const SizedBox(height: 16),
+                    if (selectedDocType == 'Treno' ||
+                        selectedDocType == 'Pullman') ...[
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Tipologia Posto *",
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF3B6A8A),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setDialogState(() {
+                                      isAssigned = false;
+                                    });
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 12,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: !isAssigned
+                                          ? Colors.blue.shade50
+                                          : Colors.white,
+                                      borderRadius: BorderRadius.circular(16),
+                                      border: Border.all(
+                                        color: !isAssigned
+                                            ? Colors.blue
+                                            : const Color(0xFFADCDE2),
+                                        width: 1.5,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.confirmation_number_outlined,
+                                          color: !isAssigned
+                                              ? Colors.blue
+                                              : Colors.grey,
+                                          size: 20,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        const Text(
+                                          "Posto Unico",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black87,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setDialogState(() {
+                                      isAssigned = true;
+                                    });
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 12,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: isAssigned
+                                          ? Colors.blue.shade50
+                                          : Colors.white,
+                                      borderRadius: BorderRadius.circular(16),
+                                      border: Border.all(
+                                        color: isAssigned
+                                            ? Colors.blue
+                                            : const Color(0xFFADCDE2),
+                                        width: 1.5,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons
+                                              .airline_seat_recline_normal_outlined,
+                                          color: isAssigned
+                                              ? Colors.blue
+                                              : Colors.grey,
+                                          size: 20,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        const Text(
+                                          "Assegnato",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black87,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                    ],
                     if (selectedDocType == 'Hotel' ||
                         selectedDocType == 'Attrazione' ||
                         selectedDocType == 'Altro')
@@ -98,7 +226,7 @@ class AddTravelDocumentDialog {
                           ),
                         ),
                       )
-                    else
+                    else if (selectedDocType == 'Volo' || isAssigned)
                       Row(
                         children: [
                           Expanded(
@@ -231,11 +359,23 @@ class AddTravelDocumentDialog {
                     final gate = gateController.text;
                     final notes = notesController.text;
 
+                    final isSingleField =
+                        selectedDocType == 'Hotel' ||
+                        selectedDocType == 'Attrazione' ||
+                        selectedDocType == 'Altro';
+                    final bool isTrainOrBus =
+                        selectedDocType == 'Treno' ||
+                        selectedDocType == 'Pullman';
+
                     if (title.startsWith(' ') ||
                         bookingCode.startsWith(' ') ||
-                        seat.startsWith(' ') ||
-                        gate.startsWith(' ') ||
-                        notes.startsWith(' ')) {
+                        notes.startsWith(' ') ||
+                        (selectedDocType == 'Volo' &&
+                            (seat.startsWith(' ') || gate.startsWith(' '))) ||
+                        (isTrainOrBus &&
+                            isAssigned &&
+                            (seat.startsWith(' ') || gate.startsWith(' '))) ||
+                        (isSingleField && gate.startsWith(' '))) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text(
@@ -255,10 +395,16 @@ class AddTravelDocumentDialog {
                       return;
                     }
 
-                    final isSingleField =
-                        selectedDocType == 'Hotel' ||
-                        selectedDocType == 'Attrazione' ||
-                        selectedDocType == 'Altro';
+                    final String? finalSeat = isTrainOrBus && !isAssigned
+                        ? "Posto unico"
+                        : (isSingleField
+                              ? null
+                              : (seat.trim().isEmpty ? null : seat.trim()));
+
+                    final String? finalGate = isTrainOrBus && !isAssigned
+                        ? null
+                        : (gate.trim().isEmpty ? null : gate.trim());
+
                     final newDoc = TravelDocument(
                       id: doc?.id,
                       tripId: provider.selectedTrip!.id!,
@@ -267,10 +413,8 @@ class AddTravelDocumentDialog {
                       bookingCode: bookingCode.trim().isEmpty
                           ? null
                           : bookingCode.trim(),
-                      seat: isSingleField
-                          ? null
-                          : (seat.trim().isEmpty ? null : seat.trim()),
-                      gate: gate.trim().isEmpty ? null : gate.trim(),
+                      seat: finalSeat,
+                      gate: finalGate,
                       dateTime: selectedDateTime,
                       notes: notes.trim(),
                     );

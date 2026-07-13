@@ -20,9 +20,7 @@ class AddUsefulInfoDialog {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              title: Text(
-                isEditing ? "Modifica Utility" : "Nuova Utility",
-              ),
+              title: Text(isEditing ? "Modifica Utility" : "Nuova Utility"),
               content: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
