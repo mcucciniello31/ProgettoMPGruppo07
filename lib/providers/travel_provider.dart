@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as path;
 import '../models/trip.dart';
 import '../models/stop.dart';
 import '../models/activity.dart';
@@ -17,6 +19,38 @@ part 'diary_provider.dart';
 part 'useful_info_provider.dart';
 
 class TravelProvider with ChangeNotifier {
+  static String? documentsDirectoryPath;
+
+  static String? resolveImagePath(String? originalPath) {
+    if (originalPath == null || originalPath.isEmpty) return null;
+
+    // Se non è un percorso assoluto locale, lo restituisce così com'è
+    if (!originalPath.startsWith('/') && !originalPath.contains(':/')) {
+      return originalPath;
+    }
+
+    // Se il file esiste direttamente nel percorso originale, lo usa
+    if (File(originalPath).existsSync()) {
+      return originalPath;
+    }
+
+    // Altrimenti, cerca il file all'interno della directory documenti attuale
+    final docsDir = documentsDirectoryPath;
+    if (docsDir != null) {
+      try {
+        final fileName = path.basename(originalPath);
+        final resolvedPath = "$docsDir/$fileName";
+        if (File(resolvedPath).existsSync()) {
+          return resolvedPath;
+        }
+      } catch (e) {
+        debugPrint("Error resolving path: $e");
+      }
+    }
+
+    return null; // Non trovato
+  }
+
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
 
   List<Trip> _trips = [];

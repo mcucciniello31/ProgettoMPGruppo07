@@ -452,7 +452,9 @@ class _HomeScreenState extends State<HomeScreen>
             Icon(
               isArchivedList ? Icons.archive_outlined : Icons.explore_outlined,
               size: 80,
-              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+              color: Theme.of(
+                context,
+              ).colorScheme.primary.withValues(alpha: 0.3),
             ),
             const SizedBox(height: 16),
             Text(
@@ -599,14 +601,14 @@ class _HomeScreenState extends State<HomeScreen>
   ) {
     // Seleziona un colore a tinta unita vibrante in modo deterministico
     final vibrantColors = [
-      const Color(0xFF1E40AF), 
-      const Color(0xFF0F766E), 
-      const Color(0xFFC2410C), 
-      const Color(0xFF6D28D9), 
-      const Color(0xFF4338CA), 
-      const Color(0xFFBE123C), 
-      const Color(0xFF047857), 
-      const Color(0xFF0369A1), 
+      const Color(0xFF1E40AF),
+      const Color(0xFF0F766E),
+      const Color(0xFFC2410C),
+      const Color(0xFF6D28D9),
+      const Color(0xFF4338CA),
+      const Color(0xFFBE123C),
+      const Color(0xFF047857),
+      const Color(0xFF0369A1),
     ];
     final cardColor =
         vibrantColors[trip.title.hashCode.abs() % vibrantColors.length];
@@ -656,19 +658,21 @@ class _HomeScreenState extends State<HomeScreen>
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: cardColor,
-                  image:
-                      trip.coverImagePath != null &&
-                          trip.coverImagePath!.isNotEmpty &&
-                          File(trip.coverImagePath!).existsSync()
-                      ? DecorationImage(
-                          image: FileImage(File(trip.coverImagePath!)),
-                          fit: BoxFit.cover,
-                          colorFilter: ColorFilter.mode(
-                            Colors.black.withValues(alpha: 0.4),
-                            BlendMode.darken,
-                          ),
-                        )
-                      : null,
+                  image: (() {
+                    final resolvedPath = TravelProvider.resolveImagePath(
+                      trip.coverImagePath,
+                    );
+                    return resolvedPath != null
+                        ? DecorationImage(
+                            image: FileImage(File(resolvedPath)),
+                            fit: BoxFit.cover,
+                            colorFilter: ColorFilter.mode(
+                              Colors.black.withValues(alpha: 0.4),
+                              BlendMode.darken,
+                            ),
+                          )
+                        : null;
+                  })(),
                 ),
                 child: Stack(
                   children: [

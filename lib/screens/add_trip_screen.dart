@@ -29,6 +29,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
   double? _latitude;
   double? _longitude;
   String? _coverImagePath;
+  bool _isNewImageSelected = false;
 
   bool _validationTriggered = false;
 
@@ -54,7 +55,9 @@ class _AddTripScreenState extends State<AddTripScreen> {
     _endDate = widget.trip?.endDate;
     _latitude = widget.trip?.latitude;
     _longitude = widget.trip?.longitude;
-    _coverImagePath = widget.trip?.coverImagePath;
+    _coverImagePath = TravelProvider.resolveImagePath(
+      widget.trip?.coverImagePath,
+    );
   }
 
   @override
@@ -167,6 +170,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
       if (image != null) {
         setState(() {
           _coverImagePath = image.path;
+          _isNewImageSelected = true;
         });
       }
     } catch (e) {
@@ -377,21 +381,28 @@ class _AddTripScreenState extends State<AddTripScreen> {
     final generalInfo = _generalInfoController.text.trim();
 
     // Copia l'immagine selezionata nella memoria interna permanente dell'applicazione
-    String? finalCoverPath = _coverImagePath;
-    if (_coverImagePath != null &&
-        _coverImagePath != widget.trip?.coverImagePath) {
-      try {
-        final appDocDir = await getApplicationDocumentsDirectory();
-        final extension = path.extension(_coverImagePath!);
-        final fileName =
-            "trip_cover_${DateTime.now().millisecondsSinceEpoch}$extension";
-        final savedFile = await File(
-          _coverImagePath!,
-        ).copy("${appDocDir.path}/$fileName");
-        finalCoverPath = savedFile.path;
-      } catch (e) {
-        debugPrint("Error copying cover image to persistent folder: $e");
+    String? finalCoverPath;
+    if (_isNewImageSelected) {
+      if (_coverImagePath != null) {
+        try {
+          final appDocDir = await getApplicationDocumentsDirectory();
+          final extension = path.extension(_coverImagePath!);
+          final fileName =
+              "trip_cover_${DateTime.now().millisecondsSinceEpoch}$extension";
+          final savedFile = await File(
+            _coverImagePath!,
+          ).copy("${appDocDir.path}/$fileName");
+          finalCoverPath = savedFile.path;
+        } catch (e) {
+          debugPrint("Error copying cover image to persistent folder: $e");
+          finalCoverPath = _coverImagePath;
+        }
+      } else {
+        finalCoverPath = null;
       }
+    } else {
+      // Nessuna modifica all'immagine di copertina
+      finalCoverPath = widget.trip?.coverImagePath;
     }
 
     // Calcola lo stato del viaggio ('futuro', 'in_corso', 'completato') in base al calendario
@@ -651,7 +662,9 @@ class _AddTripScreenState extends State<AddTripScreen> {
                     color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: Theme.of(context).dividerColor.withValues(alpha: 0.3),
+                      color: Theme.of(
+                        context,
+                      ).dividerColor.withValues(alpha: 0.3),
                     ),
                   ),
                   child: _coverImagePath == null
@@ -720,6 +733,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
                                     onPressed: () {
                                       setState(() {
                                         _coverImagePath = null;
+                                        _isNewImageSelected = true;
                                       });
                                     },
                                   ),
@@ -783,9 +797,8 @@ class _AddTripScreenState extends State<AddTripScreen> {
                                 color:
                                     _validationTriggered && _startDate == null
                                     ? Theme.of(context).colorScheme.error
-                                    : Theme.of(
-                                        context,
-                                      ).colorScheme.outline.withValues(alpha: 0.5),
+                                    : Theme.of(context).colorScheme.outline
+                                          .withValues(alpha: 0.5),
                                 width:
                                     _validationTriggered && _startDate == null
                                     ? 2.0
@@ -875,9 +888,8 @@ class _AddTripScreenState extends State<AddTripScreen> {
                               border: Border.all(
                                 color: _validationTriggered && _endDate == null
                                     ? Theme.of(context).colorScheme.error
-                                    : Theme.of(
-                                        context,
-                                      ).colorScheme.outline.withValues(alpha: 0.5),
+                                    : Theme.of(context).colorScheme.outline
+                                          .withValues(alpha: 0.5),
                                 width: _validationTriggered && _endDate == null
                                     ? 2.0
                                     : 1.0,

@@ -309,21 +309,22 @@ class _TripDetailsScreenState extends State<TripDetailsScreen>
                           width: double.infinity,
                           decoration: BoxDecoration(
                             color: cardColor,
-                            image:
-                                trip.coverImagePath != null &&
-                                    trip.coverImagePath!.isNotEmpty &&
-                                    File(trip.coverImagePath!).existsSync()
-                                ? DecorationImage(
-                                    image: FileImage(
-                                      File(trip.coverImagePath!),
-                                    ),
-                                    fit: BoxFit.cover,
-                                    colorFilter: ColorFilter.mode(
-                                      Colors.black.withValues(alpha: 0.45),
-                                      BlendMode.darken,
-                                    ),
-                                  )
-                                : null,
+                            image: (() {
+                              final resolvedPath =
+                                  TravelProvider.resolveImagePath(
+                                    trip.coverImagePath,
+                                  );
+                              return resolvedPath != null
+                                  ? DecorationImage(
+                                      image: FileImage(File(resolvedPath)),
+                                      fit: BoxFit.cover,
+                                      colorFilter: ColorFilter.mode(
+                                        Colors.black.withValues(alpha: 0.45),
+                                        BlendMode.darken,
+                                      ),
+                                    )
+                                  : null;
+                            })(),
                             borderRadius: BorderRadius.circular(24),
                             boxShadow: [
                               BoxShadow(

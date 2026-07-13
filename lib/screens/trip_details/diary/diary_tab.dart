@@ -1,7 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as path;
 import '../../../models/diary_entry.dart';
 import 'package:say_my_travel/providers/travel_provider.dart';
 import 'add_diary_entry_dialog.dart';
@@ -14,45 +12,6 @@ class DiaryTab extends StatefulWidget {
   @override
   State<DiaryTab> createState() => _DiaryTabState();
 
-  static final Map<String, File?> _resolvedFilesCache = {};
-  static final Map<String, Future<File?>> _resolutionFutures = {};
-
-  static Future<File?> _resolveLocalFile(String imagePath) {
-    if (_resolutionFutures.containsKey(imagePath)) {
-      return _resolutionFutures[imagePath]!;
-    }
-
-    final future = () async {
-      if (_resolvedFilesCache.containsKey(imagePath)) {
-        return _resolvedFilesCache[imagePath];
-      }
-
-      // Se il percorso assoluto esiste direttamente, lo restituisce
-      final file = File(imagePath);
-      if (await file.exists()) {
-        _resolvedFilesCache[imagePath] = file;
-        return file;
-      }
-      // Altrimenti estrae il nome del file e lo cerca nella cartella documenti attuale
-      try {
-        final fileName = path.basename(imagePath);
-        final appDocDir = await getApplicationDocumentsDirectory();
-        final resolvedFile = File("${appDocDir.path}/$fileName");
-        if (await resolvedFile.exists()) {
-          _resolvedFilesCache[imagePath] = resolvedFile;
-          return resolvedFile;
-        }
-      } catch (e) {
-        debugPrint("Error resolving local file: $e");
-      }
-      _resolvedFilesCache[imagePath] = null;
-      return null;
-    }();
-
-    _resolutionFutures[imagePath] = future;
-    return future;
-  }
-
   static Widget buildDiaryImage(String? imagePath) {
     if (imagePath == null || imagePath.isEmpty) {
       return Container(
@@ -60,38 +19,28 @@ class DiaryTab extends StatefulWidget {
         child: const Icon(Icons.photo_outlined, color: Colors.grey, size: 40),
       );
     }
-    if (imagePath.startsWith('/') || imagePath.contains(':/')) {
-      return FutureBuilder<File?>(
-        future: _resolveLocalFile(imagePath),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Container(
-              color: Colors.grey.shade100,
-              child: const Center(
-                child: SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                ),
-              ),
-            );
-          }
-          final file = snapshot.data;
-          if (file != null) {
-            return Image.file(
-              file,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  color: Colors.red.shade50,
-                  child: const Icon(
-                    Icons.broken_image_outlined,
-                    color: Colors.redAccent,
-                  ),
-                );
-              },
-            );
-          }
+
+    final resolvedPath = TravelProvider.resolveImagePath(imagePath);
+    if (resolvedPath != null &&
+        (resolvedPath.startsWith('/') || resolvedPath.contains(':/'))) {
+      return Image.file(
+        File(resolvedPath),
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return Container(
+            color: Colors.red.shade50,
+            child: const Icon(
+              Icons.broken_image_outlined,
+              color: Colors.redAccent,
+            ),
+          );
+        },
+      );
+    } else if (resolvedPath != null) {
+      return Image.network(
+        resolvedPath,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
           return Container(
             color: Colors.red.shade50,
             child: const Icon(
@@ -102,18 +51,10 @@ class DiaryTab extends StatefulWidget {
         },
       );
     }
-    return Image.network(
-      imagePath,
-      fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) {
-        return Container(
-          color: Colors.red.shade50,
-          child: const Icon(
-            Icons.broken_image_outlined,
-            color: Colors.redAccent,
-          ),
-        );
-      },
+
+    return Container(
+      color: Colors.red.shade50,
+      child: const Icon(Icons.broken_image_outlined, color: Colors.redAccent),
     );
   }
 
@@ -283,11 +224,17 @@ class _DiaryTabState extends State<DiaryTab> {
                               onPressed: () {
                                 final navigator = Navigator.of(context);
                                 Navigator.pop(ctx);
-                                Future.delayed(const Duration(milliseconds: 150), () {
-                                  if (navigator.mounted) {
-                                    AddDiaryEntryDialog.show(navigator.context, entry);
-                                  }
-                                });
+                                Future.delayed(
+                                  const Duration(milliseconds: 150),
+                                  () {
+                                    if (navigator.mounted) {
+                                      AddDiaryEntryDialog.show(
+                                        navigator.context,
+                                        entry,
+                                      );
+                                    }
+                                  },
+                                );
                               },
                             ),
                             IconButton(
