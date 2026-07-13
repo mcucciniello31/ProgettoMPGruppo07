@@ -4,7 +4,9 @@ class AppTheme {
   // Palette di colori del tema unico — azzurrino chiaro con contrasto blu scuro
   static const Color primary = Color(0xFF4DA8DA); // Azzurro cielo
   static const Color secondary = Color(0xFF14B8A6); // Verde acqua / Teal
-  static const Color background = Color(0xFFCBE0F0); // Sfondo azzurro pastello (leggermente più scuro/intenso per maggior contrasto con le card bianche)
+  static const Color background = Color(
+    0xFFCBE0F0,
+  ); // Sfondo azzurro pastello (leggermente più scuro/intenso per maggior contrasto con le card bianche)
   static const Color card = Color(0xFFFFFFFF); // Bianco puro per le card
   static const Color textPrimary = Color(0xFF0D2137); // Blu notte scuro
   static const Color textSecondary = Color(0xFF3B6A8A); // Blu medio/grigio
@@ -117,16 +119,12 @@ class AppTheme {
       dividerColor: const Color(0xFFADCDE2),
       dialogTheme: DialogThemeData(
         backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       ),
       bottomSheetTheme: const BottomSheetThemeData(
         backgroundColor: Colors.white,
       ),
-      popupMenuTheme: const PopupMenuThemeData(
-        color: Colors.white,
-      ),
+      popupMenuTheme: const PopupMenuThemeData(color: Colors.white),
     );
   }
 }

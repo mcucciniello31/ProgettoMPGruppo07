@@ -324,6 +324,52 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     );
   }
 
+  Widget _buildFormDropdownField<T>({
+    required String label,
+    required T? value,
+    required List<DropdownMenuItem<T>> items,
+    required ValueChanged<T?> onChanged,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFADCDE2), width: 1.5),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF3B6A8A),
+            ),
+          ),
+          const SizedBox(height: 2),
+          DropdownButtonHideUnderline(
+            child: DropdownButtonFormField<T>(
+              value: value,
+              isExpanded: true,
+              decoration: const InputDecoration(
+                isDense: true,
+                contentPadding: EdgeInsets.zero,
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+              ),
+              items: items,
+              onChanged: onChanged,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.expense != null;
@@ -392,19 +438,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                   const SizedBox(width: 12),
                   Expanded(
                     flex: 2,
-                    child: DropdownButtonFormField<String>(
-                      isExpanded: true,
+                    child: _buildFormDropdownField<String>(
+                      label: "Valuta *",
                       value: _selectedCurrency,
-                      decoration: InputDecoration(
-                        labelText: "Valuta *",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 16,
-                        ),
-                      ),
                       items: CurrencyService.currencies.map((curr) {
                         return DropdownMenuItem<String>(
                           value: curr.code,
@@ -434,15 +470,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               Row(
                 children: [
                   Expanded(
-                    child: DropdownButtonFormField<String>(
-                      isExpanded: true,
+                    child: _buildFormDropdownField<String>(
+                      label: "Categoria *",
                       value: _selectedCategory,
-                      decoration: InputDecoration(
-                        labelText: "Categoria *",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
                       items: AppTheme.categoryColors.keys.map((cat) {
                         final color =
                             AppTheme.categoryColors[cat] ?? Colors.grey;
@@ -475,15 +505,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: DropdownButtonFormField<String>(
-                      isExpanded: true,
+                    child: _buildFormDropdownField<String>(
+                      label: "Stato *",
                       value: _selectedStatus,
-                      decoration: InputDecoration(
-                        labelText: "Stato *",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
                       items: const [
                         DropdownMenuItem(
                           value: 'Prevista',
@@ -517,15 +541,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               Row(
                 children: [
                   Expanded(
-                    child: DropdownButtonFormField<String>(
-                      isExpanded: true,
+                    child: _buildFormDropdownField<String>(
+                      label: "Metodo *",
                       value: _selectedPaymentMethod,
-                      decoration: InputDecoration(
-                        labelText: "Metodo *",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
                       items:
                           const [
                                 'Contanti',
@@ -638,14 +656,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                       ),
                       if (_associatedType == 'Tappa') ...[
                         const SizedBox(height: 12),
-                        DropdownButtonFormField<int>(
+                        _buildFormDropdownField<int>(
+                          label: "Seleziona Tappa *",
                           value: _selectedStopId,
-                          decoration: InputDecoration(
-                            labelText: "Seleziona Tappa *",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
                           items: _stops.map((stop) {
                             return DropdownMenuItem<int>(
                               value: stop.id,
@@ -675,14 +688,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                                   ),
                                 ),
                               )
-                            : DropdownButtonFormField<int>(
+                            : _buildFormDropdownField<int>(
+                                label: "Seleziona Attività *",
                                 value: _selectedActivityId,
-                                decoration: InputDecoration(
-                                  labelText: "Seleziona Attività *",
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                ),
                                 items: _activities.map((act) {
                                   return DropdownMenuItem<int>(
                                     value: act.id,

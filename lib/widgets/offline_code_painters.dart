@@ -4,31 +4,63 @@ class BarcodePainter extends CustomPainter {
   final String code;
   final Color barColor;
 
-  BarcodePainter({
-    required this.code,
-    this.barColor = Colors.black,
-  });
+  BarcodePainter({required this.code, this.barColor = Colors.black});
 
   static const Map<String, String> _code39Map = {
-    '0': '000110100', '1': '100100001', '2': '001100001', '3': '101100000',
-    '4': '000110001', '5': '100110000', '6': '001110000', '7': '000100101',
-    '8': '100100100', '9': '001100100',
-    'A': '100001001', 'B': '001001001', 'C': '101001000', 'D': '000011001',
-    'E': '100011000', 'F': '001011000', 'G': '000001101', 'H': '100001100',
-    'I': '001001100', 'J': '000011100', 'K': '100000011', 'L': '001000011',
-    'M': '101000010', 'N': '000010011', 'O': '100010010', 'P': '001010010',
-    'Q': '000000111', 'R': '100000110', 'S': '001000110', 'T': '000010110',
-    'U': '110000001', 'V': '011000001', 'W': '111000000', 'X': '010010001',
-    'Y': '110010000', 'Z': '011010000',
-    '-': '010000101', '.': '110000100', ' ': '011000100', '*': '010010100',
-    '\$': '010101000', '/': '010100010', '+': '010001010', '%': '000101010',
+    '0': '000110100',
+    '1': '100100001',
+    '2': '001100001',
+    '3': '101100000',
+    '4': '000110001',
+    '5': '100110000',
+    '6': '001110000',
+    '7': '000100101',
+    '8': '100100100',
+    '9': '001100100',
+    'A': '100001001',
+    'B': '001001001',
+    'C': '101001000',
+    'D': '000011001',
+    'E': '100011000',
+    'F': '001011000',
+    'G': '000001101',
+    'H': '100001100',
+    'I': '001001100',
+    'J': '000011100',
+    'K': '100000011',
+    'L': '001000011',
+    'M': '101000010',
+    'N': '000010011',
+    'O': '100010010',
+    'P': '001010010',
+    'Q': '000000111',
+    'R': '100000110',
+    'S': '001000110',
+    'T': '000010110',
+    'U': '110000001',
+    'V': '011000001',
+    'W': '111000000',
+    'X': '010010001',
+    'Y': '110010000',
+    'Z': '011010000',
+    '-': '010000101',
+    '.': '110000100',
+    ' ': '011000100',
+    '*': '010010100',
+    '\$': '010101000',
+    '/': '010100010',
+    '+': '010001010',
+    '%': '000101010',
   };
 
   @override
   void paint(Canvas canvas, Size size) {
-    final String cleanCode = code.trim().toUpperCase().replaceAll(RegExp(r'[^A-Z0-9\-\.\ \$\/\+\%]'), '');
+    final String cleanCode = code.trim().toUpperCase().replaceAll(
+      RegExp(r'[^A-Z0-9\-\.\ \$\/\+\%]'),
+      '',
+    );
     final String fullCode = '*$cleanCode*';
-    
+
     // Calcola la dimensione totale per determinare lo spessore dell'unità grafica
     double totalUnits = 0;
     const double narrowWidth = 1.0;
@@ -58,11 +90,11 @@ class BarcodePainter extends CustomPainter {
     for (int i = 0; i < fullCode.length; i++) {
       final char = fullCode[i];
       final pattern = _code39Map[char] ?? _code39Map['*']!;
-      
+
       for (int j = 0; j < 9; j++) {
         final isWide = pattern[j] == '1';
         final width = (isWide ? wideWidth : narrowWidth) * scale;
-        
+
         final isBar = j % 2 == 0;
         if (isBar) {
           canvas.drawRect(
@@ -72,7 +104,7 @@ class BarcodePainter extends CustomPainter {
         }
         currentX += width;
       }
-      
+
       if (i < fullCode.length - 1) {
         currentX += interCharacterGap * scale;
       }
@@ -89,16 +121,13 @@ class QrCodePainter extends CustomPainter {
   final String code;
   final Color qrColor;
 
-  QrCodePainter({
-    required this.code,
-    this.qrColor = Colors.black,
-  });
+  QrCodePainter({required this.code, this.qrColor = Colors.black});
 
   @override
   void paint(Canvas canvas, Size size) {
     const int gridSize = 21;
     final double moduleSize = size.width / gridSize;
-    
+
     final paint = Paint()
       ..color = qrColor
       ..style = PaintingStyle.fill;
@@ -110,7 +139,7 @@ class QrCodePainter extends CustomPainter {
       seed = cleanCode.codeUnitAt(i) + ((seed << 5) - seed);
     }
     seed = seed.abs();
-    
+
     // Generatore pseudo-casuale lineare congruenziale (LCG)
     int currentSeed = seed;
     double nextDouble() {

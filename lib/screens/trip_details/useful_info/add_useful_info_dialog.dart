@@ -21,7 +21,7 @@ class AddUsefulInfoDialog {
           builder: (context, setDialogState) {
             return AlertDialog(
               title: Text(
-                isEditing ? "Modifica Info Utile" : "Nuova Info Utile",
+                isEditing ? "Modifica Utility" : "Nuova Utility",
               ),
               content: SingleChildScrollView(
                 child: Column(
@@ -48,50 +48,52 @@ class AddUsefulInfoDialog {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    DropdownButtonFormField<String>(
-                      isExpanded: true,
-                      value: selectedCategory,
-                      decoration: InputDecoration(
-                        labelText: "Categoria",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: const Color(0xFFADCDE2),
+                          width: 1.5,
                         ),
                       ),
-                      selectedItemBuilder: (BuildContext context) {
-                        return [
-                          'Nota',
-                          'Promemoria',
-                          'Prenotazione',
-                          'Indirizzo',
-                          'Altro',
-                        ].map((cat) {
-                          return Row(
-                            children: [
-                              Icon(
-                                UsefulInfoTab.getUsefulInfoCategoryIcon(cat),
-                                size: 18,
-                                color: UsefulInfoTab.getUsefulInfoCategoryColor(
-                                  cat,
-                                ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text(
+                            "Categoria",
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF3B6A8A),
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          DropdownButtonHideUnderline(
+                            child: DropdownButtonFormField<String>(
+                              isExpanded: true,
+                              value: selectedCategory,
+                              decoration: const InputDecoration(
+                                isDense: true,
+                                contentPadding: EdgeInsets.zero,
+                                border: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none,
                               ),
-                              const SizedBox(width: 8),
-                              Text(cat),
-                            ],
-                          );
-                        }).toList();
-                      },
-                      items:
-                          [
-                                'Nota',
-                                'Promemoria',
-                                'Prenotazione',
-                                'Indirizzo',
-                                'Altro',
-                              ]
-                              .map(
-                                (cat) => DropdownMenuItem<String>(
-                                  value: cat,
-                                  child: Row(
+                              selectedItemBuilder: (BuildContext context) {
+                                return [
+                                  'Nota',
+                                  'Promemoria',
+                                  'Prenotazione',
+                                  'Indirizzo',
+                                  'Altro',
+                                ].map((cat) {
+                                  return Row(
                                     children: [
                                       Icon(
                                         UsefulInfoTab.getUsefulInfoCategoryIcon(
@@ -106,17 +108,50 @@ class AddUsefulInfoDialog {
                                       const SizedBox(width: 8),
                                       Text(cat),
                                     ],
-                                  ),
-                                ),
-                              )
-                              .toList(),
-                      onChanged: (val) {
-                        if (val != null) {
-                          setDialogState(() {
-                            selectedCategory = val;
-                          });
-                        }
-                      },
+                                  );
+                                }).toList();
+                              },
+                              items:
+                                  [
+                                        'Nota',
+                                        'Promemoria',
+                                        'Prenotazione',
+                                        'Indirizzo',
+                                        'Altro',
+                                      ]
+                                      .map(
+                                        (cat) => DropdownMenuItem<String>(
+                                          value: cat,
+                                          child: Row(
+                                            children: [
+                                              Icon(
+                                                UsefulInfoTab.getUsefulInfoCategoryIcon(
+                                                  cat,
+                                                ),
+                                                size: 18,
+                                                color:
+                                                    UsefulInfoTab.getUsefulInfoCategoryColor(
+                                                      cat,
+                                                    ),
+                                              ),
+                                              const SizedBox(width: 8),
+                                              Text(cat),
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                      .toList(),
+                              onChanged: (val) {
+                                if (val != null) {
+                                  setDialogState(() {
+                                    selectedCategory = val;
+                                  });
+                                }
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:say_my_travel/providers/travel_provider.dart';
 import 'screens/home_screen.dart';
@@ -8,9 +9,7 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
     MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => TravelProvider()),
-      ],
+      providers: [ChangeNotifierProvider(create: (_) => TravelProvider())],
       child: const MyApp(),
     ),
   );
@@ -26,6 +25,13 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       home: const HomeScreen(),
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [Locale('it', 'IT')],
+      locale: const Locale('it', 'IT'),
     );
   }
 }

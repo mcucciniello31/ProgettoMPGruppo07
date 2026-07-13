@@ -2,7 +2,8 @@ class TravelDocument {
   final int? id;
   final int tripId;
   final String title;
-  final String documentType; // Tipo di documento: 'Volo', 'Treno', 'Hotel', 'Attrazione', 'Altro'
+  final String
+  documentType; // Tipo di documento: 'Volo', 'Treno', 'Hotel', 'Attrazione', 'Altro'
   final String? bookingCode;
   final String? seat;
   final String? gate;
@@ -44,7 +45,9 @@ class TravelDocument {
       bookingCode: map['bookingCode'] as String?,
       seat: map['seat'] as String?,
       gate: map['gate'] as String?,
-      dateTime: map['dateTime'] != null ? DateTime.tryParse(map['dateTime'] as String) : null,
+      dateTime: map['dateTime'] != null
+          ? DateTime.tryParse(map['dateTime'] as String)
+          : null,
       notes: map['notes'] as String? ?? '',
     );
   }

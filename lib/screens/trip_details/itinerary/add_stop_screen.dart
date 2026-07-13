@@ -468,6 +468,54 @@ class _AddStopScreenState extends State<AddStopScreen> {
     }
   }
 
+  Widget _buildFormDropdownField<T>({
+    required String label,
+    required T? value,
+    required List<DropdownMenuItem<T>> items,
+    required ValueChanged<T?> onChanged,
+    Widget? prefixIcon,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFADCDE2), width: 1.5),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF3B6A8A),
+            ),
+          ),
+          const SizedBox(height: 2),
+          DropdownButtonHideUnderline(
+            child: DropdownButtonFormField<T>(
+              value: value,
+              isExpanded: true,
+              decoration: InputDecoration(
+                isDense: true,
+                contentPadding: EdgeInsets.zero,
+                prefixIcon: prefixIcon,
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+              ),
+              items: items,
+              onChanged: onChanged,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isActivity = widget.parentStop != null || widget.activity != null;
@@ -576,15 +624,10 @@ class _AddStopScreenState extends State<AddStopScreen> {
                       0,
                       totalDays - 1,
                     );
-                    return DropdownButtonFormField<int>(
+                    return _buildFormDropdownField<int>(
+                      label: "Giorno del viaggio *",
                       value: dropdownValue,
-                      decoration: InputDecoration(
-                        labelText: "Giorno del viaggio *",
-                        prefixIcon: const Icon(Icons.calendar_month),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
+                      prefixIcon: const Icon(Icons.calendar_month),
                       items: List.generate(totalDays, (i) {
                         final dayDate = tripStartDay.add(Duration(days: i));
                         return DropdownMenuItem<int>(
@@ -650,15 +693,10 @@ class _AddStopScreenState extends State<AddStopScreen> {
                 ),
               ] else ...[
                 // Selezione della categoria o tipo di attività
-                DropdownButtonFormField<String>(
+                _buildFormDropdownField<String>(
+                  label: "Categoria Attività *",
                   value: _selectedActivityType,
-                  decoration: InputDecoration(
-                    labelText: "Categoria Attività *",
-                    prefixIcon: const Icon(Icons.category),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                  ),
+                  prefixIcon: const Icon(Icons.category),
                   items: AppTheme.activityIcons.keys.map((type) {
                     return DropdownMenuItem<String>(
                       value: type,
@@ -686,15 +724,10 @@ class _AddStopScreenState extends State<AddStopScreen> {
                 const SizedBox(height: 20),
 
                 // Selezione dello stato dell'attività (Da svolgere, Completata, Annullata)
-                DropdownButtonFormField<String>(
+                _buildFormDropdownField<String>(
+                  label: "Stato dell'attività *",
                   value: _selectedActivityStatus,
-                  decoration: InputDecoration(
-                    labelText: "Stato dell'attività *",
-                    prefixIcon: const Icon(Icons.task_alt),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                  ),
+                  prefixIcon: const Icon(Icons.task_alt),
                   items: const [
                     DropdownMenuItem(
                       value: 'Da svolgere',

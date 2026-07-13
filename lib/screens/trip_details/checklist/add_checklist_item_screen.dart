@@ -181,6 +181,54 @@ class _AddChecklistItemScreenState extends State<AddChecklistItemScreen> {
     );
   }
 
+  Widget _buildFormDropdownField<T>({
+    required String label,
+    required T? value,
+    required List<DropdownMenuItem<T>> items,
+    required List<Widget> Function(BuildContext)? selectedItemBuilder,
+    required ValueChanged<T?> onChanged,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFADCDE2), width: 1.5),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF3B6A8A),
+            ),
+          ),
+          const SizedBox(height: 2),
+          DropdownButtonHideUnderline(
+            child: DropdownButtonFormField<T>(
+              value: value,
+              isExpanded: true,
+              decoration: const InputDecoration(
+                isDense: true,
+                contentPadding: EdgeInsets.zero,
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+              ),
+              selectedItemBuilder: selectedItemBuilder,
+              items: items,
+              onChanged: onChanged,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.checklistItem != null;
@@ -232,16 +280,9 @@ class _AddChecklistItemScreenState extends State<AddChecklistItemScreen> {
               ),
               const SizedBox(height: 20),
 
-              // 2. Selettore Categoria
-              DropdownButtonFormField<String>(
-                isExpanded: true,
+              _buildFormDropdownField<String>(
+                label: "Categoria *",
                 value: _selectedCategory,
-                decoration: InputDecoration(
-                  labelText: "Categoria *",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
                 selectedItemBuilder: (BuildContext context) {
                   return _categories.map((cat) {
                     return Row(
@@ -282,15 +323,9 @@ class _AddChecklistItemScreenState extends State<AddChecklistItemScreen> {
               const SizedBox(height: 20),
 
               // 3. Selettore Priorità
-              DropdownButtonFormField<String>(
-                isExpanded: true,
+              _buildFormDropdownField<String>(
+                label: "Priorità *",
                 value: _selectedPriority,
-                decoration: InputDecoration(
-                  labelText: "Priorità *",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
                 selectedItemBuilder: (BuildContext context) {
                   return _priorities.map((pri) {
                     return Row(

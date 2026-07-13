@@ -129,7 +129,7 @@ class _UsefulInfoTabState extends State<UsefulInfoTab> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Elimina Info Utile"),
+          title: const Text("Elimina Utility"),
           content: Text("Sei sicuro di voler eliminare '${info.title}'?"),
           actions: [
             TextButton(

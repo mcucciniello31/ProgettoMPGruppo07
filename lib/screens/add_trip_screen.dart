@@ -282,10 +282,10 @@ class _AddTripScreenState extends State<AddTripScreen> {
       }
     }
 
-    // 6. Validazione delle informazioni utili (facoltative, ma devono contenere almeno una lettera)
+    // 6. Validazione delle utilities generali (facoltative, ma devono contenere almeno una lettera)
     if (generalInfoText.startsWith(' ')) {
       validationErrors.add(
-        "Informazioni utili: non possono iniziare con uno spazio",
+        "Utilities Generali: non possono iniziare con uno spazio",
       );
     } else if (generalInfoText.isNotEmpty) {
       final hasLetter = RegExp(
@@ -294,7 +294,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
       ).hasMatch(generalInfoText);
       if (!hasLetter) {
         validationErrors.add(
-          "Informazioni utili: non possono essere composte solo da numeri o caratteri speciali; inserisci almeno una lettera",
+          "Utilities Generali: non possono essere composte solo da numeri o caratteri speciali; inserisci almeno una lettera",
         );
       }
     }
@@ -605,7 +605,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
                 controller: _generalInfoController,
                 maxLines: 4,
                 decoration: InputDecoration(
-                  labelText: "Informazioni Utili Generali",
+                  labelText: "Utilities Generali",
                   hintText:
                       "Inserisci dettagli utili come hotel, numeri di emergenza, note sui voli...",
                   prefixIcon: const Padding(

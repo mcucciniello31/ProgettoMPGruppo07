@@ -2,12 +2,14 @@ class Activity {
   final int? id;
   final int stopId;
   final String name;
-  final String type; // Categoria dell'attività: Visita, Escursione, Prenotazione, Pasto, Spostamento, Evento, Momento Libero, Altro
+  final String
+  type; // Categoria dell'attività: Visita, Escursione, Prenotazione, Pasto, Spostamento, Evento, Momento Libero, Altro
   final String description;
   final String time; // Orario o fascia oraria dell'attività
   final double cost;
   final String location;
-  final String status; // Stato dell'attività: 'Da svolgere', 'Completata', 'Annullata'
+  final String
+  status; // Stato dell'attività: 'Da svolgere', 'Completata', 'Annullata'
   final String notes;
 
   Activity({

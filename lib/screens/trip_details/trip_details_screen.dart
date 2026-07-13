@@ -156,7 +156,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Text(
-                                "Info Utili Generali:",
+                                "Utilities Generali:",
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 12,
@@ -480,7 +480,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen>
                       ),
                       Tab(
                         icon: Icon(Icons.info_outline, size: 20),
-                        text: "Info Utili",
+                        text: "Utilities",
                       ),
                     ],
                   ),
