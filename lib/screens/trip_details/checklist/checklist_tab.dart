@@ -245,7 +245,7 @@ class _ChecklistTabState extends State<ChecklistTab> {
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFFADCDE2).withOpacity(0.15),
+                          color: const Color(0xFFADCDE2).withValues(alpha: 0.15),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),
@@ -369,7 +369,7 @@ class _ChecklistTabState extends State<ChecklistTab> {
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFFADCDE2).withOpacity(0.15),
+                          color: const Color(0xFFADCDE2).withValues(alpha: 0.15),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),
@@ -491,7 +491,7 @@ class _ChecklistTabState extends State<ChecklistTab> {
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFFADCDE2).withOpacity(0.15),
+                          color: const Color(0xFFADCDE2).withValues(alpha: 0.15),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),
@@ -604,7 +604,7 @@ class _ChecklistTabState extends State<ChecklistTab> {
                       minHeight: 10,
                       backgroundColor: Theme.of(
                         context,
-                      ).colorScheme.primary.withOpacity(0.1),
+                      ).colorScheme.primary.withValues(alpha: 0.1),
                       valueColor: AlwaysStoppedAnimation<Color>(
                         Theme.of(context).colorScheme.primary,
                       ),

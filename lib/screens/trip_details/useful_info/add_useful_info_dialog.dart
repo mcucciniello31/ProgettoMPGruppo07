@@ -77,7 +77,7 @@ class AddUsefulInfoDialog {
                           DropdownButtonHideUnderline(
                             child: DropdownButtonFormField<String>(
                               isExpanded: true,
-                              value: selectedCategory,
+                              initialValue: selectedCategory,
                               decoration: const InputDecoration(
                                 isDense: true,
                                 contentPadding: EdgeInsets.zero,

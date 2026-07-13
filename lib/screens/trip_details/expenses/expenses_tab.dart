@@ -109,7 +109,7 @@ class _ExpensesTabState extends State<ExpensesTab> {
                     children: [
                       Expanded(
                         child: DropdownButtonFormField<String>(
-                          value: _convFrom,
+                          initialValue: _convFrom,
                           decoration: InputDecoration(
                             labelText: "Da",
                             border: OutlineInputBorder(
@@ -148,7 +148,7 @@ class _ExpensesTabState extends State<ExpensesTab> {
                       const SizedBox(width: 8),
                       Expanded(
                         child: DropdownButtonFormField<String>(
-                          value: _convTo,
+                          initialValue: _convTo,
                           decoration: InputDecoration(
                             labelText: "A",
                             border: OutlineInputBorder(
@@ -201,7 +201,7 @@ class _ExpensesTabState extends State<ExpensesTab> {
                         decoration: BoxDecoration(
                           color: Theme.of(
                             context,
-                          ).colorScheme.primary.withOpacity(0.05),
+                          ).colorScheme.primary.withValues(alpha: 0.05),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Center(
@@ -449,10 +449,12 @@ class _ExpensesTabState extends State<ExpensesTab> {
     // Elenco delle transazioni registrate storiche che corrispondono ai filtri selezionati
     final filteredExpenses = expenses.where((ex) {
       // 1. Filtro di stato del viaggio
-      if (_selectedExpenseFilter == 'Sostenute' && ex.status != 'Sostenuta')
+      if (_selectedExpenseFilter == 'Sostenute' && ex.status != 'Sostenuta') {
         return false;
-      if (_selectedExpenseFilter == 'Previste' && ex.status != 'Prevista')
+      }
+      if (_selectedExpenseFilter == 'Previste' && ex.status != 'Prevista') {
         return false;
+      }
 
       // 2. Filtro per categoria delle spese
       if (_selectedExpenseCategoryFilter != 'Tutte' &&
@@ -468,15 +470,17 @@ class _ExpensesTabState extends State<ExpensesTab> {
       );
       if (_selectedExpenseAmountRangeFilter != 'Tutti') {
         if (_selectedExpenseAmountRangeFilter == 'Fino a €50' &&
-            amountInEur > 50)
+            amountInEur > 50) {
           return false;
+        }
         if (_selectedExpenseAmountRangeFilter == '€50 - €200' &&
             (amountInEur < 50 || amountInEur > 200)) {
           return false;
         }
         if (_selectedExpenseAmountRangeFilter == 'Oltre €200' &&
-            amountInEur < 200)
+            amountInEur < 200) {
           return false;
+        }
       }
 
       // 4. Filtro per collegare la spesa ad una tappa/attività
@@ -533,7 +537,7 @@ class _ExpensesTabState extends State<ExpensesTab> {
                             CircularProgressIndicator(
                               value: percentSpentActual,
                               strokeWidth: 8,
-                              backgroundColor: Colors.grey.withOpacity(0.1),
+                              backgroundColor: Colors.grey.withValues(alpha: 0.1),
                               valueColor: AlwaysStoppedAnimation<Color>(
                                 isOverBudgetActual
                                     ? Colors.redAccent
@@ -714,7 +718,7 @@ class _ExpensesTabState extends State<ExpensesTab> {
                 border: Border.all(color: const Color(0xFFADCDE2), width: 1.5),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFFADCDE2).withOpacity(0.15),
+                    color: const Color(0xFFADCDE2).withValues(alpha: 0.15),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
@@ -726,7 +730,7 @@ class _ExpensesTabState extends State<ExpensesTab> {
                     children: [
                       Expanded(
                         child: DropdownButtonFormField<String>(
-                          value: _selectedExpenseCategoryFilter,
+                          initialValue: _selectedExpenseCategoryFilter,
                           isExpanded: true,
                           decoration: _buildDropdownDecoration("Categoria"),
                           items: [
@@ -773,7 +777,7 @@ class _ExpensesTabState extends State<ExpensesTab> {
                       const SizedBox(width: 8),
                       Expanded(
                         child: DropdownButtonFormField<String>(
-                          value: _selectedExpenseAmountRangeFilter,
+                          initialValue: _selectedExpenseAmountRangeFilter,
                           isExpanded: true,
                           decoration: _buildDropdownDecoration("Importo"),
                           items: [
@@ -859,7 +863,7 @@ class _ExpensesTabState extends State<ExpensesTab> {
                     children: [
                       Expanded(
                         child: DropdownButtonFormField<String>(
-                          value: _selectedExpenseAssociationFilter,
+                          initialValue: _selectedExpenseAssociationFilter,
                           isExpanded: true,
                           decoration: _buildDropdownDecoration("Associazione"),
                           items: [
@@ -915,7 +919,7 @@ class _ExpensesTabState extends State<ExpensesTab> {
                                     ),
                                   ),
                                 )
-                                .toList(),
+                                ,
                           ],
                           onChanged: (val) {
                             if (val != null) {
@@ -929,7 +933,7 @@ class _ExpensesTabState extends State<ExpensesTab> {
                       const SizedBox(width: 8),
                       Expanded(
                         child: DropdownButtonFormField<String>(
-                          value: _selectedExpenseFilter,
+                          initialValue: _selectedExpenseFilter,
                           isExpanded: true,
                           decoration: _buildDropdownDecoration("Stato Spesa"),
                           items: const [
@@ -1008,7 +1012,7 @@ class _ExpensesTabState extends State<ExpensesTab> {
                     Icon(
                       Icons.money_off_outlined,
                       size: 64,
-                      color: Theme.of(context).hintColor.withOpacity(0.5),
+                      color: Theme.of(context).hintColor.withValues(alpha: 0.5),
                     ),
                     const SizedBox(height: 12),
                     Text(
@@ -1164,7 +1168,7 @@ class _ExpensesTabState extends State<ExpensesTab> {
                             child: LinearProgressIndicator(
                               value: fraction,
                               minHeight: 6,
-                              backgroundColor: Colors.grey.withOpacity(0.1),
+                              backgroundColor: Colors.grey.withValues(alpha: 0.1),
                               valueColor: AlwaysStoppedAnimation<Color>(
                                 AppTheme.categoryColors[category]!,
                               ),

@@ -88,7 +88,7 @@ class _ItineraryTabState extends State<ItineraryTab> {
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Theme.of(context).dividerColor.withOpacity(0.05),
+          color: Theme.of(context).dividerColor.withValues(alpha: 0.05),
         ),
       ),
       child: Row(
@@ -125,7 +125,7 @@ class _ItineraryTabState extends State<ItineraryTab> {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: statusColor.withOpacity(0.1),
+                        color: statusColor.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
@@ -177,7 +177,7 @@ class _ItineraryTabState extends State<ItineraryTab> {
                       fontSize: 12,
                       color: Theme.of(
                         context,
-                      ).textTheme.bodyMedium?.color?.withOpacity(0.8),
+                      ).textTheme.bodyMedium?.color?.withValues(alpha: 0.8),
                     ),
                   ),
                 ],
@@ -304,7 +304,7 @@ class _ItineraryTabState extends State<ItineraryTab> {
                       width: 40,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: Theme.of(context).dividerColor.withOpacity(0.3),
+                        color: Theme.of(context).dividerColor.withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -340,7 +340,7 @@ class _ItineraryTabState extends State<ItineraryTab> {
                               size: 48,
                               color: Theme.of(
                                 context,
-                              ).hintColor.withOpacity(0.5),
+                              ).hintColor.withValues(alpha: 0.5),
                             ),
                             const SizedBox(height: 12),
                             Text(
@@ -369,13 +369,13 @@ class _ItineraryTabState extends State<ItineraryTab> {
                             elevation: 0,
                             color: Theme.of(
                               context,
-                            ).colorScheme.primary.withOpacity(0.04),
+                            ).colorScheme.primary.withValues(alpha: 0.04),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
                               side: BorderSide(
                                 color: Theme.of(
                                   context,
-                                ).colorScheme.primary.withOpacity(0.1),
+                                ).colorScheme.primary.withValues(alpha: 0.1),
                               ),
                             ),
                             child: Padding(
@@ -570,7 +570,7 @@ class _ItineraryTabState extends State<ItineraryTab> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
         side: BorderSide(
-          color: Theme.of(context).dividerColor.withOpacity(0.1),
+          color: Theme.of(context).dividerColor.withValues(alpha: 0.1),
         ),
       ),
       child: Padding(
@@ -648,7 +648,7 @@ class _ItineraryTabState extends State<ItineraryTab> {
                                 ? Theme.of(context).colorScheme.primary
                                 : Theme.of(
                                     context,
-                                  ).colorScheme.primary.withOpacity(0.15))
+                                  ).colorScheme.primary.withValues(alpha: 0.15))
                           : Colors.transparent,
                       border:
                           isWithinTrip &&
@@ -675,8 +675,8 @@ class _ItineraryTabState extends State<ItineraryTab> {
                                     ? Colors.white
                                     : Theme.of(
                                         context,
-                                      ).colorScheme.onBackground)
-                              : Theme.of(context).hintColor.withOpacity(0.4),
+                                      ).colorScheme.onSurface)
+                              : Theme.of(context).hintColor.withValues(alpha: 0.4),
                         ),
                       ),
                     ),
@@ -716,12 +716,12 @@ class _ItineraryTabState extends State<ItineraryTab> {
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: Theme.of(context).dividerColor.withOpacity(0.1),
+            color: Theme.of(context).dividerColor.withValues(alpha: 0.1),
             width: 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.03),
+              color: Colors.black.withValues(alpha: 0.03),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -990,7 +990,7 @@ class _ItineraryTabState extends State<ItineraryTab> {
                         Icon(
                           Icons.map_outlined,
                           size: 64,
-                          color: Theme.of(context).hintColor.withOpacity(0.5),
+                          color: Theme.of(context).hintColor.withValues(alpha: 0.5),
                         ),
                         const SizedBox(height: 12),
                         Text(
@@ -1180,7 +1180,7 @@ class _ItineraryTabState extends State<ItineraryTab> {
                                               .textTheme
                                               .bodyMedium
                                               ?.color
-                                              ?.withOpacity(0.85),
+                                              ?.withValues(alpha: 0.85),
                                         ),
                                       ),
                                       const SizedBox(height: 12),
@@ -1189,15 +1189,15 @@ class _ItineraryTabState extends State<ItineraryTab> {
                                       Container(
                                         padding: const EdgeInsets.all(12),
                                         decoration: BoxDecoration(
-                                          color: Colors.orange.withOpacity(
-                                            0.05,
+                                          color: Colors.orange.withValues(
+                                            alpha: 0.05,
                                           ),
                                           borderRadius: BorderRadius.circular(
                                             12,
                                           ),
                                           border: Border.all(
-                                            color: Colors.orange.withOpacity(
-                                              0.15,
+                                            color: Colors.orange.withValues(
+                                              alpha: 0.15,
                                             ),
                                           ),
                                         ),

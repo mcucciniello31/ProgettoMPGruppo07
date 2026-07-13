@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../../../models/diary_entry.dart';
 import 'package:say_my_travel/providers/travel_provider.dart';
 import 'add_diary_entry_dialog.dart';
@@ -70,7 +69,7 @@ class DiaryTab extends StatefulWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
+        color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Row(
@@ -171,7 +170,7 @@ class _DiaryTabState extends State<DiaryTab> {
                     top: 12,
                     right: 12,
                     child: CircleAvatar(
-                      backgroundColor: Colors.black.withOpacity(0.5),
+                      backgroundColor: Colors.black.withValues(alpha: 0.5),
                       child: IconButton(
                         icon: const Icon(Icons.close, color: Colors.white),
                         onPressed: () => Navigator.pop(ctx),
@@ -197,7 +196,7 @@ class _DiaryTabState extends State<DiaryTab> {
                           decoration: BoxDecoration(
                             color: Theme.of(
                               context,
-                            ).colorScheme.primary.withOpacity(0.1),
+                            ).colorScheme.primary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
@@ -295,7 +294,7 @@ class _DiaryTabState extends State<DiaryTab> {
                                     .textTheme
                                     .bodyMedium
                                     ?.color
-                                    ?.withOpacity(0.85),
+                                    ?.withValues(alpha: 0.85),
                               ),
                         ),
                       ),
@@ -328,9 +327,9 @@ class _DiaryTabState extends State<DiaryTab> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -367,7 +366,7 @@ class _DiaryTabState extends State<DiaryTab> {
             Icon(
               Icons.photo_library_outlined,
               size: 70,
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
             ),
             const SizedBox(height: 16),
             Text(
@@ -422,7 +421,7 @@ class _DiaryTabState extends State<DiaryTab> {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.6),
+                            color: Colors.black.withValues(alpha: 0.6),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(

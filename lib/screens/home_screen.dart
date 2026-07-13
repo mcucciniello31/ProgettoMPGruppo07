@@ -186,7 +186,7 @@ class _HomeScreenState extends State<HomeScreen>
                                   _selectedDateRange != null
                               ? Theme.of(
                                   context,
-                                ).colorScheme.primary.withOpacity(0.15)
+                                ).colorScheme.primary.withValues(alpha: 0.15)
                               : Theme.of(context).cardColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
@@ -197,7 +197,7 @@ class _HomeScreenState extends State<HomeScreen>
                                   ? Theme.of(context).colorScheme.primary
                                   : Theme.of(
                                       context,
-                                    ).dividerColor.withOpacity(0.2),
+                                    ).dividerColor.withValues(alpha: 0.2),
                             ),
                           ),
                           padding: const EdgeInsets.all(12),
@@ -224,13 +224,13 @@ class _HomeScreenState extends State<HomeScreen>
                       elevation: 0,
                       color: Theme.of(
                         context,
-                      ).colorScheme.surface.withOpacity(0.4),
+                      ).colorScheme.surface.withValues(alpha: 0.4),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                         side: BorderSide(
                           color: Theme.of(
                             context,
-                          ).dividerColor.withOpacity(0.1),
+                          ).dividerColor.withValues(alpha: 0.1),
                         ),
                       ),
                       child: Padding(
@@ -266,7 +266,7 @@ class _HomeScreenState extends State<HomeScreen>
                                           selectedColor: Theme.of(context)
                                               .colorScheme
                                               .primary
-                                              .withOpacity(0.2),
+                                              .withValues(alpha: 0.2),
                                           labelStyle: TextStyle(
                                             fontSize: 12,
                                             color: isSelected
@@ -366,7 +366,7 @@ class _HomeScreenState extends State<HomeScreen>
                   borderRadius: BorderRadius.circular(12),
                   color: Theme.of(
                     context,
-                  ).colorScheme.primary.withOpacity(0.12),
+                  ).colorScheme.primary.withValues(alpha: 0.12),
                 ),
                 dividerColor: Colors.transparent,
                 labelColor: Theme.of(context).colorScheme.primary,
@@ -452,7 +452,7 @@ class _HomeScreenState extends State<HomeScreen>
             Icon(
               isArchivedList ? Icons.archive_outlined : Icons.explore_outlined,
               size: 80,
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
             ),
             const SizedBox(height: 16),
             Text(
@@ -664,7 +664,7 @@ class _HomeScreenState extends State<HomeScreen>
                           image: FileImage(File(trip.coverImagePath!)),
                           fit: BoxFit.cover,
                           colorFilter: ColorFilter.mode(
-                            Colors.black.withOpacity(0.4),
+                            Colors.black.withValues(alpha: 0.4),
                             BlendMode.darken,
                           ),
                         )
@@ -683,8 +683,8 @@ class _HomeScreenState extends State<HomeScreen>
                           shape: BoxShape.circle,
                           gradient: RadialGradient(
                             colors: [
-                              Colors.white.withOpacity(0.16),
-                              Colors.white.withOpacity(0.0),
+                              Colors.white.withValues(alpha: 0.16),
+                              Colors.white.withValues(alpha: 0.0),
                             ],
                           ),
                         ),
@@ -700,8 +700,8 @@ class _HomeScreenState extends State<HomeScreen>
                           shape: BoxShape.circle,
                           gradient: RadialGradient(
                             colors: [
-                              Colors.white.withOpacity(0.10),
-                              Colors.white.withOpacity(0.0),
+                              Colors.white.withValues(alpha: 0.10),
+                              Colors.white.withValues(alpha: 0.0),
                             ],
                           ),
                         ),
@@ -723,7 +723,7 @@ class _HomeScreenState extends State<HomeScreen>
                                     vertical: 4,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.2),
+                                    color: Colors.white.withValues(alpha: 0.2),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Row(

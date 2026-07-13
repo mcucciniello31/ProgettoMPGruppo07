@@ -34,7 +34,7 @@ class AddTravelDocumentDialog {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     DropdownButtonFormField<String>(
-                      value: selectedDocType,
+                      initialValue: selectedDocType,
                       decoration: InputDecoration(
                         labelText: "Tipo di Biglietto",
                         border: OutlineInputBorder(
@@ -180,7 +180,7 @@ class AddTravelDocumentDialog {
                           border: Border.all(
                             color: Theme.of(
                               context,
-                            ).dividerColor.withOpacity(0.5),
+                            ).dividerColor.withValues(alpha: 0.5),
                           ),
                           borderRadius: BorderRadius.circular(12),
                         ),

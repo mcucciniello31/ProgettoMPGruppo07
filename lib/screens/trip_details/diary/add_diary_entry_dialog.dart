@@ -178,12 +178,12 @@ class AddDiaryEntryDialog {
                   ),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? primaryColor.withOpacity(0.15)
+                        ? primaryColor.withValues(alpha: 0.15)
                         : Colors.transparent,
                     border: Border.all(
                       color: isSelected
                           ? primaryColor
-                          : theme.dividerColor.withOpacity(0.2),
+                          : theme.dividerColor.withValues(alpha: 0.2),
                       width: isSelected ? 2 : 1,
                     ),
                     borderRadius: BorderRadius.circular(12),
@@ -197,7 +197,7 @@ class AddDiaryEntryDialog {
                         size: 18,
                         color: isSelected
                             ? primaryColor
-                            : onSurface.withOpacity(0.6),
+                            : onSurface.withValues(alpha: 0.6),
                       ),
                       const SizedBox(height: 4),
                       Text(
@@ -210,7 +210,7 @@ class AddDiaryEntryDialog {
                               : FontWeight.w500,
                           color: isSelected
                               ? primaryColor
-                              : onSurface.withOpacity(0.8),
+                              : onSurface.withValues(alpha: 0.8),
                         ),
                       ),
                     ],
@@ -257,7 +257,7 @@ class AddDiaryEntryDialog {
                                   ? Colors.redAccent
                                   : Theme.of(
                                       context,
-                                    ).dividerColor.withOpacity(0.3),
+                                    ).dividerColor.withValues(alpha: 0.3),
                               width: imageError != null ? 2.0 : 1.0,
                             ),
                           ),
@@ -270,7 +270,7 @@ class AddDiaryEntryDialog {
                                       size: 36,
                                       color: Theme.of(
                                         context,
-                                      ).colorScheme.primary.withOpacity(0.7),
+                                      ).colorScheme.primary.withValues(alpha: 0.7),
                                     ),
                                     const SizedBox(height: 8),
                                     const Text(
@@ -306,8 +306,8 @@ class AddDiaryEntryDialog {
                                         child: Container(
                                           padding: const EdgeInsets.all(6),
                                           decoration: BoxDecoration(
-                                            color: Colors.black.withOpacity(
-                                              0.6,
+                                            color: Colors.black.withValues(
+                                              alpha: 0.6,
                                             ),
                                             shape: BoxShape.circle,
                                           ),
@@ -464,7 +464,7 @@ class AddDiaryEntryDialog {
                                 ),
                               )
                             : DropdownButtonFormField<int>(
-                                value: selectedStopId,
+                                initialValue: selectedStopId,
                                 decoration: InputDecoration(
                                   labelText: "Seleziona Tappa",
                                   border: OutlineInputBorder(
@@ -507,7 +507,7 @@ class AddDiaryEntryDialog {
                                 ),
                               )
                             : DropdownButtonFormField<int>(
-                                value: selectedActivityId,
+                                initialValue: selectedActivityId,
                                 decoration: InputDecoration(
                                   labelText: "Seleziona Attività",
                                   border: OutlineInputBorder(

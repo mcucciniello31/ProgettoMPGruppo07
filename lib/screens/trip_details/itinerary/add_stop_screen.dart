@@ -497,7 +497,7 @@ class _AddStopScreenState extends State<AddStopScreen> {
           const SizedBox(height: 2),
           DropdownButtonHideUnderline(
             child: DropdownButtonFormField<T>(
-              value: value,
+              initialValue: value,
               isExpanded: true,
               decoration: InputDecoration(
                 isDense: true,
@@ -659,7 +659,7 @@ class _AddStopScreenState extends State<AddStopScreen> {
                       border: Border.all(
                         color: Theme.of(
                           context,
-                        ).colorScheme.outline.withOpacity(0.5),
+                        ).colorScheme.outline.withValues(alpha: 0.5),
                       ),
                       borderRadius: BorderRadius.circular(16),
                     ),

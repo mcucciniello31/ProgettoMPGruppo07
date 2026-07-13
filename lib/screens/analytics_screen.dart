@@ -273,7 +273,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             Icon(
               Icons.bar_chart_outlined,
               size: 100,
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
             ),
             const SizedBox(height: 16),
             Text(
@@ -298,11 +298,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   Widget _buildTripFilterSelector() {
     return Card(
       elevation: 0,
-      color: Theme.of(context).colorScheme.primary.withOpacity(0.06),
+      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.06),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
-          color: Theme.of(context).colorScheme.primary.withOpacity(0.15),
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
         ),
       ),
       child: Padding(
@@ -389,7 +389,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                 child: Container(
                   height: 16,
                   width: double.infinity,
-                  color: Colors.grey.withOpacity(0.1),
+                  color: Colors.grey.withValues(alpha: 0.1),
                   child: Row(
                     children: [
                       if (future > 0)
@@ -516,7 +516,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                       CircularProgressIndicator(
                         value: spendRate,
                         strokeWidth: 8,
-                        backgroundColor: Colors.grey.withOpacity(0.1),
+                        backgroundColor: Colors.grey.withValues(alpha: 0.1),
                         valueColor: AlwaysStoppedAnimation<Color>(
                           isOverBudget
                               ? Colors.redAccent
@@ -580,7 +580,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               child: LinearProgressIndicator(
                 value: plannedSpendRate,
                 minHeight: 6,
-                backgroundColor: Colors.grey.withOpacity(0.1),
+                backgroundColor: Colors.grey.withValues(alpha: 0.1),
                 valueColor: const AlwaysStoppedAnimation<Color>(Colors.orange),
               ),
             ),
@@ -726,7 +726,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                           child: LinearProgressIndicator(
                             value: rate,
                             minHeight: 6,
-                            backgroundColor: Colors.grey.withOpacity(0.1),
+                            backgroundColor: Colors.grey.withValues(alpha: 0.1),
                             valueColor: AlwaysStoppedAnimation<Color>(color),
                           ),
                         ),
@@ -783,7 +783,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                           CircularProgressIndicator(
                             value: actCompletionRate,
                             strokeWidth: 6,
-                            backgroundColor: Colors.grey.withOpacity(0.1),
+                            backgroundColor: Colors.grey.withValues(alpha: 0.1),
                             valueColor: const AlwaysStoppedAnimation<Color>(
                               Colors.green,
                             ),
@@ -836,7 +836,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                           CircularProgressIndicator(
                             value: checklistCompletionRate,
                             strokeWidth: 6,
-                            backgroundColor: Colors.grey.withOpacity(0.1),
+                            backgroundColor: Colors.grey.withValues(alpha: 0.1),
                             valueColor: AlwaysStoppedAnimation<Color>(
                               Theme.of(context).colorScheme.primary,
                             ),

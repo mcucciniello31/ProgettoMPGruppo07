@@ -651,7 +651,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
                     color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: Theme.of(context).dividerColor.withOpacity(0.3),
+                      color: Theme.of(context).dividerColor.withValues(alpha: 0.3),
                     ),
                   ),
                   child: _coverImagePath == null
@@ -663,7 +663,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
                               size: 40,
                               color: Theme.of(
                                 context,
-                              ).colorScheme.primary.withOpacity(0.7),
+                              ).colorScheme.primary.withValues(alpha: 0.7),
                             ),
                             const SizedBox(height: 8),
                             const Text(
@@ -707,8 +707,8 @@ class _AddTripScreenState extends State<AddTripScreen> {
                                 right: 12,
                                 top: 12,
                                 child: CircleAvatar(
-                                  backgroundColor: Colors.black.withOpacity(
-                                    0.6,
+                                  backgroundColor: Colors.black.withValues(
+                                    alpha: 0.6,
                                   ),
                                   radius: 18,
                                   child: IconButton(
@@ -734,7 +734,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
                                     vertical: 6,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(0.6),
+                                    color: Colors.black.withValues(alpha: 0.6),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: const Row(
@@ -785,7 +785,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
                                     ? Theme.of(context).colorScheme.error
                                     : Theme.of(
                                         context,
-                                      ).colorScheme.outline.withOpacity(0.5),
+                                      ).colorScheme.outline.withValues(alpha: 0.5),
                                 width:
                                     _validationTriggered && _startDate == null
                                     ? 2.0
@@ -877,7 +877,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
                                     ? Theme.of(context).colorScheme.error
                                     : Theme.of(
                                         context,
-                                      ).colorScheme.outline.withOpacity(0.5),
+                                      ).colorScheme.outline.withValues(alpha: 0.5),
                                 width: _validationTriggered && _endDate == null
                                     ? 2.0
                                     : 1.0,

@@ -195,7 +195,7 @@ class _UsefulInfoTabState extends State<UsefulInfoTab> {
                           decoration: BoxDecoration(
                             color: Theme.of(
                               context,
-                            ).dividerColor.withOpacity(0.3),
+                            ).dividerColor.withValues(alpha: 0.3),
                             borderRadius: BorderRadius.circular(2),
                           ),
                         ),
@@ -277,7 +277,7 @@ class _UsefulInfoTabState extends State<UsefulInfoTab> {
                           borderRadius: BorderRadius.circular(24),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.15),
+                              color: Colors.black.withValues(alpha: 0.15),
                               blurRadius: 15,
                               offset: const Offset(0, 8),
                             ),
@@ -293,7 +293,7 @@ class _UsefulInfoTabState extends State<UsefulInfoTab> {
                                   Container(
                                     padding: const EdgeInsets.all(8),
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.2),
+                                      color: Colors.white.withValues(alpha: 0.2),
                                       shape: BoxShape.circle,
                                     ),
                                     child: Icon(
@@ -314,8 +314,8 @@ class _UsefulInfoTabState extends State<UsefulInfoTab> {
                                             fontFamily: 'Outfit',
                                             fontSize: 12,
                                             fontWeight: FontWeight.bold,
-                                            color: Colors.white.withOpacity(
-                                              0.7,
+                                            color: Colors.white.withValues(
+                                              alpha: 0.7,
                                             ),
                                             letterSpacing: 1.2,
                                           ),
@@ -354,8 +354,8 @@ class _UsefulInfoTabState extends State<UsefulInfoTab> {
                                           style: TextStyle(
                                             fontFamily: 'Outfit',
                                             fontSize: 10,
-                                            color: Colors.white.withOpacity(
-                                              0.7,
+                                            color: Colors.white.withValues(
+                                              alpha: 0.7,
                                             ),
                                           ),
                                         ),
@@ -385,8 +385,8 @@ class _UsefulInfoTabState extends State<UsefulInfoTab> {
                                             style: TextStyle(
                                               fontFamily: 'Outfit',
                                               fontSize: 10,
-                                              color: Colors.white.withOpacity(
-                                                0.7,
+                                              color: Colors.white.withValues(
+                                                alpha: 0.7,
                                               ),
                                             ),
                                           ),
@@ -414,8 +414,8 @@ class _UsefulInfoTabState extends State<UsefulInfoTab> {
                                             style: TextStyle(
                                               fontFamily: 'Outfit',
                                               fontSize: 10,
-                                              color: Colors.white.withOpacity(
-                                                0.7,
+                                              color: Colors.white.withValues(
+                                                alpha: 0.7,
                                               ),
                                             ),
                                           ),
@@ -446,8 +446,8 @@ class _UsefulInfoTabState extends State<UsefulInfoTab> {
                                             style: TextStyle(
                                               fontFamily: 'Outfit',
                                               fontSize: 10,
-                                              color: Colors.white.withOpacity(
-                                                0.7,
+                                              color: Colors.white.withValues(
+                                                alpha: 0.7,
                                               ),
                                             ),
                                           ),
@@ -478,7 +478,7 @@ class _UsefulInfoTabState extends State<UsefulInfoTab> {
                                 child: Container(
                                   padding: const EdgeInsets.all(12),
                                   decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.1),
+                                    color: Colors.white.withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Text(
@@ -525,8 +525,8 @@ class _UsefulInfoTabState extends State<UsefulInfoTab> {
                                             height: dashHeight,
                                             child: DecoratedBox(
                                               decoration: BoxDecoration(
-                                                color: Colors.white.withOpacity(
-                                                  0.4,
+                                                color: Colors.white.withValues(
+                                                  alpha: 0.4,
                                                 ),
                                               ),
                                             ),
@@ -691,12 +691,12 @@ class _UsefulInfoTabState extends State<UsefulInfoTab> {
               color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: Theme.of(context).dividerColor.withOpacity(0.1),
+                color: Theme.of(context).dividerColor.withValues(alpha: 0.1),
                 width: 1,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.02),
+                  color: Colors.black.withValues(alpha: 0.02),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
@@ -870,7 +870,7 @@ class _UsefulInfoTabState extends State<UsefulInfoTab> {
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFADCDE2).withOpacity(0.15),
+                            color: const Color(0xFFADCDE2).withValues(alpha: 0.15),
                             blurRadius: 4,
                             offset: const Offset(0, 2),
                           ),
@@ -958,7 +958,7 @@ class _UsefulInfoTabState extends State<UsefulInfoTab> {
                         Icon(
                           Icons.note_alt_outlined,
                           size: 64,
-                          color: Theme.of(context).hintColor.withOpacity(0.5),
+                          color: Theme.of(context).hintColor.withValues(alpha: 0.5),
                         ),
                         const SizedBox(height: 12),
                         Text(
@@ -994,7 +994,7 @@ class _UsefulInfoTabState extends State<UsefulInfoTab> {
                             leading: Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: catColor.withOpacity(0.1),
+                                color: catColor.withValues(alpha: 0.1),
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(catIcon, color: catColor, size: 20),
@@ -1058,12 +1058,12 @@ class _UsefulInfoTabState extends State<UsefulInfoTab> {
                                   decoration: BoxDecoration(
                                     color: Theme.of(
                                       context,
-                                    ).colorScheme.primary.withOpacity(0.02),
+                                    ).colorScheme.primary.withValues(alpha: 0.02),
                                     borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
                                       color: Theme.of(
                                         context,
-                                      ).dividerColor.withOpacity(0.05),
+                                      ).dividerColor.withValues(alpha: 0.05),
                                     ),
                                   ),
                                   child: SelectableText(
@@ -1093,7 +1093,7 @@ class _UsefulInfoTabState extends State<UsefulInfoTab> {
                         Icon(
                           Icons.wallet_travel_outlined,
                           size: 64,
-                          color: Theme.of(context).hintColor.withOpacity(0.5),
+                          color: Theme.of(context).hintColor.withValues(alpha: 0.5),
                         ),
                         const SizedBox(height: 12),
                         Text(
@@ -1130,7 +1130,7 @@ class _UsefulInfoTabState extends State<UsefulInfoTab> {
                             borderRadius: BorderRadius.circular(16),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.05),
+                                color: Colors.black.withValues(alpha: 0.05),
                                 blurRadius: 10,
                                 offset: const Offset(0, 4),
                               ),
@@ -1143,7 +1143,7 @@ class _UsefulInfoTabState extends State<UsefulInfoTab> {
                                 Container(
                                   padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.2),
+                                    color: Colors.white.withValues(alpha: 0.2),
                                     shape: BoxShape.circle,
                                   ),
                                   child: Icon(
@@ -1164,7 +1164,7 @@ class _UsefulInfoTabState extends State<UsefulInfoTab> {
                                           fontFamily: 'Outfit',
                                           fontSize: 10,
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.white.withOpacity(0.7),
+                                          color: Colors.white.withValues(alpha: 0.7),
                                           letterSpacing: 1.0,
                                         ),
                                       ),

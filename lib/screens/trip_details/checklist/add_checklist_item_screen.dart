@@ -210,7 +210,7 @@ class _AddChecklistItemScreenState extends State<AddChecklistItemScreen> {
           const SizedBox(height: 2),
           DropdownButtonHideUnderline(
             child: DropdownButtonFormField<T>(
-              value: value,
+              initialValue: value,
               isExpanded: true,
               decoration: const InputDecoration(
                 isDense: true,

@@ -288,12 +288,12 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
           decoration: BoxDecoration(
             color: isSelected
-                ? primaryColor.withOpacity(0.15)
+                ? primaryColor.withValues(alpha: 0.15)
                 : Colors.transparent,
             border: Border.all(
               color: isSelected
                   ? primaryColor
-                  : theme.dividerColor.withOpacity(0.2),
+                  : theme.dividerColor.withValues(alpha: 0.2),
               width: isSelected ? 2 : 1,
             ),
             borderRadius: BorderRadius.circular(12),
@@ -305,7 +305,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               Icon(
                 icon,
                 size: 18,
-                color: isSelected ? primaryColor : onSurface.withOpacity(0.6),
+                color: isSelected ? primaryColor : onSurface.withValues(alpha: 0.6),
               ),
               const SizedBox(height: 4),
               Text(
@@ -314,7 +314,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                  color: isSelected ? primaryColor : onSurface.withOpacity(0.8),
+                  color: isSelected ? primaryColor : onSurface.withValues(alpha: 0.8),
                 ),
               ),
             ],
@@ -352,7 +352,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           const SizedBox(height: 2),
           DropdownButtonHideUnderline(
             child: DropdownButtonFormField<T>(
-              value: value,
+              initialValue: value,
               isExpanded: true,
               decoration: const InputDecoration(
                 isDense: true,
@@ -586,7 +586,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                           border: Border.all(
                             color: Theme.of(
                               context,
-                            ).colorScheme.outline.withOpacity(0.5),
+                            ).colorScheme.outline.withValues(alpha: 0.5),
                           ),
                           borderRadius: BorderRadius.circular(16),
                         ),
@@ -618,7 +618,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                   side: BorderSide(
-                    color: Theme.of(context).dividerColor.withOpacity(0.15),
+                    color: Theme.of(context).dividerColor.withValues(alpha: 0.15),
                   ),
                 ),
                 child: Padding(

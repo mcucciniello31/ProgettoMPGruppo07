@@ -53,11 +53,9 @@ class AppTheme {
       colorScheme: const ColorScheme.light(
         primary: primary,
         secondary: secondary,
-        background: background,
         surface: card,
         onPrimary: Colors.white,
         onSecondary: Colors.white,
-        onBackground: textPrimary,
         onSurface: textPrimary,
       ),
       scaffoldBackgroundColor: background,

@@ -319,7 +319,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen>
                                     ),
                                     fit: BoxFit.cover,
                                     colorFilter: ColorFilter.mode(
-                                      Colors.black.withOpacity(0.45),
+                                      Colors.black.withValues(alpha: 0.45),
                                       BlendMode.darken,
                                     ),
                                   )
@@ -327,7 +327,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen>
                             borderRadius: BorderRadius.circular(24),
                             boxShadow: [
                               BoxShadow(
-                                color: cardColor.withOpacity(0.2),
+                                color: cardColor.withValues(alpha: 0.2),
                                 blurRadius: 10,
                                 offset: const Offset(0, 4),
                               ),
@@ -354,8 +354,8 @@ class _TripDetailsScreenState extends State<TripDetailsScreen>
                                         child: Text(
                                           trip.destination,
                                           style: TextStyle(
-                                            color: Colors.white.withOpacity(
-                                              0.9,
+                                            color: Colors.white.withValues(
+                                              alpha: 0.9,
                                             ),
                                             fontWeight: FontWeight.w600,
                                             fontSize: 16,
@@ -433,7 +433,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen>
                                   fontSize: 16,
                                   color: Theme.of(
                                     context,
-                                  ).colorScheme.onBackground,
+                                  ).colorScheme.onSurface,
                                 ),
                               ),
                             ),
@@ -451,7 +451,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen>
                     controller: _tabController,
                     isScrollable: false,
                     indicatorColor: Theme.of(context).colorScheme.primary,
-                    labelColor: Theme.of(context).colorScheme.onBackground,
+                    labelColor: Theme.of(context).colorScheme.onSurface,
                     unselectedLabelColor: Theme.of(
                       context,
                     ).textTheme.bodyMedium?.color,
