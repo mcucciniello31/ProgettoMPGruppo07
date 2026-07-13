@@ -1,9 +1,8 @@
 part of 'travel_provider.dart';
 
 extension ExpensesProvider on TravelProvider {
-  // ==========================================
+
   // OPERAZIONI SULLE SPESE
-  // ==========================================
 
   Future<void> addExpense(Expense expense) async {
     await _dbHelper.insertExpense(expense);

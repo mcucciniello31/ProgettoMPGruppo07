@@ -256,7 +256,7 @@ class _AddChecklistItemScreenState extends State<AddChecklistItemScreen> {
               ),
               const SizedBox(height: 24),
 
-              // 1. Campo di testo per l'elemento
+              // Campo di testo per l'elemento
               TextFormField(
                 controller: _textController,
                 decoration: InputDecoration(
@@ -322,7 +322,7 @@ class _AddChecklistItemScreenState extends State<AddChecklistItemScreen> {
               ),
               const SizedBox(height: 20),
 
-              // 3. Selettore Priorità
+              // Selettore Priorità
               _buildFormDropdownField<String>(
                 label: "Priorità *",
                 value: _selectedPriority,
@@ -359,7 +359,7 @@ class _AddChecklistItemScreenState extends State<AddChecklistItemScreen> {
               ),
               const SizedBox(height: 32),
 
-              // 4. Pulsante di salvataggio
+              // Pulsante di salvataggio
               ElevatedButton(
                 onPressed: _save,
                 style: ElevatedButton.styleFrom(

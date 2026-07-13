@@ -448,7 +448,7 @@ class _ExpensesTabState extends State<ExpensesTab> {
 
     // Elenco delle transazioni registrate storiche che corrispondono ai filtri selezionati
     final filteredExpenses = expenses.where((ex) {
-      // 1. Filtro di stato del viaggio
+      // Filtro di stato del viaggio
       if (_selectedExpenseFilter == 'Sostenute' && ex.status != 'Sostenuta') {
         return false;
       }
@@ -456,13 +456,13 @@ class _ExpensesTabState extends State<ExpensesTab> {
         return false;
       }
 
-      // 2. Filtro per categoria delle spese
+      // Filtro per categoria delle spese
       if (_selectedExpenseCategoryFilter != 'Tutte' &&
           ex.category != _selectedExpenseCategoryFilter) {
         return false;
       }
 
-      // 3. Filtro per range di spesa (basato sul valore convertito in EUR)
+      // Filtro per range di spesa (basato sul valore convertito in EUR)
       final amountInEur = CurrencyService.convert(
         ex.amount,
         ex.currency,
@@ -483,7 +483,7 @@ class _ExpensesTabState extends State<ExpensesTab> {
         }
       }
 
-      // 4. Filtro per collegare la spesa ad una tappa/attività
+      // Filtro per collegare la spesa ad una tappa/attività
       if (_selectedExpenseAssociationFilter != 'Tutti') {
         if (_selectedExpenseAssociationFilter == 'Generale') {
           if (ex.associatedType != 'Generale') return false;
@@ -502,7 +502,7 @@ class _ExpensesTabState extends State<ExpensesTab> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 1. Scheda di Riepilogo del Budget (Statistiche Spese Sostenute e Previste)
+          // Scheda di Riepilogo del Budget (Statistiche Spese Sostenute e Previste)
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),

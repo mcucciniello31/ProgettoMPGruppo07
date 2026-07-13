@@ -215,7 +215,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
 
     List<String> validationErrors = [];
 
-    // 1. Validazione del titolo del viaggio
+    // Validazione del titolo del viaggio
     if (title.isEmpty) {
       validationErrors.add("Titolo del viaggio: campo obbligatorio");
     } else if (title.startsWith(' ')) {
@@ -228,7 +228,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
       );
     }
 
-    // 2. Validazione della destinazione principale
+    // Validazione della destinazione principale
     if (destination.isEmpty) {
       validationErrors.add("Destinazione principale: campo obbligatorio");
     } else if (destination.startsWith(' ')) {
@@ -237,7 +237,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
       );
     }
 
-    // 3. Validazione dell'importo del budget
+    // Validazione dell'importo del budget
     if (budgetText.isEmpty) {
       validationErrors.add("Budget stimato: campo obbligatorio");
     } else if (budgetText.startsWith(' ')) {
@@ -255,7 +255,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
       }
     }
 
-    // 4. Validazione delle date selezionate
+    // Validazione delle date selezionate
     if (_startDate == null) {
       validationErrors.add("Data di inizio: campo obbligatorio");
     }
@@ -263,7 +263,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
       validationErrors.add("Data di fine: campo obbligatorio");
     }
 
-    // 5. Validazione dei partecipanti (facoltativi, ma devono avere formati validi)
+    // Validazione dei partecipanti (facoltativi, ma devono avere formati validi)
     if (participantsText.startsWith(' ')) {
       validationErrors.add("Partecipanti: non può iniziare con uno spazio");
     } else if (participantsText.isNotEmpty) {
@@ -282,7 +282,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
       }
     }
 
-    // 6. Validazione delle utilities generali (facoltative, ma devono contenere almeno una lettera)
+    // Validazione delle utilities generali (facoltative, ma devono contenere almeno una lettera)
     if (generalInfoText.startsWith(' ')) {
       validationErrors.add(
         "Utilities Generali: non possono iniziare con uno spazio",

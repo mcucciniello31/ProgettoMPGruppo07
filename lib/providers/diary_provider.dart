@@ -1,9 +1,8 @@
 part of 'travel_provider.dart';
 
 extension DiaryProvider on TravelProvider {
-  // ==========================================
-  // OPERAZIONI SUL DIARIO DI BORDO (RICORDI)
-  // ==========================================
+
+  // OPERAZIONI SUL DIARIO DI BORDO 
 
   Future<void> addDiaryEntry(DiaryEntry entry) async {
     await _dbHelper.insertDiaryEntry(entry);

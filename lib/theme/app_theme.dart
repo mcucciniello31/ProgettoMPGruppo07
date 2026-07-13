@@ -1,37 +1,36 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  // Palette di colori del tema unico — azzurrino chiaro con contrasto blu scuro
-  static const Color primary = Color(0xFF4DA8DA); // Azzurro cielo
-  static const Color secondary = Color(0xFF14B8A6); // Verde acqua / Teal
+  static const Color primary = Color(0xFF4DA8DA); 
+  static const Color secondary = Color(0xFF14B8A6); 
   static const Color background = Color(
     0xFFCBE0F0,
-  ); // Sfondo azzurro pastello (leggermente più scuro/intenso per maggior contrasto con le card bianche)
-  static const Color card = Color(0xFFFFFFFF); // Bianco puro per le card
-  static const Color textPrimary = Color(0xFF0D2137); // Blu notte scuro
-  static const Color textSecondary = Color(0xFF3B6A8A); // Blu medio/grigio
+  ); 
+  static const Color card = Color(0xFFFFFFFF);
+  static const Color textPrimary = Color(0xFF0D2137); 
+  static const Color textSecondary = Color(0xFF3B6A8A); 
 
   // Colori associati alle categorie di spesa
   static const Map<String, Color> categoryColors = {
-    'Trasporto': Color(0xFF38BDF8), // Celeste
-    'Alloggio': Color(0xFF34D399), // Smeraldo
-    'Cibo': Color(0xFFF87171), // Rosso corallo
-    'Attività': Color(0xFFC084FC), // Lavanda
-    'Shopping': Color(0xFFF472B6), // Rosa
-    'Spese Mediche': Color(0xFFE11D48), // Rosa cremisi
-    'Altro': Color(0xFF94A3B8), // Ardesia fredda
+    'Trasporto': Color(0xFF38BDF8), 
+    'Alloggio': Color(0xFF34D399), 
+    'Cibo': Color(0xFFF87171), 
+    'Attività': Color(0xFFC084FC), 
+    'Shopping': Color(0xFFF472B6), 
+    'Spese Mediche': Color(0xFFE11D48),  
+    'Altro': Color(0xFF94A3B8), 
   };
 
   // Colori associati alle categorie di attività
   static const Map<String, Color> activityColors = {
-    'Visita': Color(0xFF38BDF8), // Celeste
-    'Escursione': Color(0xFF34D399), // Smeraldo
-    'Prenotazione': Color(0xFFF87171), // Rosso corallo
-    'Pasto': Color(0xFFFB923C), // Arancione
-    'Spostamento': Color(0xFF818CF8), // Indaco
-    'Evento': Color(0xFFF472B6), // Rosa
-    'Momento Libero': Color(0xFF2DD4BF), // Teal
-    'Altro': Color(0xFF94A3B8), // Ardesia fredda
+    'Visita': Color(0xFF38BDF8), 
+    'Escursione': Color(0xFF34D399), 
+    'Prenotazione': Color(0xFFF87171), 
+    'Pasto': Color(0xFFFB923C), 
+    'Spostamento': Color(0xFF818CF8), 
+    'Evento': Color(0xFFF472B6), 
+    'Momento Libero': Color(0xFF2DD4BF),
+    'Altro': Color(0xFF94A3B8), 
   };
 
   // Icone associate alle categorie di attività

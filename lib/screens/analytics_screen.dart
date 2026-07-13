@@ -87,7 +87,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         ? _allExpenses
         : _allExpenses.where((e) => e.tripId == selectedTrip.id).toList();
 
-    // 1. Calcoli - Viaggi (Rilevante per la vista globale)
+    // Calcoli - Viaggi (Rilevante per la vista globale)
     final totalTrips = _allTrips.length;
     final futureTripsCount = _allTrips
         .where((t) => t.status == 'futuro')
@@ -102,7 +102,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         .where((t) => t.status == 'archiviato')
         .length;
 
-    // 2. Calcoli - Spese (Convertite in EUR)
+    // Calcoli - Spese (Convertite in EUR)
     final totalBudget = activeTrips.fold(0.0, (sum, t) => sum + t.budget);
     final totalSpentActual = activeExpenses
         .where((e) => e.status == 'Sostenuta')
@@ -131,7 +131,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     final sortedCategories = categoryDistribution.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
 
-    // 3. Calcoli - Attività pianificate
+    // Calcoli - Attività pianificate
     final totalActivities = activeActivities.length;
     final completedActivities = activeActivities
         .where((a) => a.status == 'Completata')
@@ -143,7 +143,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         .where((a) => a.status == 'Annullata')
         .length;
 
-    // 4. Calcoli - Elementi della Checklist
+    // Calcoli - Elementi della Checklist
     final totalChecklistItems = activeChecklistItems.length;
     final completedChecklistItems = activeChecklistItems
         .where((i) => i.isChecked)
@@ -152,7 +152,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         .where((i) => !i.isChecked)
         .length;
 
-    // 5. Calcoli - Giorni più attivi (Tappe con più attività)
+    // Calcoli - Giorni più attivi (Tappe con più attività)
     Map<int, int> stopActivityCounts = {};
     for (var a in activeActivities) {
       stopActivityCounts[a.stopId] = (stopActivityCounts[a.stopId] ?? 0) + 1;

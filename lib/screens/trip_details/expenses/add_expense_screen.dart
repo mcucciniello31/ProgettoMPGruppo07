@@ -174,19 +174,19 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     final amountText = _amountController.text;
     final notes = _notesController.text;
 
-    // 1. Controlla che il titolo non sia vuoto o non inizi con uno spazio
+    // Controlla che il titolo non sia vuoto o non inizi con uno spazio
     if (title.isEmpty) {
       errors.add("Il titolo della spesa è obbligatorio");
     } else if (title.startsWith(' ')) {
       errors.add("Il titolo della spesa non può iniziare con uno spazio");
     }
 
-    // 2. Controlla che le note non inizino con uno spazio
+    // Controlla che le note non inizino con uno spazio
     if (notes.startsWith(' ')) {
       errors.add("Le note della spesa non possono iniziare con uno spazio");
     }
 
-    // 3. Controlla che l'importo non inizi con uno spazio e sia convertibile
+    // Controlla che l'importo non inizi con uno spazio e sia convertibile
     if (amountText.isEmpty) {
       errors.add("L'importo è obbligatorio");
     } else if (amountText.startsWith(' ')) {
@@ -200,7 +200,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       errors.add("Inserisci un importo numerico valido e maggiore di zero");
     }
 
-    // 4. Controlla che l'associazione a tappe o attività sia coerente
+    // Controlla che l'associazione a tappe o attività sia coerente
     int? finalAssociatedId;
     String finalAssociatedName = 'Generale';
 

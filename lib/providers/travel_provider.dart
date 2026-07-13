@@ -87,9 +87,8 @@ class TravelProvider with ChangeNotifier {
     }
   }
 
-  // ==========================================
+
   // OPERAZIONI SUI VIAGGI
-  // ==========================================
 
   Future<void> addTrip(Trip trip) async {
     await _dbHelper.insertTrip(trip);

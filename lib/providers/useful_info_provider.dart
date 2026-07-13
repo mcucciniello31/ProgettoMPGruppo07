@@ -1,9 +1,8 @@
 part of 'travel_provider.dart';
 
 extension UsefulInfoProvider on TravelProvider {
-  // ==========================================
-  // OPERAZIONI SULLE INFO UTILI
-  // ==========================================
+
+  // OPERAZIONI SU INFO UTILI
 
   Future<void> addUsefulInfo(UsefulInfo info) async {
     await _dbHelper.insertUsefulInfo(info);
@@ -29,9 +28,8 @@ extension UsefulInfoProvider on TravelProvider {
     }
   }
 
-  // ==========================================
+
   // OPERAZIONI SUI DOCUMENTI DI VIAGGIO
-  // ==========================================
 
   Future<void> addTravelDocument(TravelDocument doc) async {
     await _dbHelper.insertTravelDocument(doc);

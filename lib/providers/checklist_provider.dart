@@ -1,9 +1,8 @@
 part of 'travel_provider.dart';
 
 extension ChecklistProvider on TravelProvider {
-  // ==========================================
+
   // OPERAZIONI SULLA CHECKLIST
-  // ==========================================
 
   Future<void> addChecklistItem(ChecklistItem item) async {
     await _dbHelper.insertChecklistItem(item);

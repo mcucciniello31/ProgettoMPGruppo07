@@ -1,9 +1,8 @@
 part of 'travel_provider.dart';
 
 extension ItineraryProvider on TravelProvider {
-  // ==========================================
+ 
   // OPERAZIONI SULLE TAPPE
-  // ==========================================
 
   int _dayNumberFor(Trip trip, DateTime dateTime) {
     final tripStartDay = DateTime(

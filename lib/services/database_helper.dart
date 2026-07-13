@@ -59,7 +59,7 @@ class DatabaseHelper {
     const textNullableType = 'TEXT';
     const doubleNullableType = 'REAL';
 
-    // 1. Tabella dei Viaggi (aggiornata alla versione 2)
+    // Tabella dei Viaggi (aggiornata alla versione 2)
     await db.execute('''
       CREATE TABLE trips (
         id $idType,
@@ -77,7 +77,7 @@ class DatabaseHelper {
       )
     ''');
 
-    // 2. Tabella delle Tappe (Fermate dell'itinerario)
+    // Tabella delle Tappe (Fermate dell'itinerario)
     await db.execute('''
       CREATE TABLE stops (
         id $idType,
@@ -94,7 +94,7 @@ class DatabaseHelper {
       )
     ''');
 
-    // 3. Tabella delle Attività
+    // Tabella delle Attività
     await db.execute('''
       CREATE TABLE activities (
         id $idType,
@@ -111,7 +111,7 @@ class DatabaseHelper {
       )
     ''');
 
-    // 4. Tabella degli elementi della Checklist e bagagli
+    // Tabella degli elementi della Checklist e bagagli
     await db.execute('''
       CREATE TABLE checklist_items (
         id $idType,
@@ -124,7 +124,7 @@ class DatabaseHelper {
       )
     ''');
 
-    // 5. Tabella delle Spese
+    // Tabella delle Spese
     await db.execute('''
       CREATE TABLE expenses (
         id $idType,
@@ -144,7 +144,7 @@ class DatabaseHelper {
       )
     ''');
 
-    // 6. Tabella delle Informazioni Utili
+    // Tabella delle Informazioni Utili
     await db.execute('''
       CREATE TABLE useful_info (
         id $idType,
@@ -156,7 +156,7 @@ class DatabaseHelper {
       )
     ''');
 
-    // 7. Tabella delle voci del Diario di Bordo (Ricordi)
+    // Tabella delle voci del Diario di Bordo (Ricordi)
     await db.execute('''
       CREATE TABLE diary_entries (
         id $idType,
@@ -172,7 +172,7 @@ class DatabaseHelper {
       )
     ''');
 
-    // 8. Tabella dei Documenti di Viaggio (Biglietti)
+    // Tabella dei Documenti di Viaggio (Biglietti)
     await db.execute('''
       CREATE TABLE travel_documents (
         id $idType,
@@ -324,9 +324,8 @@ class DatabaseHelper {
     }
   }
 
-  // ==========================================
+ 
   // OPERAZIONI CRUD SUI VIAGGI
-  // ==========================================
 
   Future<Trip> insertTrip(Trip trip) async {
     final db = await instance.database;
@@ -384,9 +383,8 @@ class DatabaseHelper {
     return await db.delete('trips', where: 'id = ?', whereArgs: [id]);
   }
 
-  // ==========================================
+
   // OPERAZIONI CRUD SULLE TAPPE
-  // ==========================================
 
   Future<Stop> insertStop(Stop stop) async {
     final db = await instance.database;
@@ -420,9 +418,8 @@ class DatabaseHelper {
     return await db.delete('stops', where: 'id = ?', whereArgs: [id]);
   }
 
-  // ==========================================
+
   // OPERAZIONI CRUD SULLE ATTIVITÀ
-  // ==========================================
 
   Future<Activity> insertActivity(Activity activity) async {
     final db = await instance.database;
@@ -456,9 +453,9 @@ class DatabaseHelper {
     return await db.delete('activities', where: 'id = ?', whereArgs: [id]);
   }
 
-  // ==========================================
+
   // OPERAZIONI CRUD SUGLI ELEMENTI DELLA CHECKLIST
-  // ==========================================
+
 
   Future<ChecklistItem> insertChecklistItem(ChecklistItem item) async {
     final db = await instance.database;
@@ -492,9 +489,9 @@ class DatabaseHelper {
     return await db.delete('checklist_items', where: 'id = ?', whereArgs: [id]);
   }
 
-  // ==========================================
+
   // OPERAZIONI CRUD SULLE SPESE
-  // ==========================================
+
 
   Future<Expense> insertExpense(Expense expense) async {
     final db = await instance.database;
@@ -528,9 +525,9 @@ class DatabaseHelper {
     return await db.delete('expenses', where: 'id = ?', whereArgs: [id]);
   }
 
-  // ==========================================
+
   // OPERAZIONI CRUD SULLE INFO UTILI
-  // ==========================================
+
 
   Future<UsefulInfo> insertUsefulInfo(UsefulInfo info) async {
     final db = await instance.database;
@@ -589,9 +586,9 @@ class DatabaseHelper {
     return result.map((json) => Expense.fromMap(json)).toList();
   }
 
-  // ==========================================
+
   // OPERAZIONI CRUD SULLE VOCI DEL DIARIO DI BORDO
-  // ==========================================
+
 
   Future<DiaryEntry> insertDiaryEntry(DiaryEntry entry) async {
     final db = await instance.database;
@@ -625,9 +622,9 @@ class DatabaseHelper {
     return await db.delete('diary_entries', where: 'id = ?', whereArgs: [id]);
   }
 
-  // ==========================================
+
   // OPERAZIONI CRUD SUI DOCUMENTI DI VIAGGIO
-  // ==========================================
+
 
   Future<TravelDocument> insertTravelDocument(TravelDocument doc) async {
     final db = await instance.database;

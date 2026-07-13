@@ -104,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // 1. Intestazione dell'app con titolo e statistiche veloci
+            // Intestazione dell'app con titolo e statistiche veloci
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
               child: Row(
@@ -353,7 +353,7 @@ class _HomeScreenState extends State<HomeScreen>
               ),
             ),
 
-            // 2. Selettore per passare dai viaggi attivi a quelli archiviati
+            // Selettore per passare dai viaggi attivi a quelli archiviati
             Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 16.0,
@@ -400,7 +400,7 @@ class _HomeScreenState extends State<HomeScreen>
               ),
             ),
 
-            // 3. Schermata contenente le liste dei viaggi divisi per scheda
+            // Schermata contenente le liste dei viaggi divisi per scheda
             Expanded(
               child: travelProvider.isLoading
                   ? const Center(child: CircularProgressIndicator())
@@ -599,14 +599,14 @@ class _HomeScreenState extends State<HomeScreen>
   ) {
     // Seleziona un colore a tinta unita vibrante in modo deterministico
     final vibrantColors = [
-      const Color(0xFF1E40AF), // Deep Blue
-      const Color(0xFF0F766E), // Deep Teal
-      const Color(0xFFC2410C), // Deep Orange
-      const Color(0xFF6D28D9), // Deep Purple
-      const Color(0xFF4338CA), // Deep Indigo
-      const Color(0xFFBE123C), // Deep Rose
-      const Color(0xFF047857), // Deep Green
-      const Color(0xFF0369A1), // Deep Sky Blue
+      const Color(0xFF1E40AF), 
+      const Color(0xFF0F766E), 
+      const Color(0xFFC2410C), 
+      const Color(0xFF6D28D9), 
+      const Color(0xFF4338CA), 
+      const Color(0xFFBE123C), 
+      const Color(0xFF047857), 
+      const Color(0xFF0369A1), 
     ];
     final cardColor =
         vibrantColors[trip.title.hashCode.abs() % vibrantColors.length];
