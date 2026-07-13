@@ -434,37 +434,95 @@ class _UsefulInfoTabState extends State<UsefulInfoTab> {
                                         ],
                                       ),
                                     if (doc.gate != null &&
-                                        doc.gate!.isNotEmpty)
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: [
-                                          Text(
-                                            doc.documentType == 'Treno'
-                                                ? "CARROZZA"
-                                                : doc.documentType == 'Pullman'
-                                                ? "FILA"
-                                                : "GATE",
-                                            style: TextStyle(
-                                              fontFamily: 'Outfit',
-                                              fontSize: 10,
-                                              color: Colors.white.withValues(
-                                                alpha: 0.7,
+                                        doc.gate!.isNotEmpty) ...[
+                                      if (doc.documentType == 'Treno' &&
+                                          doc.gate!.contains('|')) ...[
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: [
+                                            Text(
+                                              "CARROZZA",
+                                              style: TextStyle(
+                                                fontFamily: 'Outfit',
+                                                fontSize: 10,
+                                                color: Colors.white.withValues(
+                                                  alpha: 0.7,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            doc.gate!,
-                                            style: const TextStyle(
-                                              fontFamily: 'Outfit',
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              doc.gate!.split('|')[0],
+                                              style: const TextStyle(
+                                                fontFamily: 'Outfit',
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
+                                          ],
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: [
+                                            Text(
+                                              "FILA",
+                                              style: TextStyle(
+                                                fontFamily: 'Outfit',
+                                                fontSize: 10,
+                                                color: Colors.white.withValues(
+                                                  alpha: 0.7,
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              doc.gate!.split('|')[1],
+                                              style: const TextStyle(
+                                                fontFamily: 'Outfit',
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ] else ...[
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: [
+                                            Text(
+                                              doc.documentType == 'Treno'
+                                                  ? "CARROZZA"
+                                                  : doc.documentType ==
+                                                        'Pullman'
+                                                  ? "FILA"
+                                                  : "GATE",
+                                              style: TextStyle(
+                                                fontFamily: 'Outfit',
+                                                fontSize: 10,
+                                                color: Colors.white.withValues(
+                                                  alpha: 0.7,
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              doc.gate!,
+                                              style: const TextStyle(
+                                                fontFamily: 'Outfit',
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ],
                                   ],
                                 ],
                               ),

@@ -14,7 +14,24 @@ class AddTravelDocumentDialog {
       text: doc?.bookingCode ?? '',
     );
     final seatController = TextEditingController(text: doc?.seat ?? '');
-    final gateController = TextEditingController(text: doc?.gate ?? '');
+
+    // Gestione Carrozza e Fila per Treno
+    String initialCarrozza = '';
+    String initialFila = '';
+    if (isEditing && doc.documentType == 'Treno' && doc.gate != null) {
+      if (doc.gate!.contains('|')) {
+        final parts = doc.gate!.split('|');
+        initialCarrozza = parts[0];
+        initialFila = parts[1];
+      } else {
+        initialCarrozza = doc.gate!;
+      }
+    } else {
+      initialCarrozza = doc?.gate ?? '';
+    }
+
+    final gateController = TextEditingController(text: initialCarrozza);
+    final trainRowController = TextEditingController(text: initialFila);
     final notesController = TextEditingController(text: doc?.notes ?? '');
 
     String selectedDocType = doc?.documentType ?? 'Volo';
@@ -256,6 +273,24 @@ class AddTravelDocumentDialog {
                               ),
                             ),
                           ),
+                          if (selectedDocType == 'Treno') ...[
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: TextField(
+                                controller: trainRowController,
+                                maxLength: 1,
+                                textCapitalization:
+                                    TextCapitalization.characters,
+                                decoration: InputDecoration(
+                                  labelText: "Fila",
+                                  counterText: "",
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     const SizedBox(height: 16),
@@ -367,14 +402,23 @@ class AddTravelDocumentDialog {
                         selectedDocType == 'Treno' ||
                         selectedDocType == 'Pullman';
 
+                    final trainRow = trainRowController.text
+                        .trim()
+                        .toUpperCase();
+
                     if (title.startsWith(' ') ||
                         bookingCode.startsWith(' ') ||
                         notes.startsWith(' ') ||
                         (selectedDocType == 'Volo' &&
                             (seat.startsWith(' ') || gate.startsWith(' '))) ||
-                        (isTrainOrBus &&
+                        (selectedDocType == 'Pullman' &&
                             isAssigned &&
                             (seat.startsWith(' ') || gate.startsWith(' '))) ||
+                        (selectedDocType == 'Treno' &&
+                            isAssigned &&
+                            (seat.startsWith(' ') ||
+                                gate.startsWith(' ') ||
+                                trainRowController.text.startsWith(' '))) ||
                         (isSingleField && gate.startsWith(' '))) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -384,6 +428,22 @@ class AddTravelDocumentDialog {
                         ),
                       );
                       return;
+                    }
+
+                    if (selectedDocType == 'Treno' &&
+                        isAssigned &&
+                        trainRow.isNotEmpty) {
+                      final regExp = RegExp(r'^[A-Z]$');
+                      if (!regExp.hasMatch(trainRow)) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              "La fila deve essere una singola lettera da A a Z",
+                            ),
+                          ),
+                        );
+                        return;
+                      }
                     }
 
                     if (title.trim().isEmpty) {
@@ -401,9 +461,19 @@ class AddTravelDocumentDialog {
                               ? null
                               : (seat.trim().isEmpty ? null : seat.trim()));
 
-                    final String? finalGate = isTrainOrBus && !isAssigned
-                        ? null
-                        : (gate.trim().isEmpty ? null : gate.trim());
+                    String? finalGate;
+                    if (isTrainOrBus && !isAssigned) {
+                      finalGate = null;
+                    } else if (selectedDocType == 'Treno') {
+                      final carr = gate.trim();
+                      if (carr.isEmpty && trainRow.isEmpty) {
+                        finalGate = null;
+                      } else {
+                        finalGate = "$carr|$trainRow";
+                      }
+                    } else {
+                      finalGate = gate.trim().isEmpty ? null : gate.trim();
+                    }
 
                     final newDoc = TravelDocument(
                       id: doc?.id,

@@ -728,7 +728,9 @@ class ExportTripDialog {
                               doc.documentType == 'Hotel'
                                   ? "Indirizzo: ${doc.gate}"
                                   : doc.documentType == 'Treno'
-                                  ? "Carrozza: ${doc.gate}"
+                                  ? (doc.gate!.contains('|')
+                                        ? "Carrozza: ${doc.gate!.split('|')[0]} - Fila: ${doc.gate!.split('|')[1]}"
+                                        : "Carrozza: ${doc.gate}")
                                   : doc.documentType == 'Pullman'
                                   ? "Fila: ${doc.gate}"
                                   : "Gate: ${doc.gate}",
